@@ -5,32 +5,32 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include <list>
+
 #include "config.h"
 #include "juego.h"
-#include "lista.h"
 #include "obstaculo.h"
 #include "poligono.h"
 
 #define DT (1.0 / JUEGO_FPS)
 
-obstaculo_t obs;
-bool wrapper_actualizar_obstaculo(void *obstaculo, void *recibo_null) {
-    if (obs.get_tocado((obstaculo_t *)obstaculo))
-        obs.set_dibujar((obstaculo_t *)obstaculo, false);
+obstaculo_t obs2;
+bool wrapper_actualizar_obstaculo(obstaculo_t obs) {
+    if (obs.get_tocado(&obs)) obs.set_dibujar(&obs, false);
     return true;
 }
 
 bool wrapper_dibujar_obstaculo(void *obstaculo, void *renderer) {
-    return obs.dibujar((SDL_Renderer *)renderer, (obstaculo_t *)obstaculo);
+    return obs2.dibujar((SDL_Renderer *)renderer, (obstaculo_t *)obstaculo);
 }
 
 void wrapper_destruccion_obstaculo(void *obstaculo) {
-    obs.destruir((obstaculo_t *)obstaculo);
+    obs2.destruir((obstaculo_t *)obstaculo);
 }
 
-bool wrapper_resetear_obstaculos(void *obstaculo, void *recibo_null) {
-    obs.set_tocado((obstaculo_t *)obstaculo, false);
-    obs.set_dibujar((obstaculo_t *)obstaculo, true);
+bool wrapper_resetear_obstaculos(obstaculo_t obs) {
+    obs.set_tocado(&obs, false);
+    obs.set_dibujar(&obs, true);
     return true;
 }
 
@@ -39,9 +39,9 @@ bool wrapper_resetear_obstaculos(void *obstaculo, void *recibo_null) {
 #ifdef TTF
 #include <SDL2/SDL_ttf.h>
 
-// ------------------------------------------------------------- FUNCIONES QUE
-// ESCRIBEN TEXTO EN LA PANTALLA
-// -------------------------------------------------------------
+// |-------------------------------------------------------------|
+// | FUNCIONES QUE ESCRIBEN TEXTO EN LA PANTALLA
+// |-------------------------------------------------------------|
 
 void escribir_texto(SDL_Renderer *renderer, TTF_Font *font, const char *s,
                     int x, int y, uint8_t r, uint8_t g, uint8_t b) {
@@ -210,7 +210,7 @@ int main(int argc, char *argv[]) {
     game_state_t estado = GAME_RUNNING;
 
     while (estado) {
-        if (!obs.leer_cantidad_de_obstaculos(
+        if (!obs2.leer_cantidad_de_obstaculos(
                 f, &cant_obstaculos)) {  // Si no pude leer más obstaculos, GAME
                                          // OVER
             estado = GAME_OVER;
@@ -224,19 +224,13 @@ int main(int argc, char *argv[]) {
 
         vidas_resetear(vidas);  // Se setean las vidas a la cantidad inicial
 
-        lista_t *obstaculos = lista_crear();
-
-        if (obstaculos == NULL) {
-            // fprintf(stderr, "No se pudo crear lista\n");
-            // return 1;
-            break;
-        }
+        std::list<obstaculo_t> obstaculos;
 
         for (size_t i = 0; i < cant_obstaculos;
              i++) {  // Se levantan todos los obstáculos del nivel
-            obstaculo_t *nuevo = obs.levantar_obstaculo(f);
+            obstaculo_t *nuevo = obs2.levantar_obstaculo(f);
             if (nuevo->es_naranja(nuevo)) cantidad_naranjas++;
-            lista_insertar_al_principio(obstaculos, nuevo);
+            obstaculos.emplace_front(*nuevo);
         }
 
         unsigned int ticks = SDL_GetTicks();
@@ -358,8 +352,10 @@ int main(int argc, char *argv[]) {
                     // Se salió de la pantalla:
                     if (cy > MAX_Y - BOLA_RADIO) {
                         cayendo = false;
-                        lista_recorrer(obstaculos, wrapper_actualizar_obstaculo,
-                                       NULL);
+                        for (auto &obs : obstaculos) {
+                            if (obs2.get_tocado(&obs))
+                                obs2.set_dibujar(&obs, false);
+                        }
                         if (!bola_recuperada) {
                             if (!vidas_estan_agotadas(vidas))
                                 vidas_quitar(vidas);
@@ -378,8 +374,11 @@ int main(int argc, char *argv[]) {
                         bola_trabada = 0;
 
                     if (bola_trabada > 120)
-                        lista_recorrer(obstaculos, wrapper_actualizar_obstaculo,
-                                       renderer);
+                        for (auto &obs : obstaculos) {
+                            wrapper_actualizar_obstaculo(obs);
+                            // if (obs.get_tocado(&obs))
+                            //     obs.set_dibujar(&obs, false);
+                        }
 
                     // Dibujamos el cañón:
                     SDL_RenderDrawLine(
@@ -415,34 +414,29 @@ int main(int argc, char *argv[]) {
 
                     // Dibujasmos los obstaculos y realizamos la interacción con
                     // la bola
-                    lista_iter_t *iterador = lista_iter_crear(obstaculos);
                     float nor_x, nor_y;
 
-                    while (!lista_iter_al_final(iterador)) {
-                        obstaculo_t *actual =
-                            (obstaculo_t *)lista_iter_ver_actual(iterador);
-                        if (actual->get_dibujar(actual)) {
-                            actual->dibujar(renderer, actual);
-                            if (actual->distancia(actual, cx, cy, &nor_x,
-                                                  &nor_y) < BOLA_RADIO) {
+                    for (auto &obs : obstaculos) {
+                        if (obs.get_dibujar(&obs)) {
+                            obs.dibujar(renderer, &obs);
+                            if (obs.distancia(&obs, cx, cy, &nor_x, &nor_y) <
+                                BOLA_RADIO) {
                                 reflejar(nor_x, nor_y, &cx, &cy, &vx, &vy);
                                 vy *= PLASTICIDAD;
                                 vx *= PLASTICIDAD;
-                                if (!actual->es_gris(actual)) {
-                                    if (actual->es_naranja(actual) &&
-                                        actual->get_dibujar(actual) == true &&
-                                        actual->get_tocado(actual) == false)
+                                if (!obs.es_gris(&obs)) {
+                                    if (obs.es_naranja(&obs) &&
+                                        obs.get_dibujar(&obs) == true &&
+                                        obs.get_tocado(&obs) == false)
                                         naranjas_golpeados++;
-                                    puntaje_actualizar(&puntaje_en_nivel,
-                                                       actual, multiplicador);
-                                    actual->set_tocado(actual, true);
+                                    puntaje_actualizar(&puntaje_en_nivel, &obs,
+                                                       multiplicador);
+                                    obs.set_tocado(&obs, true);
                                 }
                             }
                         }
-                        actual->mover(actual, DT);
-                        lista_iter_avanzar(iterador);
+                        obs.mover(&obs, DT);
                     }
-                    lista_iter_destruir(iterador);
 
                     if (naranjas_golpeados == cantidad_naranjas) {
                         estado = GAME_LEVEL_UP;
@@ -525,8 +519,11 @@ int main(int argc, char *argv[]) {
                             naranjas_golpeados = 0;
                             puntaje_en_nivel = 0;
                             estado = GAME_RUNNING;
-                            lista_recorrer(obstaculos,
-                                           wrapper_resetear_obstaculos, NULL);
+                            for (auto &obs : obstaculos) {
+                                wrapper_resetear_obstaculos(obs);
+                                // obs.set_tocado(&obs, false);
+                                // obs.set_dibujar(&obs, true);
+                            }
                             vidas_resetear(vidas);
 #ifdef TTF
                             contador_game_over = CONTADOR_GAME_OVER;
@@ -543,8 +540,9 @@ int main(int argc, char *argv[]) {
 
                         continue;
                     }
-                    lista_recorrer(obstaculos, wrapper_dibujar_obstaculo,
-                                   renderer);
+                    for (auto &obs : obstaculos) {
+                        return obs.dibujar((SDL_Renderer *)renderer, &obs);
+                    }
 
 #ifdef TTF
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0x60, 0x00, 0x00);
@@ -660,7 +658,6 @@ int main(int argc, char *argv[]) {
                 SDL_Delay(1000 / JUEGO_FPS - ticks);
             ticks = SDL_GetTicks();
         }
-        lista_destruir(obstaculos, wrapper_destruccion_obstaculo);
     }
 
     trayectoria_destruir(
