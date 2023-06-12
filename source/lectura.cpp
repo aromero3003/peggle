@@ -15,6 +15,8 @@
 #define SHIFT_COLOR 6
 #define SHIFT_MOVE 4
 
+poligono_t pol;
+
 // Funcion para leer la cantidad de obstaculos en un nivel
 
 bool leer_cantidad_obstaculos(FILE *f, int16_t *cantidad) {
@@ -79,10 +81,10 @@ poligono_t *leer_geometria_circulo(FILE *f) {
     if (fread(&r, SIZE16B, 1, f) != 1) return NULL;
 
     float radio = r;
-    poligono_t *poligono = poligono_crear_circular(radio, RESOL_BOLA_OBS);
+    poligono_t *poligono = pol.crear_circular(radio, RESOL_BOLA_OBS);
     if (poligono == NULL) return NULL;
 
-    poligono_trasladar(poligono, x, y);
+    pol.trasladar(poligono, x, y);
     // printf("CIRCULO: x = %d, y = %d, radio = %d\n",x, y, r);
     return poligono;
 }
@@ -107,12 +109,12 @@ poligono_t *leer_geometria_rectangulo(FILE *f) {
     }
     putchar('\n');
     */
-    poligono_t *poligono = poligono_crear(vertices, 4);
+    poligono_t *poligono = pol.crear(vertices, 4);
     if (poligono == NULL) return NULL;
 
     // printf("angul = %g x: %d y: %d\n",(double)angulo, x, y);
-    poligono_rotar2(poligono, angulo);
-    poligono_trasladar(poligono, x, y);
+    pol.rotar2(poligono, angulo);
+    pol.trasladar(poligono, x, y);
     // printf("RECTANGULO: x = %d, y = %d, ancho = %d, alto = %d, angulo =
     // %d\n", x, y, ancho, alto, angulo);
     return poligono;
@@ -132,7 +134,7 @@ poligono_t *leer_geometria_poligono(FILE *f) {
         parametros[i][1] = param[i][1];
     }
 
-    poligono_t *poligono = poligono_crear(parametros, puntos);
+    poligono_t *poligono = pol.crear(parametros, puntos);
     if (poligono == NULL) return NULL;
 
     /*for (size_t i = 0; i < puntos; i++) {

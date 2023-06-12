@@ -27,6 +27,8 @@ struct trayectoria {
     poligono_t *linea;
 };
 
+poligono_t poligono;
+
 //------------------------------------------ BOLA
 //------------------------------------------
 
@@ -34,22 +36,25 @@ bola_t *bola_crear(float cx, float cy, float radio, int resolucion) {
     bola_t *bola = (bola_t *)malloc(sizeof(bola_t));
     if (bola == NULL) return NULL;
 
-    bola->forma = poligono_crear_circular(radio, resolucion);
+    poligono_t poligono;
+    bola->forma = poligono.crear_circular(radio, resolucion);
     if (bola->forma == NULL) {
         free(bola);
         return NULL;
     }
-    poligono_trasladar(bola->forma, cx, cy);
+    poligono.trasladar(bola->forma, cx, cy);
     return bola;
 }
 
 void bola_destruir(bola_t *bola) {
-    poligono_destruir(bola->forma);
+    poligono_t poligono;
+    poligono.destruir(bola->forma);
     free(bola);
 }
 
 bool bola_dibujar(SDL_Renderer *renderer, bola_t *bola) {
-    return poligono_dibujar(renderer, bola->forma);
+    poligono_t p;
+    return p.dibujar(renderer, bola->forma);
 }
 
 // ------------------------------------------TRAYECTORIA------------------------------------------
@@ -57,7 +62,8 @@ trayectoria_t *trayectoria_crear() {
     trayectoria_t *tray = (trayectoria_t *)malloc(sizeof(trayectoria_t));
     if (tray == NULL) return NULL;
 
-    tray->linea = poligono_crear(NULL, 0);
+    poligono_t p;
+    tray->linea = p.crear(NULL, 0);
     if (tray->linea == NULL) {
         free(tray);
         return NULL;
@@ -67,16 +73,20 @@ trayectoria_t *trayectoria_crear() {
 
 void trayectoria_destruir(trayectoria_t *tray) {
     if (tray == NULL) return;
-    poligono_destruir(tray->linea);
+    poligono_t p;
+
+    p.destruir(tray->linea);
     free(tray);
 }
 
 bool trayectoria_agregar_coordenada(trayectoria_t *tray, float x, float y) {
-    return poligono_agregar_vertice(tray->linea, x, y);
+    poligono_t p;
+    return p.agregar_vertice(tray->linea, x, y);
 }
 
 bool trayectoria_dibujar(SDL_Renderer *renderer, trayectoria_t *tray) {
-    return poligono_abierto_dibujar(renderer, tray->linea);
+    poligono_t p;
+    return p.abierto_dibujar(renderer, tray->linea);
 }
 
 trayectoria_t *trayectoria_calcular(float xi, float yi, float vxi, float vyi,
@@ -203,7 +213,7 @@ recuperador_t *recuperador_crear(float ancho, float alto, float velocidad) {
                            {MIN_X, MAX_Y - alto},
                            {MIN_X + ancho, MAX_Y - alto},
                            {MIN_X + ancho, MAX_Y}};
-    recuperador->r = poligono_crear(vertices, 4);
+    recuperador->r = poligono.crear(vertices, 4);
     if (recuperador->r == NULL) {
         free(recuperador);
         return NULL;
@@ -215,24 +225,24 @@ recuperador_t *recuperador_crear(float ancho, float alto, float velocidad) {
 }
 
 void recuperador_destruir(recuperador_t *recuperador) {
-    poligono_destruir(recuperador->r);
+    poligono.destruir(recuperador->r);
     free(recuperador);
 }
 
 void recuperador_mover(recuperador_t *recuperador, float dt) {
     if (recuperador->xi < MIN_X || recuperador->xi + recuperador->ancho > MAX_X)
         recuperador->velocidad = -(recuperador->velocidad);
-    poligono_trasladar(recuperador->r, recuperador->velocidad * dt, 0);
+    poligono.trasladar(recuperador->r, recuperador->velocidad * dt, 0);
     recuperador->xi += (recuperador->velocidad * dt);
 }
 
 void recuperador_dibujar(SDL_Renderer *renderer, recuperador_t *recuperador) {
-    poligono_dibujar(renderer, recuperador->r);
+    poligono.dibujar(renderer, recuperador->r);
 }
 
 bool recuperador_bola_recuperada(recuperador_t *recuperador, float cx,
                                  float cy) {
-    return poligono_punto_dentro(recuperador->r, cx, cy);
+    return poligono.punto_dentro(recuperador->r, cx, cy);
 }
 
 // -------------------------------------------- PUNTAJE
