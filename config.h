@@ -20,13 +20,15 @@
 
 #define BOLA_RADIO 6
 #define BOLA_VI 450
-#define BOLA_RESOL 12       // Resoluciones de la bola y de
-#define RESOL_BOLA_OBS 30   // los obstaculos circulares
+#define BOLA_RESOL 12      // Resoluciones de la bola y de
+#define RESOL_BOLA_OBS 30  // los obstaculos circulares
 
-// Si el contador cuando la bola está quieta llega a BOLA_RESET se eliminan los obstaculos
+// Si el contador cuando la bola está quieta llega a BOLA_RESET se eliminan los
+// obstaculos
 #define BOLA_RESET 13
 
-// La cantidad de naranjas que deben ser golpeados para que cambie el multiplicador
+// La cantidad de naranjas que deben ser golpeados para que cambie el
+// multiplicador
 #define MULT0 0
 #define MULT1 10
 #define MULT2 15
@@ -35,8 +37,7 @@
 
 #define VIDAS_INICIALES 15
 
-
-#define CONTADOR_GAME_OVER 8 // Cuenta regresiva para terminar el juego
+#define CONTADOR_GAME_OVER 8  // Cuenta regresiva para terminar el juego
 
 #define PUNTAJE_AZUL 10
 #define PUNTAJE_NARANJA 100
@@ -49,4 +50,4 @@
 #define PLASTICIDAD 0.8
 #define ROZAMIENTO 0.9999
 
-#endif // _CONFIG_H_
+#endif  // _CONFIG_H_
