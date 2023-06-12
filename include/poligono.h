@@ -10,6 +10,11 @@
 #include "vec2.h"
 
 struct poligono_t {
+    poligono_t() = default;
+    poligono_t(float vertices[][2], size_t n);
+    poligono_t(const std::vector<aVec2> &vertices);
+    poligono_t(float radio, int resolucion);
+
     poligono_t *crear(float vertices[][2], size_t n);
     poligono_t *crear(const std::vector<aVec2> &vertices);
     poligono_t *crear_circular(float radio, int resolucion);

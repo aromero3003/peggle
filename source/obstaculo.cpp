@@ -17,7 +17,7 @@ bool obstaculo_t::leer_cantidad_de_obstaculos(FILE *f, int16_t *cantidad) {
 // Imprime por stdout los parametros de un obstaculo
 void obstaculo_t::imprimir_obstaculo(obstaculo_t *o) const {
     printf("Mov: %d For: %d Col: %d\n", o->movimiento, o->geometria, o->color);
-    o->poligono->imprimir(o->poligono);
+    o->poligono.imprimir(&o->poligono);
     putchar('\n');
 }
 
@@ -27,7 +27,7 @@ obstaculo_t *obstaculo_t::crear(poligono_t *puntos, color_t color,
     obstaculo_t *obstaculo = new obstaculo_t;
     if (obstaculo == NULL) return NULL;
 
-    obstaculo->poligono = puntos;
+    obstaculo->poligono = *puntos;
     obstaculo->color = color;
     obstaculo->movimiento = mov;
     obstaculo->geometria = geo;
@@ -85,10 +85,7 @@ obstaculo_t *obstaculo_t::levantar_obstaculo(FILE *f) {
     return obstaculo;
 }
 
-void obstaculo_t::destruir(obstaculo_t *obstaculo) {
-    p.destruir(obstaculo->poligono);
-    delete obstaculo;
-}
+void obstaculo_t::destruir(obstaculo_t *obstaculo) { delete obstaculo; }
 
 bool obstaculo_t::es_gris(obstaculo_t *obstaculo) const {
     return obstaculo->color == COLOR_GRIS;
@@ -103,16 +100,16 @@ color_t obstaculo_t::get_color(obstaculo_t *obstaculo) const {
 }
 
 void obstaculo_t::trasladar(obstaculo_t *obstaculo, float dx, float dy) {
-    p.trasladar(obstaculo->poligono, dx, dy);
+    p.trasladar(&obstaculo->poligono, dx, dy);
 }
 
 void obstaculo_t::rotar(obstaculo_t *obstaculo, double rad) {
-    p.rotar2(obstaculo->poligono, rad);
+    p.rotar2(&obstaculo->poligono, rad);
 }
 
 void obstaculo_t::rotar_centro(obstaculo_t *obstaculo, double rad, float cx,
                                float cy) {
-    p.rotar_centro2(obstaculo->poligono, rad, cx, cy);
+    p.rotar_centro2(&obstaculo->poligono, rad, cx, cy);
 }
 
 // FUNCIONES PARA MOVER EL OBSTACULO
@@ -177,7 +174,7 @@ bool obstaculo_t::dibujar(SDL_Renderer *renderer, obstaculo_t *obstaculo) {
                 break;
         }
     }
-    return obstaculo->_dibujar ? p.dibujar(renderer, obstaculo->poligono)
+    return obstaculo->_dibujar ? p.dibujar(renderer, &obstaculo->poligono)
                                : true;
 }
 
@@ -199,5 +196,5 @@ bool obstaculo_t::get_dibujar(obstaculo_t *obstaculo) const {
 
 double obstaculo_t::distancia(const obstaculo_t *obstaculo, float xp, float yp,
                               float *nor_x, float *nor_y) {
-    return p.distancia(obstaculo->poligono, xp, yp, nor_x, nor_y);
+    return p.distancia(&obstaculo->poligono, xp, yp, nor_x, nor_y);
 }

@@ -5,52 +5,45 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include <cmath>
 #include <vector>
 
 #include "config.h"
 #include "vec2.h"
 
 // Crea un polígono de n vertices en R2
-poligono_t *poligono_t::crear(float vertices[][2], size_t n) {
-    poligono_t *poligono = new poligono_t;
-
-    poligono->vertices.resize(n);
-
+poligono_t::poligono_t(float vertices[][2], size_t n) : vertices(n) {
     for (size_t i = 0; i < n; i++) {
-        poligono->vertices[i].x = vertices[i][0];
-        poligono->vertices[i].y = vertices[i][1];
+        this->vertices[i].x = vertices[i][0];
+        this->vertices[i].y = vertices[i][1];
     }
+}
 
-    return poligono;
+poligono_t::poligono_t(const std::vector<aVec2> &vertices)
+    : vertices(vertices) {}
+
+poligono_t::poligono_t(float radio, int resolucion) {
+    int angulo = 360 / resolucion;
+    for (size_t i = 0; i < resolucion; i++) {
+        vertices.emplace_back(0, radio);
+        this->rotar_centro(this, -angulo * M_PI / 180, 0, 0);
+    }
+}
+
+// Crea un polígono de n vertices en R2
+poligono_t *poligono_t::crear(float vertices[][2], size_t n) {
+    return new poligono_t(vertices, n);
 }
 
 // Crea un polígono de n vertices en R2
 poligono_t *poligono_t::crear(const std::vector<aVec2> &vertices) {
-    poligono_t *poligono = new poligono_t;
-    if (poligono == NULL) return NULL;
-
-    poligono->vertices = vertices;
-
-    return poligono;
+    return new poligono_t(vertices);
 }
 
 // Crea un poligono circular de 8 vertices de resolucion con centro en el
 // origen;
 poligono_t *poligono_t::crear_circular(float radio, int resolucion) {
-    poligono_t *circulo = poligono_t::crear(NULL, 0);
-    if (circulo == NULL) return NULL;
-
-    int angulo = 360 / resolucion;
-
-    for (size_t i = 0; i < resolucion; i++) {
-        if (!poligono_t::agregar_vertice(circulo, 0, radio)) {
-            poligono_t::destruir(circulo);
-            return NULL;
-        }
-        poligono_t::rotar_centro(circulo, -angulo * PI / 180, 0, 0);
-    }
-
-    return circulo;
+    return new poligono_t(radio, resolucion);
 }
 
 // Destruye un poligono

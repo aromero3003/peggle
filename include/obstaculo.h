@@ -45,7 +45,7 @@ struct obstaculo_t {
                      float *nor_x, float *nor_y);
 
    private:
-    poligono_t *poligono;
+    poligono_t poligono;
 
     color_t color;
 
