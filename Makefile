@@ -9,24 +9,24 @@ all: peggle
 peggle: obstaculo.o poligono.o lectura.o peggle.o lista.o juego.o  
 	$(CC) $(CFLAGS) $(DEBUG) obstaculo.o poligono.o lectura.o peggle.o lista.o juego.o -o peggle $(SDLFLAGS)
 
-peggle.o: peggle.c obstaculo.h poligono.h config.h lista.h juego.h
-	$(CC) -c peggle.c $(DFLAG)
+peggle.o: peggle.cpp obstaculo.h poligono.h config.h lista.h juego.h
+	$(CC) -c peggle.cpp $(DFLAG)
 
-juego.o: juego.c juego.h obstaculo.h poligono.h config.h tipos.h
-	$(CC) -c juego.c 
+juego.o: juego.cpp juego.h obstaculo.h poligono.h config.h tipos.h
+	$(CC) -c juego.cpp 
 
 
-obstaculo.o: obstaculo.c obstaculo.h lectura.h config.h tipos.h
-	$(CC) -c obstaculo.c
+obstaculo.o: obstaculo.cpp obstaculo.h lectura.h config.h tipos.h
+	$(CC) -c obstaculo.cpp
 
-lectura.o: lectura.c lectura.h tipos.h config.h
-	$(CC) -c lectura.c
+lectura.o: lectura.cpp lectura.h tipos.h config.h
+	$(CC) -c lectura.cpp
 
-poligono.o: poligono.c poligono.h config.h
-	$(CC) -c poligono.c
+poligono.o: poligono.cpp poligono.h config.h
+	$(CC) -c poligono.cpp
 
-lista.o: lista.c lista.h
-	$(CC) -c lista.c
+lista.o: lista.cpp lista.h
+	$(CC) -c lista.cpp
 
 clean:
 	rm *.o
