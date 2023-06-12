@@ -5,7 +5,7 @@ project(Peggle VERSION 2.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g3 -ggdb")
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug
     CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
@@ -14,7 +14,7 @@ endif()
 # Export compile commands for completion engines (optional)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_executable(Peggle ./source/juego.cpp ./source/lista.cpp ./source/peggle.cpp ./source/lectura.cpp ./source/poligono.cpp ./source/obstaculo.cpp)
+add_executable(Peggle ./source/juego.cpp ./source/lista.cpp ./source/peggle.cpp ./source/lectura.cpp ./source/poligono.cpp ./source/obstaculo.cpp ./source/vec2.cpp)
 target_include_directories(Peggle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 find_package(SDL2 REQUIRED)
