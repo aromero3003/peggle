@@ -33,7 +33,7 @@ void imprimir_obstaculo(obstaculo_t *o) {
 }
 
 obstaculo_t *obstaculo_crear(poligono_t *puntos, color_t color, movimiento_t mov, float parametros[3], geometria_t geo) {
-    obstaculo_t *obstaculo = malloc(sizeof(obstaculo_t));
+    obstaculo_t *obstaculo = (obstaculo_t*) malloc(sizeof(obstaculo_t));
     if(obstaculo == NULL) return NULL;
 
     obstaculo->poligono = puntos;
@@ -150,10 +150,10 @@ void obstaculo_mover_circular(obstaculo_t *obstaculo, double dt) {
 }
 
 
-void (*funciones_obstaculo_mover[])(obstaculo_t *obstaculo, double dt) = {
+static void (*funciones_obstaculo_mover[])(obstaculo_t *obstaculo, double dt) = {
     [INMOVIL] = obstaculo_mover_inmovil,
-    [HORIZONTAL] = obstaculo_mover_horizontal,
-    [CIRCULAR] = obstaculo_mover_circular
+    [CIRCULAR] = obstaculo_mover_circular,
+    [HORIZONTAL] = obstaculo_mover_horizontal
 };
 
 // Mover al obstaculo segun su movimiento

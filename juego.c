@@ -31,7 +31,7 @@ struct trayectoria {
  
 bola_t *bola_crear(float cx, float cy, float radio, int resolucion) {
     
-    bola_t *bola = malloc(sizeof(bola_t));
+    bola_t *bola = (bola_t *)malloc(sizeof(bola_t));
     if(bola == NULL) return NULL;
 
     bola->forma = poligono_crear_circular(radio, resolucion);
@@ -55,7 +55,7 @@ bool bola_dibujar(SDL_Renderer *renderer, bola_t *bola) {
 
 // ------------------------------------------TRAYECTORIA------------------------------------------ 
 trayectoria_t *trayectoria_crear() {
-    trayectoria_t *tray = malloc(sizeof(trayectoria_t));
+    trayectoria_t *tray = (trayectoria_t *)malloc(sizeof(trayectoria_t));
     if(tray == NULL) return NULL;
 
     tray->linea = poligono_crear(NULL, 0);
@@ -135,10 +135,10 @@ void reflejar(float norm_x, float norm_y, float *cx, float *cy, float *vx, float
 
 // Inicializa las vidas en la posicion cx cy
 vidas_t *vidas_inicializar(size_t n, float cx, float cy) { 
-    vidas_t *vidas = malloc(sizeof(vidas_t));
+    vidas_t *vidas = (vidas_t *)malloc(sizeof(vidas_t));
     if(vidas == NULL) return NULL;
     
-    vidas->figuras = malloc(sizeof(bola_t) * n - 1);
+    vidas->figuras = (bola_t **)malloc(sizeof(bola_t) * n - 1);
     if(vidas->figuras == NULL) {
         free(vidas);
         return NULL;
@@ -210,7 +210,7 @@ struct recuperador {
 
 recuperador_t *recuperador_crear(float ancho, float alto, float velocidad) {
 
-    recuperador_t *recuperador = malloc(sizeof(recuperador_t));
+    recuperador_t *recuperador = (recuperador_t *)malloc(sizeof(recuperador_t));
     if(recuperador == NULL) return NULL;
     
     float vertices[][2] = { {MIN_X, MAX_Y}, {MIN_X, MAX_Y - alto}, {MIN_X + ancho, MAX_Y - alto}, {MIN_X + ancho, MAX_Y} };

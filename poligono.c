@@ -14,10 +14,10 @@ struct poligono{
 // Crea un polígono de n vertices en R2
 poligono_t *poligono_crear(float vertices[][2], size_t n) {
     
-    poligono_t *poligono = malloc( sizeof(poligono_t) );
+    poligono_t *poligono = (poligono_t *)malloc( sizeof(poligono_t) );
     if (poligono == NULL) return NULL;
     
-    poligono->vertices = malloc( n * sizeof(float[2]) );
+    poligono->vertices = (float(*)[2]) malloc( n * sizeof(float[2]) );
     if (poligono->vertices == NULL) {
         free(poligono);
         return NULL;
@@ -85,7 +85,7 @@ bool poligono_agregar_vertice(poligono_t *poligono, float x, float y) {
     if (poligono == NULL) return false;
     if (poligono->vertices == NULL) return false;
 
-    float (*aux)[2] = realloc(poligono->vertices, (poligono->n + 1) * sizeof(float[2]));
+    float (*aux)[2] = (float(*)[2])realloc(poligono->vertices, (poligono->n + 1) * sizeof(float[2]));
     if (aux == NULL) return false;
 
     poligono->vertices = aux;

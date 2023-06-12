@@ -21,7 +21,7 @@ struct lista_iter {
 
 
 static nodo_t *nodo_crear(nodo_t *prox, void *elem) {
-	nodo_t *nodo = malloc(sizeof(nodo_t));
+	nodo_t *nodo = (nodo_t *)malloc(sizeof(nodo_t));
 	if(nodo == NULL) return NULL;
 	nodo->elem = elem;
 	nodo->prox = prox;
@@ -30,7 +30,7 @@ static nodo_t *nodo_crear(nodo_t *prox, void *elem) {
 
 lista_t *lista_crear() {
 	
-	lista_t * lista = malloc(sizeof(lista_t));
+	lista_t * lista =(lista_t *) malloc(sizeof(lista_t));
 	if(lista == NULL) 
 		return NULL;
 
@@ -149,7 +149,7 @@ void lista_recorrer(const lista_t *l, bool (*f)(void *, void *), void *extra) {
 }
 
 lista_iter_t *lista_iter_crear(lista_t *lista) {
-	lista_iter_t *i = malloc(sizeof(lista_iter_t));
+	lista_iter_t *i = (lista_iter_t *)malloc(sizeof(lista_iter_t));
 	if(i == NULL) return NULL;
 
 	i->act = lista->prim;

@@ -36,9 +36,9 @@ bool leer_encabezado(FILE *f, color_t *color, movimiento_t *movimiento, geometri
     uint8_t encabezado;
     if(fread(&encabezado, 1, 1, f) != 1) return false;
 
-    *color = (encabezado >> SHIFT_COLOR) & MASK_COLOR;
-    *movimiento = (encabezado >> SHIFT_MOVE) & MASK_MOVE;
-    *geometria = encabezado & MASK_FORM;
+    *color = (color_t)((encabezado >> SHIFT_COLOR) & MASK_COLOR);
+    *movimiento = (movimiento_t)((encabezado >> SHIFT_MOVE) & MASK_MOVE);
+    *geometria = (geometria_t)(encabezado & MASK_FORM);
 
     return true;
 }

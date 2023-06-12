@@ -1,5 +1,5 @@
-CC=gcc
-CFLAGS=-Wall -pedantic -std=c99
+CC=g++
+CFLAGS=-Wall -pedantic -std=c++17
 DEBUG=-g
 SDLFLAGS=-lm -lSDL2 -lSDL2_ttf
 DFLAG=-DTTF

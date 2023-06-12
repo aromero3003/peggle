@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_keycode.h>
 #include <stdbool.h>
 #include <assert.h>
 #include <string.h>
@@ -257,11 +258,16 @@ int main(int argc, char *argv[]) {
             switch (estado) {
 
                 ///////////////////////////////////////////////// JUEGO CORRIENDO /////////////////////////////////////////////////
-                case GAME_RUNNING:
+                case GAME_RUNNING: {
                     if(SDL_PollEvent(&event)) {
                         if (event.type == SDL_QUIT) {
                             estado = GAME_CLOSE;
                             break;
+                        }
+
+                        if (event.type == SDL_KEYUP) {
+                            if (event.key.keysym.sym == SDLK_q)
+                                estado = GAME_LEVEL_UP; 
                         }
 
                         if(event.type == SDL_MOUSEBUTTONDOWN) {
@@ -397,7 +403,7 @@ int main(int argc, char *argv[]) {
                     float nor_x, nor_y;
 
                     while(! lista_iter_al_final(iterador)) {
-                        obstaculo_t *actual = lista_iter_ver_actual(iterador);
+                        obstaculo_t *actual = (obstaculo_t *)lista_iter_ver_actual(iterador);
                         if(obstaculo_get_dibujar(actual)) {
 
                             obstaculo_dibujar(renderer, actual);
@@ -429,12 +435,13 @@ int main(int argc, char *argv[]) {
                         break;
                     }
                     break;
+                }
 
 // ///////////////////////////////////////////////// LEVEL PASSED /////////////////////////////////////////////////   
 
 
             case GAME_LEVEL_UP: //Caso se pasó de nivel
-                    
+                    {
                 if(SDL_PollEvent(&event)) {
                     if (event.type == SDL_QUIT) {
                         estado = GAME_CLOSE;
@@ -478,10 +485,11 @@ int main(int argc, char *argv[]) {
                 SDL_RenderDrawLine(renderer, MAX_X, MAX_Y, MAX_X, MIN_Y);
 
                 break;
+                    }
 
 // ///////////////////////////////////////////////// NIVEL FALLIDO ///////////////////////////////////////////////// 
             case GAME_LEVEL_FAILED: //Caso no se pasó de nivel
-                    
+                    {
                 if(SDL_PollEvent(&event)) {
                     if (event.type == SDL_QUIT) {
                         estado = GAME_CLOSE;
@@ -513,7 +521,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef TTF
                 SDL_SetRenderDrawColor(renderer, 0xFF, 0x60, 0x00, 0x00);
-                dibujito = bola_crear( MAX_X + 40, MAX_Y - 50, 10, RESOL_BOLA_OBS);
+                bola_t *dibujito = bola_crear( MAX_X + 40, MAX_Y - 50, 10, RESOL_BOLA_OBS);
                 bola_dibujar(renderer, dibujito);
                 bola_destruir(dibujito);
                 
@@ -535,6 +543,7 @@ int main(int argc, char *argv[]) {
                     break;
                 }
 
+                        char contador_golpeados[6];
                 sprintf(contador_golpeados, "%zd/%zd", naranjas_golpeados, cantidad_naranjas);
                 escribir_texto(renderer, font, contador_golpeados, MAX_X + 15, MAX_Y - 30, 0xFF, 0xFF, 0xFF);
 
@@ -558,6 +567,7 @@ int main(int argc, char *argv[]) {
                 SDL_RenderDrawLine(renderer, MIN_X, MAX_Y, MAX_X, MAX_Y);
                 SDL_RenderDrawLine(renderer, MIN_X, MAX_Y, MIN_X, MIN_Y);
                 SDL_RenderDrawLine(renderer, MAX_X, MAX_Y, MAX_X, MIN_Y);
+                    }
 
                 break;
             
