@@ -13,24 +13,24 @@
 
 #define DT (1.0 / JUEGO_FPS)
 
+obstaculo_t obs;
 bool wrapper_actualizar_obstaculo(void *obstaculo, void *recibo_null) {
-    if (obstaculo_get_tocado((obstaculo_t *)obstaculo))
-        obstaculo_set_dibujar((obstaculo_t *)obstaculo, false);
+    if (obs.get_tocado((obstaculo_t *)obstaculo))
+        obs.set_dibujar((obstaculo_t *)obstaculo, false);
     return true;
 }
 
 bool wrapper_dibujar_obstaculo(void *obstaculo, void *renderer) {
-    return obstaculo_dibujar((SDL_Renderer *)renderer,
-                             (obstaculo_t *)obstaculo);
+    return obs.dibujar((SDL_Renderer *)renderer, (obstaculo_t *)obstaculo);
 }
 
 void wrapper_destruccion_obstaculo(void *obstaculo) {
-    obstaculo_destruir((obstaculo_t *)obstaculo);
+    obs.destruir((obstaculo_t *)obstaculo);
 }
 
 bool wrapper_resetear_obstaculos(void *obstaculo, void *recibo_null) {
-    obstaculo_set_tocado((obstaculo_t *)obstaculo, false);
-    obstaculo_set_dibujar((obstaculo_t *)obstaculo, true);
+    obs.set_tocado((obstaculo_t *)obstaculo, false);
+    obs.set_dibujar((obstaculo_t *)obstaculo, true);
     return true;
 }
 
@@ -210,7 +210,7 @@ int main(int argc, char *argv[]) {
     game_state_t estado = GAME_RUNNING;
 
     while (estado) {
-        if (!obstaculo_leer_cantidad_de_obstaculos(
+        if (!obs.leer_cantidad_de_obstaculos(
                 f, &cant_obstaculos)) {  // Si no pude leer más obstaculos, GAME
                                          // OVER
             estado = GAME_OVER;
@@ -234,8 +234,8 @@ int main(int argc, char *argv[]) {
 
         for (size_t i = 0; i < cant_obstaculos;
              i++) {  // Se levantan todos los obstáculos del nivel
-            obstaculo_t *nuevo = obstaculo_levantar_obstaculo(f);
-            if (obstaculo_es_naranja(nuevo)) cantidad_naranjas++;
+            obstaculo_t *nuevo = obs.levantar_obstaculo(f);
+            if (nuevo->es_naranja(nuevo)) cantidad_naranjas++;
             lista_insertar_al_principio(obstaculos, nuevo);
         }
 
@@ -421,25 +421,25 @@ int main(int argc, char *argv[]) {
                     while (!lista_iter_al_final(iterador)) {
                         obstaculo_t *actual =
                             (obstaculo_t *)lista_iter_ver_actual(iterador);
-                        if (obstaculo_get_dibujar(actual)) {
-                            obstaculo_dibujar(renderer, actual);
-                            if (obstaculo_distancia(actual, cx, cy, &nor_x,
-                                                    &nor_y) < BOLA_RADIO) {
+                        if (actual->get_dibujar(actual)) {
+                            actual->dibujar(renderer, actual);
+                            if (actual->distancia(actual, cx, cy, &nor_x,
+                                                  &nor_y) < BOLA_RADIO) {
                                 reflejar(nor_x, nor_y, &cx, &cy, &vx, &vy);
                                 vy *= PLASTICIDAD;
                                 vx *= PLASTICIDAD;
-                                if (!obstaculo_es_gris(actual)) {
-                                    if (obstaculo_es_naranja(actual) &&
-                                        obstaculo_get_dibujar(actual) == true &&
-                                        obstaculo_get_tocado(actual) == false)
+                                if (!actual->es_gris(actual)) {
+                                    if (actual->es_naranja(actual) &&
+                                        actual->get_dibujar(actual) == true &&
+                                        actual->get_tocado(actual) == false)
                                         naranjas_golpeados++;
                                     puntaje_actualizar(&puntaje_en_nivel,
                                                        actual, multiplicador);
-                                    obstaculo_set_tocado(actual, true);
+                                    actual->set_tocado(actual, true);
                                 }
                             }
                         }
-                        obstaculo_mover(actual, DT);
+                        actual->mover(actual, DT);
                         lista_iter_avanzar(iterador);
                     }
                     lista_iter_destruir(iterador);

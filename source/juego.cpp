@@ -250,10 +250,10 @@ bool recuperador_bola_recuperada(recuperador_t *recuperador, float cx,
 
 void puntaje_actualizar(puntaje_t *puntos_totales, obstaculo_t *obstaculo,
                         int multiplicador) {
-    if (obstaculo_get_tocado(obstaculo)) return;
+    if (obstaculo->get_tocado(obstaculo)) return;
 
     puntaje_t puntaje_azul = 10;
-    switch (obstaculo_get_color(obstaculo)) {
+    switch (obstaculo->get_color(obstaculo)) {
         case COLOR_AZUL:
             // Las azules valen 20 puntos
             break;

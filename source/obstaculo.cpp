@@ -8,36 +8,23 @@
 #include "lectura.h"
 #include "tipos.h"
 
-struct obstaculo {
-    poligono_t *poligono;
-
-    color_t color;
-
-    geometria_t geometria;
-
-    movimiento_t movimiento;
-    float parametros[3];
-
-    bool tocado;
-    bool dibujar;
-};
 poligono_t p;
 
-bool obstaculo_leer_cantidad_de_obstaculos(FILE *f, int16_t *cantidad) {
+bool obstaculo_t::leer_cantidad_de_obstaculos(FILE *f, int16_t *cantidad) {
     return leer_cantidad_obstaculos(f, cantidad);
 }
 
 // Imprime por stdout los parametros de un obstaculo
-void imprimir_obstaculo(obstaculo_t *o) {
+void obstaculo_t::imprimir_obstaculo(obstaculo_t *o) const {
     printf("Mov: %d For: %d Col: %d\n", o->movimiento, o->geometria, o->color);
     o->poligono->imprimir(o->poligono);
     putchar('\n');
 }
 
-obstaculo_t *obstaculo_crear(poligono_t *puntos, color_t color,
-                             movimiento_t mov, float parametros[3],
-                             geometria_t geo) {
-    obstaculo_t *obstaculo = (obstaculo_t *)malloc(sizeof(obstaculo_t));
+obstaculo_t *obstaculo_t::crear(poligono_t *puntos, color_t color,
+                                movimiento_t mov, float parametros[3],
+                                geometria_t geo) {
+    obstaculo_t *obstaculo = new obstaculo_t;
     if (obstaculo == NULL) return NULL;
 
     obstaculo->poligono = puntos;
@@ -45,7 +32,7 @@ obstaculo_t *obstaculo_crear(poligono_t *puntos, color_t color,
     obstaculo->movimiento = mov;
     obstaculo->geometria = geo;
     obstaculo->tocado = false;
-    obstaculo->dibujar = true;
+    obstaculo->_dibujar = true;
 
     if (parametros != NULL) {
         obstaculo->parametros[0] = parametros[0];
@@ -61,7 +48,7 @@ bool obstaculo_cantidad_en_nivel(FILE *f, int16_t *cant) {
 }
 
 // Levanta un obstaculo de un archivo
-obstaculo_t *obstaculo_levantar_obstaculo(FILE *f) {
+obstaculo_t *obstaculo_t::levantar_obstaculo(FILE *f) {
     color_t color;
     movimiento_t mov;
     geometria_t geo;
@@ -89,7 +76,7 @@ obstaculo_t *obstaculo_levantar_obstaculo(FILE *f) {
     if (poligono == NULL) return NULL;
 
     obstaculo_t *obstaculo =
-        obstaculo_crear(poligono, color, mov, parametros, geo);
+        obstaculo->crear(poligono, color, mov, parametros, geo);
     if (obstaculo == NULL) {
         p.destruir(poligono);
         return NULL;
@@ -98,40 +85,42 @@ obstaculo_t *obstaculo_levantar_obstaculo(FILE *f) {
     return obstaculo;
 }
 
-void obstaculo_destruir(obstaculo_t *obstaculo) {
+void obstaculo_t::destruir(obstaculo_t *obstaculo) {
     p.destruir(obstaculo->poligono);
-    free(obstaculo);
+    delete obstaculo;
 }
 
-bool obstaculo_es_gris(obstaculo_t *obstaculo) {
+bool obstaculo_t::es_gris(obstaculo_t *obstaculo) const {
     return obstaculo->color == COLOR_GRIS;
 }
 
-bool obstaculo_es_naranja(obstaculo_t *obstaculo) {
+bool obstaculo_t::es_naranja(obstaculo_t *obstaculo) const {
     return obstaculo->color == COLOR_NARANJA;
 }
 
-color_t obstaculo_get_color(obstaculo_t *obstaculo) { return obstaculo->color; }
+color_t obstaculo_t::get_color(obstaculo_t *obstaculo) const {
+    return obstaculo->color;
+}
 
-void obstaculo_trasladar(obstaculo_t *obstaculo, float dx, float dy) {
+void obstaculo_t::trasladar(obstaculo_t *obstaculo, float dx, float dy) {
     p.trasladar(obstaculo->poligono, dx, dy);
 }
 
-void obstaculo_rotar(obstaculo_t *obstaculo, double rad) {
+void obstaculo_t::rotar(obstaculo_t *obstaculo, double rad) {
     p.rotar2(obstaculo->poligono, rad);
 }
 
-void obstaculo_rotar_centro(obstaculo_t *obstaculo, double rad, float cx,
-                            float cy) {
+void obstaculo_t::rotar_centro(obstaculo_t *obstaculo, double rad, float cx,
+                               float cy) {
     p.rotar_centro2(obstaculo->poligono, rad, cx, cy);
 }
 
 // FUNCIONES PARA MOVER EL OBSTACULO
 
-void obstaculo_mover_inmovil(obstaculo_t *obstaculo, double dt) { return; }
+void obstaculo_t::mover_inmovil(obstaculo_t *obstaculo, double dt) { return; }
 
-void obstaculo_mover_horizontal(obstaculo_t *obstaculo, double dt) {
-    obstaculo_trasladar(obstaculo, obstaculo->parametros[2] * dt, 0);
+void obstaculo_t::mover_horizontal(obstaculo_t *obstaculo, double dt) {
+    obstaculo_t::trasladar(obstaculo, obstaculo->parametros[2] * dt, 0);
 
     obstaculo->parametros[1] += (obstaculo->parametros[2] * dt);
 
@@ -140,24 +129,33 @@ void obstaculo_mover_horizontal(obstaculo_t *obstaculo, double dt) {
         obstaculo->parametros[2] = -obstaculo->parametros[2];
 }
 
-void obstaculo_mover_circular(obstaculo_t *obstaculo, double dt) {
-    obstaculo_rotar_centro(obstaculo, obstaculo->parametros[2] * dt * 60,
-                           obstaculo->parametros[0], obstaculo->parametros[1]);
+void obstaculo_t::mover_circular(obstaculo_t *obstaculo, double dt) {
+    obstaculo_t::rotar_centro(obstaculo, obstaculo->parametros[2] * dt * 60,
+                              obstaculo->parametros[0],
+                              obstaculo->parametros[1]);
 }
 
-static void (*funciones_obstaculo_mover[])(obstaculo_t *obstaculo,
-                                           double dt) = {
-    [INMOVIL] = obstaculo_mover_inmovil,
-    [CIRCULAR] = obstaculo_mover_circular,
-    [HORIZONTAL] = obstaculo_mover_horizontal};
+// static const void (*const funciones_obstaculo_mover[])(obstaculo_t
+// *obstaculo,
+//                                                        double dt) = {
+//     [INMOVIL] = obs.mover_inmovil,
+//     [HORIZONTAL] = obs.mover_horizontal,
+//     [CIRCULAR] = obs.mover_circular};
 
 // Mover al obstaculo segun su movimiento
-void obstaculo_mover(obstaculo_t *obstaculo, double dt) {
-    funciones_obstaculo_mover[obstaculo->movimiento](obstaculo, dt);
+void obstaculo_t::mover(obstaculo_t *obstaculo, double dt) {
+    if (obstaculo->movimiento == INMOVIL)
+        obstaculo->mover_inmovil(obstaculo, dt);
+    else if (obstaculo->movimiento == HORIZONTAL)
+        obstaculo->mover_horizontal(obstaculo, dt);
+    else if (obstaculo->movimiento == CIRCULAR)
+        obstaculo->mover_circular(obstaculo, dt);
+
+    // funciones_obstaculo_mover[obstaculo->movimiento](obstaculo, dt);
 }
 
 // Dibuja un obstaculo sobre un SDL_Renderer
-bool obstaculo_dibujar(SDL_Renderer *renderer, obstaculo_t *obstaculo) {
+bool obstaculo_t::dibujar(SDL_Renderer *renderer, obstaculo_t *obstaculo) {
     if (obstaculo->tocado)
         SDL_SetRenderDrawColor(renderer, 0xFF, 0XFF, 0x00, 0x00);
     else {
@@ -179,24 +177,27 @@ bool obstaculo_dibujar(SDL_Renderer *renderer, obstaculo_t *obstaculo) {
                 break;
         }
     }
-    return obstaculo->dibujar ? p.dibujar(renderer, obstaculo->poligono) : true;
+    return obstaculo->_dibujar ? p.dibujar(renderer, obstaculo->poligono)
+                               : true;
 }
 
-void obstaculo_set_tocado(obstaculo_t *obstaculo, bool state) {
+void obstaculo_t::set_tocado(obstaculo_t *obstaculo, bool state) {
     obstaculo->tocado = state;
 }
 
-bool obstaculo_get_tocado(obstaculo_t *obstaculo) { return obstaculo->tocado; }
-
-void obstaculo_set_dibujar(obstaculo_t *obstaculo, bool state) {
-    obstaculo->dibujar = state;
+bool obstaculo_t::get_tocado(obstaculo_t *obstaculo) const {
+    return obstaculo->tocado;
 }
 
-bool obstaculo_get_dibujar(obstaculo_t *obstaculo) {
-    return obstaculo->dibujar;
+void obstaculo_t::set_dibujar(obstaculo_t *obstaculo, bool state) {
+    obstaculo->_dibujar = state;
 }
 
-double obstaculo_distancia(const obstaculo_t *obstaculo, float xp, float yp,
-                           float *nor_x, float *nor_y) {
+bool obstaculo_t::get_dibujar(obstaculo_t *obstaculo) const {
+    return obstaculo->_dibujar;
+}
+
+double obstaculo_t::distancia(const obstaculo_t *obstaculo, float xp, float yp,
+                              float *nor_x, float *nor_y) {
     return p.distancia(obstaculo->poligono, xp, yp, nor_x, nor_y);
 }
