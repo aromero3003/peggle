@@ -26,8 +26,16 @@ poligono_t::poligono_t(float radio, int resolucion) {
     int angulo = 360 / resolucion;
     for (size_t i = 0; i < resolucion; i++) {
         vertices.emplace_back(0, radio);
-        this->rotar_centro(this, -angulo * M_PI / 180, 0, 0);
+        this->rotar_centro(-angulo * M_PI / 180, 0, 0);
     }
+}
+
+poligono_t::poligono_t(const poligono_t &other) : vertices(other.vertices) {}
+
+poligono_t &poligono_t::operator=(const poligono_t &other) {
+    if (this == &other) return *this;
+    this->vertices = other.vertices;
+    return *this;
 }
 
 // Crea un polígono de n vertices en R2
@@ -46,55 +54,40 @@ poligono_t *poligono_t::crear_circular(float radio, int resolucion) {
     return new poligono_t(radio, resolucion);
 }
 
-// Destruye un poligono
-void poligono_t::destruir(poligono_t *poligono) { delete poligono; }
-
 // Devuelve la cantidad de vértices de un polígono
-size_t poligono_t::cantidad_vertices(const poligono_t *poligono) const {
-    return poligono->vertices.size();
-}
+size_t poligono_t::cantidad_vertices() const { return vertices.size(); }
 
 // Devuelve true y por interfaz las coordenadas del vértice pos o false si no se
 // puede
-bool poligono_t::obtener_vertice(const poligono_t *poligono, size_t pos,
-                                 float *x, float *y) const {
-    if (poligono == NULL || poligono->cantidad_vertices(poligono) <= pos)
-        return false;
-    *x = poligono->vertices[pos].x;
-    *y = poligono->vertices[pos].y;
+bool poligono_t::obtener_vertice(size_t pos, float *x, float *y) const {
+    if (cantidad_vertices() <= pos) return false;  // raise exception
+    *x = vertices[pos].x;
+    *y = vertices[pos].y;
     return true;
 }
 
-// Clona un polígono
-poligono_t *poligono_t::clonar(const poligono_t *poligono) {
-    poligono_t *poligono2 = poligono_t::crear(poligono->vertices);
-    return poligono2;
-}
-
 // Agrega un vértice a un polígono
-bool poligono_t::agregar_vertice(poligono_t *poligono, float x, float y) {
-    if (poligono == NULL) return false;
-
-    poligono->vertices.emplace_back(x, y);
+bool poligono_t::agregar_vertice(float x, float y) {
+    vertices.emplace_back(x, y);
     return true;
 }
 
 // Traslada un polígono de n vértices dx en el eje de las abscisas, y dy en le
 // eje de las ordenadas.
-void poligono_t::trasladar(poligono_t *poligono, float dx, float dy) {
-    for (size_t i = 0; i < poligono->vertices.size(); i++) {
-        poligono->vertices[i].x += dx;
-        poligono->vertices[i].y += dy;
+void poligono_t::trasladar(float dx, float dy) {
+    for (size_t i = 0; i < vertices.size(); i++) {
+        vertices[i].x += dx;
+        vertices[i].y += dy;
     }
 }
 
 // Rota un polígono de n vértices una rad cantidad de radianes.
-void poligono_t::rotar(poligono_t *poligono, double rad) {
-    for (size_t i = 0; i < poligono->vertices.size(); i++) {
-        float x = poligono->vertices[i].x;
-        float y = poligono->vertices[i].y;
-        poligono->vertices[i].x = x * cos(rad) - y * sin(rad);
-        poligono->vertices[i].y = x * sin(rad) + y * cos(rad);
+void poligono_t::rotar(double rad) {
+    for (size_t i = 0; i < vertices.size(); i++) {
+        float x = vertices[i].x;
+        float y = vertices[i].y;
+        vertices[i].x = x * cos(rad) - y * sin(rad);
+        vertices[i].y = x * sin(rad) + y * cos(rad);
         /*
         float x = poligono->vertices[i][0];
         poligono->vertices[i][0] = poligono->vertices[i][0] * cos(rad) -
@@ -104,13 +97,13 @@ void poligono_t::rotar(poligono_t *poligono, double rad) {
     }
 }
 
-void poligono_t::rotar2(poligono_t *poligono, double rad) {
+void poligono_t::rotar2(double rad) {
     double angulo = rad * PI / 180;
-    for (size_t i = 0; i < poligono->vertices.size(); i++) {
-        float x = poligono->vertices[i].x;
-        float y = poligono->vertices[i].y;
-        poligono->vertices[i].x = x * cos(angulo) - y * sin(angulo);
-        poligono->vertices[i].y = x * sin(angulo) + y * cos(angulo);
+    for (size_t i = 0; i < vertices.size(); i++) {
+        float x = vertices[i].x;
+        float y = vertices[i].y;
+        vertices[i].x = x * cos(angulo) - y * sin(angulo);
+        vertices[i].y = x * sin(angulo) + y * cos(angulo);
         /*
         float x = poligono->vertices[i][0];
         poligono->vertices[i][0] = poligono->vertices[i][0] * cos(rad) -
@@ -121,18 +114,16 @@ void poligono_t::rotar2(poligono_t *poligono, double rad) {
 }
 
 // Rota un poligono respecto a un centro
-void poligono_t::rotar_centro(poligono_t *poligono, double rad, float centro_x,
-                              float centro_y) {
-    poligono_t::trasladar(poligono, -centro_x, -centro_y);
-    poligono_t::rotar(poligono, rad);
-    poligono_t::trasladar(poligono, centro_x, centro_y);
+void poligono_t::rotar_centro(double rad, float centro_x, float centro_y) {
+    poligono_t::trasladar(-centro_x, -centro_y);
+    poligono_t::rotar(rad);
+    poligono_t::trasladar(centro_x, centro_y);
 }
 
-void poligono_t::rotar_centro2(poligono_t *poligono, double rad, float centro_x,
-                               float centro_y) {
-    poligono_t::trasladar(poligono, -centro_x, -centro_y);
-    poligono_t::rotar2(poligono, rad);
-    poligono_t::trasladar(poligono, centro_x, centro_y);
+void poligono_t::rotar_centro2(double rad, float centro_x, float centro_y) {
+    poligono_t::trasladar(-centro_x, -centro_y);
+    poligono_t::rotar2(rad);
+    poligono_t::trasladar(centro_x, centro_y);
 }
 
 // Calcula el producto vectorial de dos vectores (FUNCION AUXILIAR)
@@ -158,13 +149,11 @@ static bool punto_en_triangulo(float px, float py, float ax, float ay, float bx,
 
 // Determina si un punto de coordenadas px, py está contenido en un polígono de
 // n vértices.
-bool poligono_t::punto_dentro(poligono_t *poligono, float px, float py) const {
-    for (size_t i = 1; i < poligono->vertices.size() - 1; i++) {
-        if (punto_en_triangulo(px, py, poligono->vertices[0].x,
-                               poligono->vertices[0].y, poligono->vertices[i].x,
-                               poligono->vertices[i].y,
-                               poligono->vertices[i + 1].x,
-                               poligono->vertices[i + 1].y) == true) {
+bool poligono_t::punto_dentro(float px, float py) const {
+    for (size_t i = 1; i < vertices.size() - 1; i++) {
+        if (punto_en_triangulo(px, py, vertices[0].x, vertices[0].y,
+                               vertices[i].x, vertices[i].y, vertices[i + 1].x,
+                               vertices[i + 1].y) == true) {
             return true;
         }
     }
@@ -172,38 +161,34 @@ bool poligono_t::punto_dentro(poligono_t *poligono, float px, float py) const {
 }
 
 // Imprimir las coordenadas de los vertices de un polígono.
-void poligono_t::imprimir(poligono_t *poligono) const {
-    for (size_t i = 0; i < poligono->vertices.size(); i++) {
-        printf("  (%g ; %g) ", poligono->vertices[i].x,
-               poligono->vertices[i].y);
+void poligono_t::imprimir() const {
+    for (size_t i = 0; i < vertices.size(); i++) {
+        printf("  (%g ; %g) ", vertices[i].x, vertices[i].y);
     }
     putchar('\n');
 }
 
 // Dibuja un poligono cerrado sobre un SDL_Renderer
-bool poligono_t::dibujar(SDL_Renderer *renderer, poligono_t *poligono) {
-    if (poligono == NULL || renderer == NULL) return false;
-    for (size_t i = 0; i + 1 < poligono->vertices.size(); i++) {
-        SDL_RenderDrawLine(renderer, poligono->vertices[i].x,
-                           poligono->vertices[i].y, poligono->vertices[i + 1].x,
-                           poligono->vertices[i + 1].y);
+bool poligono_t::dibujar(SDL_Renderer *renderer) {
+    if (renderer == NULL) return false;
+    for (size_t i = 0; i + 1 < vertices.size(); i++) {
+        SDL_RenderDrawLine(renderer, vertices[i].x, vertices[i].y,
+                           vertices[i + 1].x, vertices[i + 1].y);
     }
-    SDL_RenderDrawLine(renderer,
-                       poligono->vertices[(poligono->vertices.size()) - 1].x,
-                       poligono->vertices[(poligono->vertices.size() - 1)].y,
-                       poligono->vertices[0].x, poligono->vertices[0].y
+    SDL_RenderDrawLine(renderer, vertices[(vertices.size()) - 1].x,
+                       vertices[(vertices.size() - 1)].y, vertices[0].x,
+                       vertices[0].y
 
     );
     return true;
 }
 
 // Dibuja un poligono abierto sobre un SDL_Renderer
-bool poligono_t::abierto_dibujar(SDL_Renderer *renderer, poligono_t *poligono) {
-    if (poligono == NULL || renderer == NULL) return false;
-    for (size_t i = 0; i + 1 < poligono->vertices.size(); i++) {
-        SDL_RenderDrawLine(renderer, poligono->vertices[i].x,
-                           poligono->vertices[i].y, poligono->vertices[i + 1].x,
-                           poligono->vertices[i + 1].y);
+bool poligono_t::abierto_dibujar(SDL_Renderer *renderer) {
+    if (renderer == NULL) return false;
+    for (size_t i = 0; i + 1 < vertices.size(); i++) {
+        SDL_RenderDrawLine(renderer, vertices[i].x, vertices[i].y,
+                           vertices[i + 1].x, vertices[i + 1].y);
     }
     return true;
 }

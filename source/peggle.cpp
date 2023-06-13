@@ -7,25 +7,30 @@
 
 #include <list>
 
+#include "bola.h"
 #include "config.h"
 #include "juego.h"
+#include "lectura.h"
 #include "obstaculo.h"
 #include "poligono.h"
+#include "recuperador.h"
+#include "trayectoria.h"
+#include "vidas.h"
 
 #define DT (1.0 / JUEGO_FPS)
 
-obstaculo_t obs2;
+obstaculo_t obs;
 bool wrapper_actualizar_obstaculo(obstaculo_t obs) {
     if (obs.get_tocado(&obs)) obs.set_dibujar(&obs, false);
     return true;
 }
 
 bool wrapper_dibujar_obstaculo(void *obstaculo, void *renderer) {
-    return obs2.dibujar((SDL_Renderer *)renderer, (obstaculo_t *)obstaculo);
+    return obs.dibujar((SDL_Renderer *)renderer, (obstaculo_t *)obstaculo);
 }
 
 void wrapper_destruccion_obstaculo(void *obstaculo) {
-    obs2.destruir((obstaculo_t *)obstaculo);
+    obs.destruir((obstaculo_t *)obstaculo);
 }
 
 bool wrapper_resetear_obstaculos(obstaculo_t obs) {
@@ -39,9 +44,9 @@ bool wrapper_resetear_obstaculos(obstaculo_t obs) {
 #ifdef TTF
 #include <SDL2/SDL_ttf.h>
 
-// |-------------------------------------------------------------|
-// | FUNCIONES QUE ESCRIBEN TEXTO EN LA PANTALLA
-// |-------------------------------------------------------------|
+// ------------------------------------------------------------- FUNCIONES QUE
+// ESCRIBEN TEXTO EN LA PANTALLA
+// -------------------------------------------------------------
 
 void escribir_texto(SDL_Renderer *renderer, TTF_Font *font, const char *s,
                     int x, int y, uint8_t r, uint8_t g, uint8_t b) {
@@ -180,7 +185,7 @@ int main(int argc, char *argv[]) {
 
     puntaje_t puntaje_total = 0;
 
-    trayectoria_t *tray = NULL;
+    trayectoria_t tray;
 
     FILE *f = fopen(argv[1], "rb");
     if (f == NULL) {
@@ -191,26 +196,26 @@ int main(int argc, char *argv[]) {
     int16_t cant_obstaculos;
     int nivel = 0;
 
-    vidas_t *vidas = vidas_inicializar(VIDAS_INICIALES, 60, MIN_Y + BOLA_RADIO);
-    if (vidas == NULL) {
-        fclose(f);
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);
-        return 3;
-    }
-    recuperador_t *recuperador = recuperador_crear(60, 10, 0.6);
-    if (recuperador == NULL) {
-        vidas_destruir(vidas);
-        fclose(f);
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);
-        return 3;
-    }
+    vidas_t vidas(VIDAS_INICIALES, 60, MIN_Y + BOLA_RADIO);
+    // if (vidas == NULL) {
+    //     fclose(f);
+    //     SDL_DestroyRenderer(renderer);
+    //     SDL_DestroyWindow(window);
+    //     return 3;
+    // }
+    // recuperador_t *recuperador = recuperador_crear(60, 10, 0.6);
+    recuperador_t recuperador(60, 10, 0.6);
+    // if (recuperador == NULL) {
+    //     fclose(f);
+    //     SDL_DestroyRenderer(renderer);
+    //     SDL_DestroyWindow(window);
+    //     return 3;
+    // }
 
     game_state_t estado = GAME_RUNNING;
 
     while (estado) {
-        if (!obs2.leer_cantidad_de_obstaculos(
+        if (!leer_cantidad_obstaculos(
                 f, &cant_obstaculos)) {  // Si no pude leer más obstaculos, GAME
                                          // OVER
             estado = GAME_OVER;
@@ -222,13 +227,13 @@ int main(int argc, char *argv[]) {
         int multiplicador = 1;
         nivel++;
 
-        vidas_resetear(vidas);  // Se setean las vidas a la cantidad inicial
+        vidas.resetear();  // Se setean las vidas a la cantidad inicial
 
         std::list<obstaculo_t> obstaculos;
 
         for (size_t i = 0; i < cant_obstaculos;
              i++) {  // Se levantan todos los obstáculos del nivel
-            obstaculo_t *nuevo = obs2.levantar_obstaculo(f);
+            obstaculo_t *nuevo = obstaculo_t::levantar_obstaculo(f);
             if (nuevo->es_naranja(nuevo)) cantidad_naranjas++;
             obstaculos.emplace_front(*nuevo);
         }
@@ -265,7 +270,7 @@ int main(int argc, char *argv[]) {
                         if (event.type == SDL_MOUSEBUTTONDOWN) {
                             if (!cayendo) {
                                 cayendo = true;
-                                tray = trayectoria_crear();
+                                tray = trayectoria_t();
                             }
                         } else if (event.type == SDL_MOUSEMOTION) {
                             canon_angulo = atan2(event.motion.x - CANON_X,
@@ -321,10 +326,10 @@ int main(int argc, char *argv[]) {
                         // Se agrega una coordenada cada que el contador supera
                         // 5
                         if (contador_trayectoria > 5) {
-                            trayectoria_agregar_coordenada(tray, cx, cy);
+                            tray.agregar_coordenada(cx, cy);
                             contador_trayectoria = 0;
                         }
-                        trayectoria_dibujar(renderer, tray);
+                        tray.dibujar(renderer);
                         contador_trayectoria++;
                     } else {
                         // Si la bola no se disparó establecemos condiciones
@@ -333,15 +338,20 @@ int main(int argc, char *argv[]) {
                         cy = CANON_Y + CANON_LARGO * cos(canon_angulo);
                         vx = BOLA_VI * sin(canon_angulo);
                         vy = BOLA_VI * cos(canon_angulo);
-                        trayectoria_destruir(tray);
-                        tray = NULL;
+                        // trayectoria_destruir(tray);
+                        // tray = NULL;
                         bola_recuperada = false;
                         puntaje_actualizar_multiplicador(&multiplicador,
                                                          naranjas_golpeados);
-                        trayectoria_t *calculada =
-                            trayectoria_calcular(cx, cy, vx, vy, G, 0.01);
-                        trayectoria_dibujar(renderer, calculada);
-                        trayectoria_destruir(calculada);
+                        {
+                            trayectoria_t calculada =
+                                calcular(cx, cy, vx, vy, G, 0.01);
+                            calculada.dibujar(renderer);
+                        }
+                        // trayectoria_t calculada =
+                        //     trayectoria_calcular(cx, cy, vx, vy, G, 0.01);
+                        // trayectoria_dibujar(renderer, calculada);
+                        // trayectoria_destruir(calculada);
                     }
 
                     // Rebote contra las paredes:
@@ -352,13 +362,14 @@ int main(int argc, char *argv[]) {
                     // Se salió de la pantalla:
                     if (cy > MAX_Y - BOLA_RADIO) {
                         cayendo = false;
-                        for (auto &obs : obstaculos) {
-                            if (obs2.get_tocado(&obs))
-                                obs2.set_dibujar(&obs, false);
+                        for (obstaculo_t &obs : obstaculos) {
+                            wrapper_actualizar_obstaculo(obs);
+                            // if (obs.get_tocado(&obs))
+                            //     obs.set_dibujar(&obs, false);
                         }
                         if (!bola_recuperada) {
-                            if (!vidas_estan_agotadas(vidas))
-                                vidas_quitar(vidas);
+                            if (!vidas.estan_agotadas())
+                                vidas.quitar();
                             else {
                                 estado = GAME_LEVEL_FAILED;
                                 break;
@@ -387,13 +398,12 @@ int main(int argc, char *argv[]) {
                         CANON_Y + cos(canon_angulo) * CANON_LARGO);
 
                     // Dibujamos la bola:
-                    bola_t *bola = bola_crear(cx, cy, BOLA_RADIO, 10);
-                    bola_dibujar(renderer, bola);
-                    bola_destruir(bola);
+                    bola_t bola(cx, cy, BOLA_RADIO, 10);
+                    bola.dibujar(renderer);
+                    // bola_destruir(bola);
 
                     // Dibujamos las vidas
-                    if (!vidas_estan_agotadas(vidas))
-                        vidas_dibujar(renderer, vidas);
+                    if (!vidas.estan_agotadas()) vidas.dibujar(renderer);
 
                     // Dibujamos las paredes:
                     SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0x00);
@@ -407,9 +417,9 @@ int main(int argc, char *argv[]) {
                     //        vy);
 
                     // Dibujamos el recuperador de bolas
-                    recuperador_dibujar(renderer, recuperador);
-                    recuperador_mover(recuperador, 1);
-                    if (recuperador_bola_recuperada(recuperador, cx, cy))
+                    recuperador.dibujar(renderer);
+                    recuperador.mover(1);
+                    if (recuperador.bola_recuperada(cx, cy))
                         bola_recuperada = true;
 
                     // Dibujasmos los obstaculos y realizamos la interacción con
@@ -524,7 +534,7 @@ int main(int argc, char *argv[]) {
                                 // obs.set_tocado(&obs, false);
                                 // obs.set_dibujar(&obs, true);
                             }
-                            vidas_resetear(vidas);
+                            vidas.resetear();
 #ifdef TTF
                             contador_game_over = CONTADOR_GAME_OVER;
 #endif
@@ -660,10 +670,10 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    trayectoria_destruir(
-        tray);  // Por si se cerró el juego antes de que la bola toque el piso
-    recuperador_destruir(recuperador);
-    vidas_destruir(vidas);
+    // trayectoria_destruir(
+    //     tray);  // Por si se cerró el juego antes de que la bola toque el
+    //     piso
+    // recuperador_destruir(recuperador);
     fclose(f);
 
     SDL_DestroyRenderer(renderer);

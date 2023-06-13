@@ -16,7 +16,7 @@ struct obstaculo_t {
                        float parametros[3], geometria_t geo);
     void destruir(obstaculo_t *obs);
 
-    obstaculo_t *levantar_obstaculo(FILE *f);
+    static obstaculo_t *levantar_obstaculo(FILE *f);
 
     void trasladar(obstaculo_t *obs, float dx, float dy);
     void rotar(obstaculo_t *obs, double rad);

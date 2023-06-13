@@ -3,90 +3,72 @@
 #include <SDL2/SDL.h>
 #include <stdlib.h>
 
+#include "bola.h"
 #include "config.h"
 #include "obstaculo.h"
 #include "poligono.h"
 #include "tipos.h"
 
-struct bola {
-    poligono_t *forma;
-};
+// struct bola {
+//     poligono_t forma;
+// };
 
+/*
 struct vidas {
-    bola_t **figuras;
-    size_t totales;
-    int dibujadas;
+   bola_t **figuras;
+   size_t totales;
+   int dibujadas;
 };
+*/
 
 struct coordenada {
     float x;
     float y;
 };
 
-struct trayectoria {
-    poligono_t *linea;
-};
-
-poligono_t poligono;
+// struct trayectoria {
+//     poligono_t linea;
+// };
 
 //------------------------------------------ BOLA
 //------------------------------------------
-
+/*
 bola_t *bola_crear(float cx, float cy, float radio, int resolucion) {
     bola_t *bola = (bola_t *)malloc(sizeof(bola_t));
     if (bola == NULL) return NULL;
 
-    poligono_t poligono;
-    bola->forma = poligono.crear_circular(radio, resolucion);
-    if (bola->forma == NULL) {
-        free(bola);
-        return NULL;
-    }
-    poligono.trasladar(bola->forma, cx, cy);
+    bola->forma = poligono_t(radio, resolucion);
+    bola->forma.trasladar(cx, cy);
     return bola;
 }
 
-void bola_destruir(bola_t *bola) {
-    poligono_t poligono;
-    poligono.destruir(bola->forma);
-    free(bola);
-}
+void bola_destruir(bola_t *bola) { free(bola); }
 
 bool bola_dibujar(SDL_Renderer *renderer, bola_t *bola) {
-    poligono_t p;
-    return p.dibujar(renderer, bola->forma);
+    return bola->forma.dibujar(renderer);
 }
+*/
 
 // ------------------------------------------TRAYECTORIA------------------------------------------
+/*
 trayectoria_t *trayectoria_crear() {
     trayectoria_t *tray = (trayectoria_t *)malloc(sizeof(trayectoria_t));
     if (tray == NULL) return NULL;
 
-    poligono_t p;
-    tray->linea = p.crear(NULL, 0);
-    if (tray->linea == NULL) {
-        free(tray);
-        return NULL;
-    }
     return tray;
 }
 
 void trayectoria_destruir(trayectoria_t *tray) {
     if (tray == NULL) return;
-    poligono_t p;
-
-    p.destruir(tray->linea);
     free(tray);
 }
 
 bool trayectoria_agregar_coordenada(trayectoria_t *tray, float x, float y) {
-    poligono_t p;
-    return p.agregar_vertice(tray->linea, x, y);
+    return tray->linea.agregar_vertice(x, y);
 }
 
 bool trayectoria_dibujar(SDL_Renderer *renderer, trayectoria_t *tray) {
-    poligono_t p;
-    return p.abierto_dibujar(renderer, tray->linea);
+    return tray->linea.abierto_dibujar(renderer);
 }
 
 trayectoria_t *trayectoria_calcular(float xi, float yi, float vxi, float vyi,
@@ -114,6 +96,7 @@ double computar_posicion(double pi, double vi, double dt) {
     return pi + (vi * dt);
 }
 
+*/
 double modulo(float vx, float vy) { return sqrt(vx * vx + vy * vy); }
 
 float producto_interno(float ax, float ay, float bx, float by) {
@@ -137,6 +120,7 @@ void reflejar(float norm_x, float norm_y, float *cx, float *cy, float *vx,
 // ------------------------------------------ VIDAS
 // ------------------------------------------
 
+/*
 // Inicializa las vidas en la posicion cx cy
 vidas_t *vidas_inicializar(size_t n, float cx, float cy) {
     vidas_t *vidas = (vidas_t *)malloc(sizeof(vidas_t));
@@ -149,7 +133,7 @@ vidas_t *vidas_inicializar(size_t n, float cx, float cy) {
     }
 
     for (int i = 0; i < n - 1; i++) {
-        vidas->figuras[i] =
+        vidas->figuras[i] = bola_t()
             bola_crear(cx, cy + (BOLA_RADIO * 3 * i), BOLA_RADIO, BOLA_RESOL);
         if (vidas->figuras[i] == NULL) {
             for (size_t j = 0; j < i; j++) {
@@ -181,12 +165,10 @@ void vidas_resetear(vidas_t *vidas) { vidas->dibujadas = vidas->totales - 1; }
 
 void vidas_quitar(vidas_t *vidas) { (vidas->dibujadas)--; }
 
-/*
 void vidas_agregar(vidas_t *vidas) {
     if(vidas->dibujadas < vidas->totales - 1)
         (vidas->dibujadas)++;
 }
-*/
 
 bool vidas_dibujar(SDL_Renderer *renderer, vidas_t *vidas) {
     if (vidas == NULL) return false;
@@ -196,55 +178,51 @@ bool vidas_dibujar(SDL_Renderer *renderer, vidas_t *vidas) {
     return true;
 }
 
+*/
 // -------------------------------------------- RECUPERADOR
 // ----------------------------------------------------
-struct recuperador {
-    poligono_t *r;
-    float velocidad;
-    float xi;
-    float ancho;
-};
-
-recuperador_t *recuperador_crear(float ancho, float alto, float velocidad) {
-    recuperador_t *recuperador = (recuperador_t *)malloc(sizeof(recuperador_t));
-    if (recuperador == NULL) return NULL;
-
-    float vertices[][2] = {{MIN_X, MAX_Y},
-                           {MIN_X, MAX_Y - alto},
-                           {MIN_X + ancho, MAX_Y - alto},
-                           {MIN_X + ancho, MAX_Y}};
-    recuperador->r = poligono.crear(vertices, 4);
-    if (recuperador->r == NULL) {
-        free(recuperador);
-        return NULL;
-    }
-    recuperador->velocidad = 1;
-    recuperador->xi = MIN_X;
-    recuperador->ancho = ancho;
-    return recuperador;
-}
-
-void recuperador_destruir(recuperador_t *recuperador) {
-    poligono.destruir(recuperador->r);
-    free(recuperador);
-}
-
-void recuperador_mover(recuperador_t *recuperador, float dt) {
-    if (recuperador->xi < MIN_X || recuperador->xi + recuperador->ancho > MAX_X)
-        recuperador->velocidad = -(recuperador->velocidad);
-    poligono.trasladar(recuperador->r, recuperador->velocidad * dt, 0);
-    recuperador->xi += (recuperador->velocidad * dt);
-}
-
-void recuperador_dibujar(SDL_Renderer *renderer, recuperador_t *recuperador) {
-    poligono.dibujar(renderer, recuperador->r);
-}
-
-bool recuperador_bola_recuperada(recuperador_t *recuperador, float cx,
-                                 float cy) {
-    return poligono.punto_dentro(recuperador->r, cx, cy);
-}
-
+// struct recuperador {
+//     poligono_t r;
+//     float velocidad;
+//     float xi;
+//     float ancho;
+// };
+//
+// recuperador_t *recuperador_crear(float ancho, float alto, float velocidad) {
+//     recuperador_t *recuperador = (recuperador_t
+//     *)malloc(sizeof(recuperador_t)); if (recuperador == NULL) return NULL;
+//
+//     float vertices[][2] = {{MIN_X, MAX_Y},
+//                            {MIN_X, MAX_Y - alto},
+//                            {MIN_X + ancho, MAX_Y - alto},
+//                            {MIN_X + ancho, MAX_Y}};
+//     recuperador->r = poligono_t(vertices, 4);
+//     recuperador->velocidad = 1;
+//     recuperador->xi = MIN_X;
+//     recuperador->ancho = ancho;
+//     return recuperador;
+// }
+//
+// void recuperador_destruir(recuperador_t *recuperador) { free(recuperador); }
+//
+// void recuperador_mover(recuperador_t *recuperador, float dt) {
+//     if (recuperador->xi < MIN_X || recuperador->xi + recuperador->ancho >
+//     MAX_X)
+//         recuperador->velocidad = -(recuperador->velocidad);
+//     recuperador->r.trasladar(recuperador->velocidad * dt, 0);
+//     recuperador->xi += (recuperador->velocidad * dt);
+// }
+//
+// void recuperador_dibujar(SDL_Renderer *renderer, recuperador_t *recuperador)
+// {
+//     recuperador->r.dibujar(renderer);
+// }
+//
+// bool recuperador_bola_recuperada(recuperador_t *recuperador, float cx,
+//                                  float cy) {
+//     return recuperador->r.punto_dentro(cx, cy);
+// }
+//
 // -------------------------------------------- PUNTAJE
 // ----------------------------------------------------
 

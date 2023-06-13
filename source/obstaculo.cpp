@@ -8,7 +8,7 @@
 #include "lectura.h"
 #include "tipos.h"
 
-poligono_t p;
+poligono_t p(nullptr, 0);
 
 bool obstaculo_t::leer_cantidad_de_obstaculos(FILE *f, int16_t *cantidad) {
     return leer_cantidad_obstaculos(f, cantidad);
@@ -17,7 +17,7 @@ bool obstaculo_t::leer_cantidad_de_obstaculos(FILE *f, int16_t *cantidad) {
 // Imprime por stdout los parametros de un obstaculo
 void obstaculo_t::imprimir_obstaculo(obstaculo_t *o) const {
     printf("Mov: %d For: %d Col: %d\n", o->movimiento, o->geometria, o->color);
-    o->poligono.imprimir(&o->poligono);
+    o->poligono.imprimir();
     putchar('\n');
 }
 
@@ -78,7 +78,7 @@ obstaculo_t *obstaculo_t::levantar_obstaculo(FILE *f) {
     obstaculo_t *obstaculo =
         obstaculo->crear(poligono, color, mov, parametros, geo);
     if (obstaculo == NULL) {
-        p.destruir(poligono);
+        // p.destruir(poligono);
         return NULL;
     }
 
@@ -100,16 +100,16 @@ color_t obstaculo_t::get_color(obstaculo_t *obstaculo) const {
 }
 
 void obstaculo_t::trasladar(obstaculo_t *obstaculo, float dx, float dy) {
-    p.trasladar(&obstaculo->poligono, dx, dy);
+    obstaculo->poligono.trasladar(dx, dy);
 }
 
 void obstaculo_t::rotar(obstaculo_t *obstaculo, double rad) {
-    p.rotar2(&obstaculo->poligono, rad);
+    obstaculo->poligono.rotar2(rad);
 }
 
 void obstaculo_t::rotar_centro(obstaculo_t *obstaculo, double rad, float cx,
                                float cy) {
-    p.rotar_centro2(&obstaculo->poligono, rad, cx, cy);
+    obstaculo->poligono.rotar_centro2(rad, cx, cy);
 }
 
 // FUNCIONES PARA MOVER EL OBSTACULO
@@ -174,8 +174,7 @@ bool obstaculo_t::dibujar(SDL_Renderer *renderer, obstaculo_t *obstaculo) {
                 break;
         }
     }
-    return obstaculo->_dibujar ? p.dibujar(renderer, &obstaculo->poligono)
-                               : true;
+    return obstaculo->_dibujar ? obstaculo->poligono.dibujar(renderer) : true;
 }
 
 void obstaculo_t::set_tocado(obstaculo_t *obstaculo, bool state) {
