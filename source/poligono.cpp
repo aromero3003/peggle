@@ -38,22 +38,6 @@ poligono_t &poligono_t::operator=(const poligono_t &other) {
     return *this;
 }
 
-// Crea un polígono de n vertices en R2
-poligono_t *poligono_t::crear(float vertices[][2], size_t n) {
-    return new poligono_t(vertices, n);
-}
-
-// Crea un polígono de n vertices en R2
-poligono_t *poligono_t::crear(const std::vector<aVec2> &vertices) {
-    return new poligono_t(vertices);
-}
-
-// Crea un poligono circular de 8 vertices de resolucion con centro en el
-// origen;
-poligono_t *poligono_t::crear_circular(float radio, int resolucion) {
-    return new poligono_t(radio, resolucion);
-}
-
 // Devuelve la cantidad de vértices de un polígono
 size_t poligono_t::cantidad_vertices() const { return vertices.size(); }
 
@@ -169,7 +153,7 @@ void poligono_t::imprimir() const {
 }
 
 // Dibuja un poligono cerrado sobre un SDL_Renderer
-bool poligono_t::dibujar(SDL_Renderer *renderer) {
+bool poligono_t::dibujar(SDL_Renderer *renderer) const {
     if (renderer == NULL) return false;
     for (size_t i = 0; i + 1 < vertices.size(); i++) {
         SDL_RenderDrawLine(renderer, vertices[i].x, vertices[i].y,
@@ -184,7 +168,7 @@ bool poligono_t::dibujar(SDL_Renderer *renderer) {
 }
 
 // Dibuja un poligono abierto sobre un SDL_Renderer
-bool poligono_t::abierto_dibujar(SDL_Renderer *renderer) {
+bool poligono_t::abierto_dibujar(SDL_Renderer *renderer) const {
     if (renderer == NULL) return false;
     for (size_t i = 0; i + 1 < vertices.size(); i++) {
         SDL_RenderDrawLine(renderer, vertices[i].x, vertices[i].y,

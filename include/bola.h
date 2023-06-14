@@ -4,7 +4,7 @@
 #include "poligono.h"
 struct bola_t {
     bola_t(float cx, float cy, float radio, int resolucion);
-    bool dibujar(SDL_Renderer *renderer);
+    bool dibujar(SDL_Renderer *renderer) const;
 
    private:
     poligono_t forma;

@@ -13,10 +13,6 @@ struct obstaculo_t {
 
     void imprimir_obstaculo() const;
 
-    obstaculo_t *crear(poligono_t *puntos, color_t color, movimiento_t mov,
-                       float parametros[3], geometria_t geo);
-    void destruir();
-
     void trasladar(float dx, float dy);
     void rotar(double rad);
     void rotar_centro(double rad, float cx, float cy);
@@ -28,7 +24,7 @@ struct obstaculo_t {
 
     void mover(double dt);
 
-    bool dibujar(SDL_Renderer *renderer);
+    bool dibujar(SDL_Renderer *renderer) const;
 
     bool es_gris() const;
     bool es_naranja() const;
@@ -40,7 +36,7 @@ struct obstaculo_t {
     bool get_dibujar() const;
     void set_dibujar(bool state);
 
-    double distancia(float xp, float yp, float *nor_x, float *nor_y);
+    double distancia(float xp, float yp, float *nor_x, float *nor_y) const;
 
    private:
     poligono_t poligono;

@@ -18,12 +18,6 @@ struct poligono_t {
 
     poligono_t &operator=(const poligono_t &other);
 
-    poligono_t *crear(float vertices[][2], size_t n);
-    poligono_t *crear(const std::vector<aVec2> &vertices);
-    poligono_t *crear_circular(float radio, int resolucion);
-
-    void destruir();
-
     void imprimir() const;  // Imprime por consola los puntos del poligono
 
     size_t cantidad_vertices() const;
@@ -41,8 +35,8 @@ struct poligono_t {
 
     bool punto_dentro(float px, float py) const;
 
-    bool dibujar(SDL_Renderer *renderer);
-    bool abierto_dibujar(SDL_Renderer *renderer);
+    bool dibujar(SDL_Renderer *renderer) const;
+    bool abierto_dibujar(SDL_Renderer *renderer) const;
 
     double distancia(float xp, float yp, float *nor_x, float *nor_y) const;
 

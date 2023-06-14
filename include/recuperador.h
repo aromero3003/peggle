@@ -14,9 +14,9 @@ class recuperador_t {
 
     recuperador_t(float ancho, float alto, float velocidad);
     void mover(float dt);
-    void dibujar(SDL_Renderer *renderer);
+    void dibujar(SDL_Renderer *renderer) const;
 
-    bool bola_recuperada(float cx, float cy);
+    bool bola_recuperada(float cx, float cy) const;
 
    private:
     poligono_t r;

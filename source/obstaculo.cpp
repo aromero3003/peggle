@@ -83,7 +83,7 @@ void obstaculo_t::mover(double dt) {
 }
 
 // Dibuja un obstaculo sobre un SDL_Renderer
-bool obstaculo_t::dibujar(SDL_Renderer *renderer) {
+bool obstaculo_t::dibujar(SDL_Renderer *renderer) const {
     if (tocado)
         SDL_SetRenderDrawColor(renderer, 0xFF, 0XFF, 0x00, 0x00);
     else {
@@ -116,6 +116,7 @@ void obstaculo_t::set_dibujar(bool state) { _dibujar = state; }
 
 bool obstaculo_t::get_dibujar() const { return _dibujar; }
 
-double obstaculo_t::distancia(float xp, float yp, float *nor_x, float *nor_y) {
+double obstaculo_t::distancia(float xp, float yp, float *nor_x,
+                              float *nor_y) const {
     return poligono.distancia(xp, yp, nor_x, nor_y);
 }

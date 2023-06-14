@@ -15,8 +15,10 @@ void recuperador_t::mover(float dt) {
     r.trasladar(velocidad * dt, 0);
     xi += (velocidad * dt);
 }
-void recuperador_t::dibujar(SDL_Renderer *renderer) { r.dibujar(renderer); }
+void recuperador_t::dibujar(SDL_Renderer *renderer) const {
+    r.dibujar(renderer);
+}
 
-bool recuperador_t::bola_recuperada(float cx, float cy) {
+bool recuperador_t::bola_recuperada(float cx, float cy) const {
     return r.punto_dentro(cx, cy);
 }

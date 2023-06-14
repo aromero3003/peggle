@@ -8,4 +8,6 @@ bola_t::bola_t(float cx, float cy, float radio, int resolucion)
     forma.trasladar(cx, cy);
 }
 
-bool bola_t::dibujar(SDL_Renderer *renderer) { return forma.dibujar(renderer); }
+bool bola_t::dibujar(SDL_Renderer *renderer) const {
+    return forma.dibujar(renderer);
+}
