@@ -13,7 +13,7 @@ struct poligono_t {
     poligono_t() = delete;
     poligono_t(float vertices[][2], size_t n);
     poligono_t(const std::vector<aVec2> &vertices);
-    poligono_t(float radio, int resolucion);
+    poligono_t(float radio, size_t resolucion);
     poligono_t(const poligono_t &p);
 
     poligono_t &operator=(const poligono_t &other);
@@ -31,10 +31,10 @@ struct poligono_t {
     void rotar(double rad);
     void rotar2(double rad);
 
-    void rotar_centro(double rad, float centro_x, float centro_y);
-    void rotar_centro2(double rad, float centro_x, float centro_y);
+    void rotar_centro(double rad, aVec2 centro);
+    void rotar_centro2(double rad, aVec2 centro);
 
-    bool punto_dentro(float px, float py) const;
+    bool punto_dentro(aVec2 p) const;
 
     bool dibujar(SDL_Renderer *renderer) const;
     bool abierto_dibujar(SDL_Renderer *renderer) const;

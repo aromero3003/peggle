@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include <iostream>
+
 #include "config.h"
 #include "tipos.h"
 #include "vec2.h"
@@ -23,9 +25,11 @@ obstaculo_t::obstaculo_t(poligono_t p, color_t c, movimiento_t m, geometria_t g,
 
 // Imprime por stdout los parametros de un obstaculo
 void obstaculo_t::imprimir_obstaculo() const {
-    printf("Mov: %d For: %d Col: %d\n", movimiento, geometria, color);
+    // printf("Mov: %d For: %d Col: %d\n", movimiento, geometria, color);
+    std::cout << "Mov :" << movimiento << " For: " << geometria
+              << " Col: " << color << std::endl;
     poligono.imprimir();
-    putchar('\n');
+    // putchar('\n');
 }
 
 bool obstaculo_cantidad_en_nivel(FILE *f, int16_t *cant) {
@@ -46,7 +50,7 @@ void obstaculo_t::trasladar(float dx, float dy) {
 void obstaculo_t::rotar(double rad) { poligono.rotar2(rad); }
 
 void obstaculo_t::rotar_centro(double rad, float cx, float cy) {
-    poligono.rotar_centro2(rad, cx, cy);
+    poligono.rotar_centro2(rad, aVec2(cx, cy));
 }
 
 // FUNCIONES PARA MOVER EL OBSTACULO

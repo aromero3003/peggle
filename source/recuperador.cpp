@@ -21,5 +21,5 @@ void recuperador_t::dibujar(SDL_Renderer *renderer) const {
 }
 
 bool recuperador_t::bola_recuperada(float cx, float cy) const {
-    return r.punto_dentro(cx, cy);
+    return r.punto_dentro(aVec2(cx, cy));
 }

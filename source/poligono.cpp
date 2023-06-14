@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include <cmath>
+#include <iostream>
 #include <vector>
 
 #include "config.h"
@@ -14,19 +15,18 @@
 // Crea un polígono de n vertices en R2
 poligono_t::poligono_t(float vertices[][2], size_t n) : vertices(n) {
     for (size_t i = 0; i < n; i++) {
-        this->vertices[i].x = vertices[i][0];
-        this->vertices[i].y = vertices[i][1];
+        this->vertices[i].set(vertices[i][0], vertices[i][1]);
     }
 }
 
 poligono_t::poligono_t(const std::vector<aVec2> &vertices)
     : vertices(vertices) {}
 
-poligono_t::poligono_t(float radio, int resolucion) {
+poligono_t::poligono_t(float radio, size_t resolucion) : vertices(resolucion) {
     int angulo = 360 / resolucion;
-    for (size_t i = 0; i < resolucion; i++) {
-        vertices.emplace_back(0, radio);
-        this->rotar_centro(-angulo * M_PI / 180, 0, 0);
+    for (aVec2 &v : vertices) {
+        v.set(0., radio);
+        rotar_centro2(-angulo, aVec2Zero);
     }
 }
 
@@ -65,88 +65,67 @@ bool poligono_t::agregar_vertice(aVec2 xy) {
 // Traslada un polígono de n vértices dx en el eje de las abscisas, y dy en le
 // eje de las ordenadas.
 void poligono_t::trasladar(aVec2 d) {
-    for (size_t i = 0; i < vertices.size(); i++) {
-        vertices[i].x += d.x;
-        vertices[i].y += d.y;
-    }
+    for (aVec2 &vertex : vertices) vertex += d;
 }
 
 // Rota un polígono de n vértices una rad cantidad de radianes.
 void poligono_t::rotar(double rad) {
-    for (size_t i = 0; i < vertices.size(); i++) {
-        aVec2 xy = vertices[i];
-        // float x = vertices[i].x;
-        // float y = vertices[i].y;
-        vertices[i].set(xy.x * cos(rad) - xy.y * sin(rad),
-                        xy.x * sin(rad) + xy.y * cos(rad));
-        // vertices[i].x = x * cos(rad) - y * sin(rad);
-        // vertices[i].y = x * sin(rad) + y * cos(rad);
+    for (aVec2 &v : vertices) {
+        v.set(v.x * cos(rad) - v.y * sin(rad), v.x * sin(rad) + v.y * cos(rad));
     }
 }
 
 void poligono_t::rotar2(double rad) {
     double angulo = rad * PI / 180;
-    for (size_t i = 0; i < vertices.size(); i++) {
-        float x = vertices[i].x;
-        float y = vertices[i].y;
-        vertices[i].x = x * cos(angulo) - y * sin(angulo);
-        vertices[i].y = x * sin(angulo) + y * cos(angulo);
-    }
+    rotar(angulo);
 }
 
 // Rota un poligono respecto a un centro
-void poligono_t::rotar_centro(double rad, float centro_x, float centro_y) {
-    poligono_t::trasladar(aVec2(-centro_x, -centro_y));
+void poligono_t::rotar_centro(double rad, aVec2 centro) {
+    poligono_t::trasladar(-centro);
     poligono_t::rotar(rad);
-    poligono_t::trasladar(aVec2(centro_x, centro_y));
+    poligono_t::trasladar(centro);
 }
 
-void poligono_t::rotar_centro2(double rad, float centro_x, float centro_y) {
-    poligono_t::trasladar(aVec2(-centro_x, -centro_y));
+void poligono_t::rotar_centro2(double rad, aVec2 centro) {
+    poligono_t::trasladar(-centro);
     poligono_t::rotar2(rad);
-    poligono_t::trasladar(aVec2(centro_x, centro_y));
-}
-
-// Calcula el producto vectorial de dos vectores (FUNCION AUXILIAR)
-static float producto_vectorial(float vector1[2], float vector2[2]) {
-    return vector1[0] * vector2[1] - vector1[1] * vector2[0];
+    poligono_t::trasladar(centro);
 }
 
 // Determina si un punto de coordenadas px, py está dentro de un triángulo de
 // coordenadas ax, ay, bx ,by, cx, cy.
-static bool punto_en_triangulo(float px, float py, float ax, float ay, float bx,
-                               float by, float cx, float cy) {
-    //                                                              B
-    float pa[2] = {ax - px, ay - py}; /*           Vector PA /\ */
-    float pb[2] = {bx - px, by - py}; /*           Vector PB /P.\ */
-    float pc[2] = {cx - px, cy - py}; /*           Vector PC /____\ */
-    //                                                          A      C
-    return (producto_vectorial(pa, pb) <= 0 &&
-            producto_vectorial(pb, pc) <= 0 &&
-            producto_vectorial(pc, pa) <= 0) ||
-           (producto_vectorial(pa, pb) >= 0 &&
-            producto_vectorial(pb, pc) >= 0 && producto_vectorial(pc, pa) >= 0);
+static bool punto_en_triangulo(aVec2 p, aVec2 a, aVec2 b, aVec2 c) {
+    //                                         B
+    aVec2 pa = a - p; /*           Vector PA   /\ */
+    aVec2 pb = b - p; /*           Vector PB  /P.\ */
+    aVec2 pc = c - p; /*           Vector PC /____\ */
+    //                                      A      C
+    return (aCross(pa, pb) <= 0 and aCross(pb, pc) <= 0 and
+            aCross(pc, pa) <= 0) or
+           (aCross(pc, pa) >= 0 and aCross(pa, pb) >= 0 and
+            aCross(pb, pc) >= 0);
 }
 
 // Determina si un punto de coordenadas px, py está contenido en un polígono de
 // n vértices.
-bool poligono_t::punto_dentro(float px, float py) const {
-    for (size_t i = 1; i < vertices.size() - 1; i++) {
-        if (punto_en_triangulo(px, py, vertices[0].x, vertices[0].y,
-                               vertices[i].x, vertices[i].y, vertices[i + 1].x,
-                               vertices[i + 1].y) == true) {
+bool poligono_t::punto_dentro(aVec2 p) const {
+    for (size_t i = 1; i < vertices.size() - 1; i++)
+        if (punto_en_triangulo(p, vertices[0], vertices[i], vertices[i + 1]) ==
+            true)
             return true;
-        }
-    }
     return false;
 }
 
 // Imprimir las coordenadas de los vertices de un polígono.
 void poligono_t::imprimir() const {
-    for (size_t i = 0; i < vertices.size(); i++) {
-        printf("  (%g ; %g) ", vertices[i].x, vertices[i].y);
-    }
-    putchar('\n');
+    for (const aVec2 &vertex : vertices)
+        std::cout << "  (" << vertex.x << " ; " << vertex.y << ") ";
+    std::cout << std::endl;
+    // for (size_t i = 0; i < vertices.size(); i++) {
+    //     printf("  (%g ; %g) ", vertices[i].x, vertices[i].y);
+    // }
+    // putchar('\n');
 }
 
 // Dibuja un poligono cerrado sobre un SDL_Renderer
@@ -175,8 +154,8 @@ bool poligono_t::abierto_dibujar(SDL_Renderer *renderer) const {
 }
 
 static aVec2 punto_mas_cercano(aVec2 xy0, aVec2 xy1, aVec2 p) {
-    aVec2 a(p.x - xy0.x, p.y - xy0.y);
-    aVec2 b(xy1.x - xy0.x, xy1.y - xy0.y);
+    aVec2 a = p - xy0;
+    aVec2 b = xy1 - xy0;
 
     float alfa = aDot(a, b) / aDot(b, b);
 
@@ -204,9 +183,9 @@ double poligono_t::distancia(aVec2 punto, aVec2 &norma) const {
         }
     }
 
-    aVec2 n(vertices[(idx + 1) % cant].y - vertices[idx].y,
-            vertices[idx].x - vertices[(idx + 1) % cant].x);
-    n /= aDistance(n, aVec2Zero);
-    norma = n;
+    norma.set(vertices[(idx + 1) % cant].y - vertices[idx].y,
+              vertices[idx].x - vertices[(idx + 1) % cant].x);
+    // n /= aDistance(n, aVec2Zero);
+    norma.Normalize();
     return d;
 }
