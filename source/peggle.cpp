@@ -9,6 +9,7 @@
 #include <list>
 
 #include "bola.h"
+#include "cannon.h"
 #include "config.h"
 #include "juego.h"
 #include "loader.h"
@@ -153,8 +154,8 @@ int main(int argc, char *argv[]) {
 
     int dormir = 0;
 
-    float canon_angulo = 0;  // Ángulo del cañón
-    bool cayendo = false;    // ¿Hay bola disparada?
+    Cannon canon(aVec2(CANON_X, CANON_Y));  // Ángulo del cañón
+    bool cayendo = false;                   // ¿Hay bola disparada?
 
     float cx, cy;  // Centro de la bola
     float vx, vy;  // Velocidad de la bola
@@ -254,12 +255,8 @@ int main(int argc, char *argv[]) {
                                 tray = trayectoria_t();
                             }
                         } else if (event.type == SDL_MOUSEMOTION) {
-                            canon_angulo = atan2(event.motion.x - CANON_X,
-                                                 event.motion.y - CANON_Y);
-                            if (canon_angulo > CANON_MAX)
-                                canon_angulo = CANON_MAX;
-                            if (canon_angulo < -CANON_MAX)
-                                canon_angulo = -CANON_MAX;
+                            canon.update(atan2(event.motion.x - CANON_X,
+                                               event.motion.y - CANON_Y));
                         }
                         continue;
                     }
@@ -315,10 +312,10 @@ int main(int argc, char *argv[]) {
                     } else {
                         // Si la bola no se disparó establecemos condiciones
                         // iniciales
-                        cx = CANON_X + CANON_LARGO * sin(canon_angulo);
-                        cy = CANON_Y + CANON_LARGO * cos(canon_angulo);
-                        vx = BOLA_VI * sin(canon_angulo);
-                        vy = BOLA_VI * cos(canon_angulo);
+                        cx = canon.tip().x;
+                        cy = canon.tip().y;
+                        vx = BOLA_VI * sin(canon.angle());
+                        vy = BOLA_VI * cos(canon.angle());
                         // trayectoria_destruir(tray);
                         // tray = NULL;
                         bola_recuperada = false;
@@ -373,10 +370,7 @@ int main(int argc, char *argv[]) {
                         }
 
                     // Dibujamos el cañón:
-                    SDL_RenderDrawLine(
-                        renderer, CANON_X, CANON_Y,
-                        CANON_X + sin(canon_angulo) * CANON_LARGO,
-                        CANON_Y + cos(canon_angulo) * CANON_LARGO);
+                    canon.draw(renderer);
 
                     // Dibujamos la bola:
                     bola_t bola(cx, cy, BOLA_RADIO, 10);
@@ -456,12 +450,8 @@ int main(int argc, char *argv[]) {
                             pasar_nivel = true;
                             break;
                         } else if (event.type == SDL_MOUSEMOTION) {
-                            canon_angulo = atan2(event.motion.x - CANON_X,
-                                                 event.motion.y - CANON_Y);
-                            if (canon_angulo > CANON_MAX)
-                                canon_angulo = CANON_MAX;
-                            if (canon_angulo < -CANON_MAX)
-                                canon_angulo = -CANON_MAX;
+                            canon.update(atan2(event.motion.x - CANON_X,
+                                               event.motion.y - CANON_Y));
                         }
 
                         continue;
@@ -481,10 +471,7 @@ int main(int argc, char *argv[]) {
 #endif
 
                     // Dibujamos el cañón:
-                    SDL_RenderDrawLine(
-                        renderer, CANON_X, CANON_Y,
-                        CANON_X + sin(canon_angulo) * CANON_LARGO,
-                        CANON_Y + cos(canon_angulo) * CANON_LARGO);
+                    canon.draw(renderer);
 
                     // Dibujamos las paredes:
                     SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0x00);
@@ -521,12 +508,8 @@ int main(int argc, char *argv[]) {
 #endif
                             break;
                         } else if (event.type == SDL_MOUSEMOTION) {
-                            canon_angulo = atan2(event.motion.x - CANON_X,
-                                                 event.motion.y - CANON_Y);
-                            if (canon_angulo > CANON_MAX)
-                                canon_angulo = CANON_MAX;
-                            if (canon_angulo < -CANON_MAX)
-                                canon_angulo = -CANON_MAX;
+                            canon.update(atan2(event.motion.x - CANON_X,
+                                               event.motion.y - CANON_Y));
                         }
 
                         continue;
@@ -582,10 +565,7 @@ int main(int argc, char *argv[]) {
 
                     // Dibujamos el cañón:
                     SDL_SetRenderDrawColor(renderer, 0xFE, 0XFE, 0XFE, 0X00);
-                    SDL_RenderDrawLine(
-                        renderer, CANON_X, CANON_Y,
-                        CANON_X + sin(canon_angulo) * CANON_LARGO,
-                        CANON_Y + cos(canon_angulo) * CANON_LARGO);
+                    canon.draw(renderer);
 
                     // Dibujamos las paredes:
                     SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0x00);
