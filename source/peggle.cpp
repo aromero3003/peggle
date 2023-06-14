@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include <iostream>
 #include <list>
 
 #include "bola.h"
@@ -131,7 +132,7 @@ void escribir_numero(SDL_Renderer *renderer, TTF_Font *font, int contador,
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        fprintf(stderr, "Uso: %s <archivo_nivel.bin>\n", argv[0]);
+        std::cerr << "Usage: " << argv[0] << "<levels_path.bin" << std::endl;
         return 1;
     }
 
