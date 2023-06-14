@@ -117,7 +117,7 @@ void nivel_escribir(SDL_Renderer *renderer, TTF_Font *font, int nivel, int x,
 void vidas_escribir(SDL_Renderer *renderer, TTF_Font *font, vidas_t *vidas,
                     int x, int y) {
     char v[3];
-    size_t aux = vidas_restantes(vidas);
+    size_t aux = vidas->restantes();
     sprintf(v, "%zd", aux);
     escribir_texto(renderer, font, v, x, y, 0xFF, 0xFF, 0xFF);
 }
@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef TTF
     TTF_Init();
-    TTF_Font *font = TTF_OpenFont("FreeSansBold.ttf", 24);
+    TTF_Font *font = TTF_OpenFont("../resources/FreeSansBold.ttf", 24);
 #endif
 
     SDL_Window *window;
@@ -263,10 +263,16 @@ int main(int argc, char *argv[]) {
 #ifdef TTF
                     // escribir_texto(renderer, font, "Peggle", 100, 20);
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0x60, 0x00, 0x00);
-                    bola_t *dibujito =
-                        bola_crear(MAX_X + 40, MAX_Y - 50, 10, RESOL_BOLA_OBS);
-                    bola_dibujar(renderer, dibujito);
-                    bola_destruir(dibujito);
+                    {
+                        bola_t dibujito(MAX_X + 40, MAX_Y - 50, 10,
+                                        RESOL_BOLA_OBS);
+                        // bola_t *dibujito =
+                        //     bola_crear(MAX_X + 40, MAX_Y - 50, 10,
+                        //     RESOL_BOLA_OBS);
+                        // bola_dibujar(renderer, dibujito);
+                        // bola_destruir(dibujito);
+                        dibujito.dibujar(renderer);
+                    }
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
 
                     char contador_golpeados[6];
@@ -281,7 +287,7 @@ int main(int argc, char *argv[]) {
                     puntaje_multiplicador_escribir(renderer, font,
                                                    multiplicador, 730, 50);
                     nivel_escribir(renderer, font, nivel, MIN_X, MIN_Y / 2);
-                    vidas_escribir(renderer, font, vidas, MIN_X / 4, MIN_Y);
+                    vidas_escribir(renderer, font, &vidas, MIN_X / 4, MIN_Y);
 #endif
 
                     if (cayendo) {
@@ -520,10 +526,15 @@ int main(int argc, char *argv[]) {
 
 #ifdef TTF
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0x60, 0x00, 0x00);
-                    bola_t *dibujito =
-                        bola_crear(MAX_X + 40, MAX_Y - 50, 10, RESOL_BOLA_OBS);
-                    bola_dibujar(renderer, dibujito);
-                    bola_destruir(dibujito);
+                    {
+                        bola_t dibujito(MAX_X + 40, MAX_Y - 50, 10,
+                                        RESOL_BOLA_OBS);
+                        dibujito.dibujar(renderer);
+                    }
+                    //     bola_crear(MAX_X + 40, MAX_Y - 50, 10,
+                    //     RESOL_BOLA_OBS);
+                    // bola_dibujar(renderer, dibujito);
+                    // bola_destruir(dibujito);
 
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
 
