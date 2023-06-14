@@ -19,19 +19,9 @@
 
 #define DT (1.0 / JUEGO_FPS)
 
-bool wrapper_actualizar_obstaculo(obstaculo_t obs) {
-    if (obs.get_tocado()) obs.set_dibujar(false);
-    return true;
-}
-
-bool wrapper_dibujar_obstaculo(void *obstaculo, void *renderer) {
-    return ((obstaculo_t *)obstaculo)->dibujar((SDL_Renderer *)renderer);
-}
-
-bool wrapper_resetear_obstaculos(obstaculo_t obs) {
+void resetear_obstaculos(obstaculo_t &obs) {
     obs.set_tocado(false);
     obs.set_dibujar(true);
-    return true;
 }
 
 #define DT (1.0 / JUEGO_FPS)
@@ -353,7 +343,7 @@ int main(int argc, char *argv[]) {
                     if (cy > MAX_Y - BOLA_RADIO) {
                         cayendo = false;
                         for (obstaculo_t &obs : obstaculos) {
-                            wrapper_actualizar_obstaculo(obs);
+                            if (obs.get_tocado()) obs.set_dibujar(false);
                             // if (obs.get_tocado(&obs))
                             //     obs.set_dibujar(&obs, false);
                         }
@@ -376,7 +366,7 @@ int main(int argc, char *argv[]) {
 
                     if (bola_trabada > 120)
                         for (auto &obs : obstaculos) {
-                            wrapper_actualizar_obstaculo(obs);
+                            if (obs.get_tocado()) obs.set_dibujar(false);
                             // if (obs.get_tocado(&obs))
                             //     obs.set_dibujar(&obs, false);
                         }
@@ -520,7 +510,7 @@ int main(int argc, char *argv[]) {
                             puntaje_en_nivel = 0;
                             estado = GAME_RUNNING;
                             for (auto &obs : obstaculos) {
-                                wrapper_resetear_obstaculos(obs);
+                                resetear_obstaculos(obs);
                                 // obs.set_tocado(&obs, false);
                                 // obs.set_dibujar(&obs, true);
                             }
