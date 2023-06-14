@@ -3,7 +3,7 @@
 #include "config.h"
 
 recuperador_t::recuperador_t(float ancho, float alto, float velocidad)
-    : velocidad(1), xi(MIN_X), ancho(ancho) {
+    : velocidad(1), xi(MIN_X), ancho(ancho), r(nullptr, 0) {
     float aux[4][2] = {{MIN_X, MAX_Y},
                        {MIN_X, MAX_Y - alto},
                        {MIN_X + ancho, MAX_Y - alto},

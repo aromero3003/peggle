@@ -19,23 +19,18 @@
 
 #define DT (1.0 / JUEGO_FPS)
 
-obstaculo_t obs;
 bool wrapper_actualizar_obstaculo(obstaculo_t obs) {
-    if (obs.get_tocado(&obs)) obs.set_dibujar(&obs, false);
+    if (obs.get_tocado()) obs.set_dibujar(false);
     return true;
 }
 
 bool wrapper_dibujar_obstaculo(void *obstaculo, void *renderer) {
-    return obs.dibujar((SDL_Renderer *)renderer, (obstaculo_t *)obstaculo);
-}
-
-void wrapper_destruccion_obstaculo(void *obstaculo) {
-    obs.destruir((obstaculo_t *)obstaculo);
+    return ((obstaculo_t *)obstaculo)->dibujar((SDL_Renderer *)renderer);
 }
 
 bool wrapper_resetear_obstaculos(obstaculo_t obs) {
-    obs.set_tocado(&obs, false);
-    obs.set_dibujar(&obs, true);
+    obs.set_tocado(false);
+    obs.set_dibujar(true);
     return true;
 }
 
@@ -229,7 +224,7 @@ int main(int argc, char *argv[]) {
         for (size_t i = 0; i < cant_obstaculos;
              i++) {  // Se levantan todos los obstáculos del nivel
             obstaculo_t nuevo = loader.leer_obstaculo();
-            if (nuevo.es_naranja(&nuevo)) cantidad_naranjas++;
+            if (nuevo.es_naranja()) cantidad_naranjas++;
             obstaculos.push_back(nuevo);
         }
 
@@ -422,25 +417,25 @@ int main(int argc, char *argv[]) {
                     float nor_x, nor_y;
 
                     for (auto &obs : obstaculos) {
-                        if (obs.get_dibujar(&obs)) {
-                            obs.dibujar(renderer, &obs);
-                            if (obs.distancia(&obs, cx, cy, &nor_x, &nor_y) <
+                        if (obs.get_dibujar()) {
+                            obs.dibujar(renderer);
+                            if (obs.distancia(cx, cy, &nor_x, &nor_y) <
                                 BOLA_RADIO) {
                                 reflejar(nor_x, nor_y, &cx, &cy, &vx, &vy);
                                 vy *= PLASTICIDAD;
                                 vx *= PLASTICIDAD;
-                                if (!obs.es_gris(&obs)) {
-                                    if (obs.es_naranja(&obs) &&
-                                        obs.get_dibujar(&obs) == true &&
-                                        obs.get_tocado(&obs) == false)
+                                if (!obs.es_gris()) {
+                                    if (obs.es_naranja() &&
+                                        obs.get_dibujar() == true &&
+                                        obs.get_tocado() == false)
                                         naranjas_golpeados++;
-                                    puntaje_actualizar(&puntaje_en_nivel, &obs,
+                                    puntaje_actualizar(&puntaje_en_nivel, obs,
                                                        multiplicador);
-                                    obs.set_tocado(&obs, true);
+                                    obs.set_tocado(true);
                                 }
                             }
                         }
-                        obs.mover(&obs, DT);
+                        obs.mover(DT);
                     }
 
                     if (naranjas_golpeados == cantidad_naranjas) {
@@ -546,7 +541,7 @@ int main(int argc, char *argv[]) {
                         continue;
                     }
                     for (auto &obs : obstaculos) {
-                        return obs.dibujar((SDL_Renderer *)renderer, &obs);
+                        return obs.dibujar((SDL_Renderer *)renderer);
                     }
 
 #ifdef TTF

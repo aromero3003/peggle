@@ -224,17 +224,16 @@ static void punto_mas_cercano(float x0, float y0, float x1, float y1, float xp,
 }
 
 // Devuelve por interfaz el punto del polígono más cercano al punto (xp;yp)
-double poligono_t::distancia(const poligono_t *p, float xp, float yp,
-                             float *nor_x, float *nor_y) const {
+double poligono_t::distancia(float xp, float yp, float *nor_x,
+                             float *nor_y) const {
     double d = 1 / 0.0;
     size_t idx = 0;
 
-    for (size_t i = 0; i < p->vertices.size(); i++) {
+    for (size_t i = 0; i < vertices.size(); i++) {
         float xi, yi;
-        punto_mas_cercano(p->vertices[i].x, p->vertices[i].y,
-                          p->vertices[(i + 1) % p->vertices.size()].x,
-                          p->vertices[(i + 1) % p->vertices.size()].y, xp, yp,
-                          &xi, &yi);
+        punto_mas_cercano(
+            vertices[i].x, vertices[i].y, vertices[(i + 1) % vertices.size()].x,
+            vertices[(i + 1) % vertices.size()].y, xp, yp, &xi, &yi);
         double di = ::distancia(xp, yp, xi, yi);
 
         if (di < d) {
@@ -243,10 +242,8 @@ double poligono_t::distancia(const poligono_t *p, float xp, float yp,
         }
     }
 
-    float nx =
-        p->vertices[(idx + 1) % p->vertices.size()].y - p->vertices[idx].y;
-    float ny =
-        p->vertices[idx].x - p->vertices[(idx + 1) % p->vertices.size()].x;
+    float nx = vertices[(idx + 1) % vertices.size()].y - vertices[idx].y;
+    float ny = vertices[idx].x - vertices[(idx + 1) % vertices.size()].x;
     float dn = ::distancia(nx, ny, 0, 0);
 
     nx /= dn;

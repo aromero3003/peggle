@@ -86,7 +86,7 @@ void reflejar(float norm_x, float norm_y, float *cx, float *cy, float *vx,
 // Funciones para manejar el puntaje
 
 // bool puntaje_dibujar_caja(float x, float y);
-void puntaje_actualizar(puntaje_t *puntos_totales, obstaculo_t *obstaculo,
+void puntaje_actualizar(puntaje_t *puntos_totales, obstaculo_t &obstaculo,
                         int multiplicador);
 void puntaje_actualizar_multiplicador(int *multiplicador,
                                       size_t naranjas_golpeados);

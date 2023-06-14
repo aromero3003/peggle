@@ -5,7 +5,7 @@
 
 class recuperador_t {
    public:
-    recuperador_t() = default;
+    recuperador_t() = delete;
     recuperador_t(recuperador_t &&) = default;
     recuperador_t(const recuperador_t &) = default;
     recuperador_t &operator=(recuperador_t &&) = default;

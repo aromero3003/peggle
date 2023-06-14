@@ -2,6 +2,8 @@
 
 #include "config.h"
 
+trayectoria_t::trayectoria_t() : linea(nullptr, 0) {}
+
 bool trayectoria_t::agregar_coordenada(float x, float y) {
     linea.agregar_vertice(x, y);
     return true;

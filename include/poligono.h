@@ -10,7 +10,7 @@
 #include "vec2.h"
 
 struct poligono_t {
-    poligono_t() = default;
+    poligono_t() = delete;
     poligono_t(float vertices[][2], size_t n);
     poligono_t(const std::vector<aVec2> &vertices);
     poligono_t(float radio, int resolucion);
@@ -44,8 +44,7 @@ struct poligono_t {
     bool dibujar(SDL_Renderer *renderer);
     bool abierto_dibujar(SDL_Renderer *renderer);
 
-    double distancia(const poligono_t *p, float xp, float yp, float *nor_x,
-                     float *nor_y) const;
+    double distancia(float xp, float yp, float *nor_x, float *nor_y) const;
 
    private:
     std::vector<aVec2> vertices;
