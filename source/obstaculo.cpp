@@ -29,6 +29,7 @@ void obstaculo_t::imprimir_obstaculo() const {
     std::cout << "Mov :" << movimiento << " For: " << geometria
               << " Col: " << color << std::endl;
     poligono.imprimir();
+    std::cout << std::endl;
     // putchar('\n');
 }
 
