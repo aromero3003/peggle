@@ -2,6 +2,9 @@
 
 #include <cfloat>
 #include <cmath>
+
+const aVec2 aVec2Zero(0.f, 0.f);
+
 aVec2::aVec2(float x, float y) : x(x), y(y) {}
 
 void aVec2::setZero() {
@@ -35,6 +38,12 @@ void aVec2::operator-=(const aVec2& v) {
 void aVec2::operator*=(float a) {
     x *= a;
     y *= a;
+}
+
+/// Divide this vector by a scalar
+void aVec2::operator/=(float a) {
+    x /= a;
+    y /= a;
 }
 
 /// Get the length of this vector (the norm).

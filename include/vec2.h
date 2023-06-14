@@ -25,6 +25,9 @@ struct aVec2 {
     /// Multiply this vector by a scalar.
     void operator*=(float a);
 
+    /// Divide this vector by a scalar.
+    void operator/=(float a);
+
     /// Get the length of this vector (the norm).
     float length();
 
@@ -39,6 +42,8 @@ struct aVec2 {
     /// Get the skew vector such that dot(skew_vec, other) == cross(vec, other)
     aVec2 skew() const;
 };
+
+extern const aVec2 aVec2Zero;
 
 /*
 inline aVec2 aAbs(const aVec2& a);
