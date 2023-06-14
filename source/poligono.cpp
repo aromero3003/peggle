@@ -43,41 +43,44 @@ size_t poligono_t::cantidad_vertices() const { return vertices.size(); }
 
 // Devuelve true y por interfaz las coordenadas del vértice pos o false si no se
 // puede
-bool poligono_t::obtener_vertice(size_t pos, float *x, float *y) const {
+bool poligono_t::obtener_vertice(size_t pos, float &x, float &y) const {
     if (cantidad_vertices() <= pos) return false;  // raise exception
-    *x = vertices[pos].x;
-    *y = vertices[pos].y;
+    x = vertices[pos].x;
+    y = vertices[pos].y;
+    return true;
+}
+
+bool poligono_t::obtener_vertice(size_t pos, aVec2 &v) const {
+    if (cantidad_vertices() <= pos) return false;  // raise exception
+    v = vertices[pos];
     return true;
 }
 
 // Agrega un vértice a un polígono
-bool poligono_t::agregar_vertice(float x, float y) {
-    vertices.emplace_back(x, y);
+bool poligono_t::agregar_vertice(aVec2 xy) {
+    vertices.emplace_back(xy);
     return true;
 }
 
 // Traslada un polígono de n vértices dx en el eje de las abscisas, y dy en le
 // eje de las ordenadas.
-void poligono_t::trasladar(float dx, float dy) {
+void poligono_t::trasladar(aVec2 d) {
     for (size_t i = 0; i < vertices.size(); i++) {
-        vertices[i].x += dx;
-        vertices[i].y += dy;
+        vertices[i].x += d.x;
+        vertices[i].y += d.y;
     }
 }
 
 // Rota un polígono de n vértices una rad cantidad de radianes.
 void poligono_t::rotar(double rad) {
     for (size_t i = 0; i < vertices.size(); i++) {
-        float x = vertices[i].x;
-        float y = vertices[i].y;
-        vertices[i].x = x * cos(rad) - y * sin(rad);
-        vertices[i].y = x * sin(rad) + y * cos(rad);
-        /*
-        float x = poligono->vertices[i][0];
-        poligono->vertices[i][0] = poligono->vertices[i][0] * cos(rad) -
-        poligono->vertices[i][1] * sin(rad); poligono->vertices[i][1] = x
-        * sin(rad) + poligono->vertices[i][1] * cos(rad) ;
-        */
+        aVec2 xy = vertices[i];
+        // float x = vertices[i].x;
+        // float y = vertices[i].y;
+        vertices[i].set(xy.x * cos(rad) - xy.y * sin(rad),
+                        xy.x * sin(rad) + xy.y * cos(rad));
+        // vertices[i].x = x * cos(rad) - y * sin(rad);
+        // vertices[i].y = x * sin(rad) + y * cos(rad);
     }
 }
 
@@ -88,26 +91,20 @@ void poligono_t::rotar2(double rad) {
         float y = vertices[i].y;
         vertices[i].x = x * cos(angulo) - y * sin(angulo);
         vertices[i].y = x * sin(angulo) + y * cos(angulo);
-        /*
-        float x = poligono->vertices[i][0];
-        poligono->vertices[i][0] = poligono->vertices[i][0] * cos(rad) -
-        poligono->vertices[i][1] * sin(rad); poligono->vertices[i][1] = x
-        * sin(rad) + poligono->vertices[i][1] * cos(rad) ;
-        */
     }
 }
 
 // Rota un poligono respecto a un centro
 void poligono_t::rotar_centro(double rad, float centro_x, float centro_y) {
-    poligono_t::trasladar(-centro_x, -centro_y);
+    poligono_t::trasladar(aVec2(-centro_x, -centro_y));
     poligono_t::rotar(rad);
-    poligono_t::trasladar(centro_x, centro_y);
+    poligono_t::trasladar(aVec2(centro_x, centro_y));
 }
 
 void poligono_t::rotar_centro2(double rad, float centro_x, float centro_y) {
-    poligono_t::trasladar(-centro_x, -centro_y);
+    poligono_t::trasladar(aVec2(-centro_x, -centro_y));
     poligono_t::rotar2(rad);
-    poligono_t::trasladar(centro_x, centro_y);
+    poligono_t::trasladar(aVec2(centro_x, centro_y));
 }
 
 // Calcula el producto vectorial de dos vectores (FUNCION AUXILIAR)
@@ -177,64 +174,39 @@ bool poligono_t::abierto_dibujar(SDL_Renderer *renderer) const {
     return true;
 }
 
-static float producto_interno(float ax, float ay, float bx, float by) {
-    return ax * bx + ay * by;
-}
+static aVec2 punto_mas_cercano(aVec2 xy0, aVec2 xy1, aVec2 p) {
+    aVec2 a(p.x - xy0.x, p.y - xy0.y);
+    aVec2 b(xy1.x - xy0.x, xy1.y - xy0.y);
 
-static double distancia(float ax, float ay, float bx, float by) {
-    return sqrt(pow(bx - ax, 2) + pow(by - ay, 2));
-}
+    float alfa = aDot(a, b) / aDot(b, b);
 
-static void punto_mas_cercano(float x0, float y0, float x1, float y1, float xp,
-                              float yp, float *x, float *y) {
-    float ax = xp - x0;
-    float ay = yp - y0;
-    float bx = x1 - x0;
-    float by = y1 - y0;
-
-    float alfa =
-        producto_interno(ax, ay, bx, by) / producto_interno(bx, by, bx, by);
-
-    if (alfa <= 0) {
-        *x = x0;
-        *y = y0;
-    } else if (alfa >= 1) {
-        *x = x1;
-        *y = y1;
-    } else {
-        *x = alfa * bx + x0;
-        *y = alfa * by + y0;
-    }
+    if (alfa <= 0)
+        return xy0;
+    else if (alfa >= 1)
+        return xy1;
+    else
+        return alfa * b + xy0;
 }
 
 // Devuelve por interfaz el punto del polígono más cercano al punto (xp;yp)
-double poligono_t::distancia(float xp, float yp, float *nor_x,
-                             float *nor_y) const {
+double poligono_t::distancia(aVec2 punto, aVec2 &norma) const {
     double d = 1 / 0.0;
     size_t idx = 0;
+    size_t cant = cantidad_vertices();
 
     for (size_t i = 0; i < vertices.size(); i++) {
-        float xi, yi;
-        punto_mas_cercano(
-            vertices[i].x, vertices[i].y, vertices[(i + 1) % vertices.size()].x,
-            vertices[(i + 1) % vertices.size()].y, xp, yp, &xi, &yi);
-        double di = ::distancia(xp, yp, xi, yi);
-
+        aVec2 xyi =
+            punto_mas_cercano(vertices[i], vertices[(i + 1) % cant], punto);
+        double di = aDistance(xyi, punto);
         if (di < d) {
             d = di;
             idx = i;
         }
     }
 
-    float nx = vertices[(idx + 1) % vertices.size()].y - vertices[idx].y;
-    float ny = vertices[idx].x - vertices[(idx + 1) % vertices.size()].x;
-    float dn = ::distancia(nx, ny, 0, 0);
-
-    nx /= dn;
-    ny /= dn;
-
-    *nor_x = nx;
-    *nor_y = ny;
-
+    aVec2 n(vertices[(idx + 1) % cant].y - vertices[idx].y,
+            vertices[idx].x - vertices[(idx + 1) % cant].x);
+    n /= aDistance(n, aVec2Zero);
+    norma = n;
     return d;
 }

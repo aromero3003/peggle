@@ -1,11 +1,12 @@
 #include "trayectoria.h"
 
 #include "config.h"
+#include "vec2.h"
 
 trayectoria_t::trayectoria_t() : linea(nullptr, 0) {}
 
 bool trayectoria_t::agregar_coordenada(float x, float y) {
-    linea.agregar_vertice(x, y);
+    linea.agregar_vertice(aVec2(x, y));
     return true;
 }
 

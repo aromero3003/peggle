@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "tipos.h"
+#include "vec2.h"
 
 #define MASK_COLOR 0x3  // 0011
 #define MASK_MOVE 0x3   // 0011
@@ -104,7 +105,7 @@ poligono_t Loader::leer_geometria_circulo() {
         throw -1;  // TODO Crear Excepcion
 
     poligono_t poligono(r, RESOL_BOLA_OBS);
-    poligono.trasladar(x, y);
+    poligono.trasladar(aVec2(x, y));
     // printf("CIRCULO: x = %d, y = %d, radio = %d\n",x, y, r);
     return poligono;
 }
@@ -135,7 +136,7 @@ poligono_t Loader::leer_geometria_rectangulo() {
 
     // printf("angul = %g x: %d y: %d\n",(double)angulo, x, y);
     poligono.rotar2(angulo);
-    poligono.trasladar(x, y);
+    poligono.trasladar(aVec2(x, y));
     // printf("RECTANGULO: x = %d, y = %d, ancho = %d, alto = %d, angulo =
     // %d\n", x, y, ancho, alto, angulo);
     return poligono;

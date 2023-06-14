@@ -6,6 +6,7 @@
 
 #include "config.h"
 #include "tipos.h"
+#include "vec2.h"
 
 obstaculo_t::obstaculo_t(poligono_t p, color_t c, movimiento_t m, geometria_t g,
                          float parametros[3])
@@ -38,7 +39,9 @@ bool obstaculo_t::es_naranja() const { return color == COLOR_NARANJA; }
 
 color_t obstaculo_t::get_color() const { return color; }
 
-void obstaculo_t::trasladar(float dx, float dy) { poligono.trasladar(dx, dy); }
+void obstaculo_t::trasladar(float dx, float dy) {
+    poligono.trasladar(aVec2(dx, dy));
+}
 
 void obstaculo_t::rotar(double rad) { poligono.rotar2(rad); }
 
@@ -118,5 +121,11 @@ bool obstaculo_t::get_dibujar() const { return _dibujar; }
 
 double obstaculo_t::distancia(float xp, float yp, float *nor_x,
                               float *nor_y) const {
-    return poligono.distancia(xp, yp, nor_x, nor_y);
+    // return poligono.distancia(xp, yp, nor_x, nor_y);
+    aVec2 p(xp, yp);
+    aVec2 norma(*nor_x, *nor_y);
+    double distancia = poligono.distancia(p, norma);
+    *nor_x = norma.x;
+    *nor_y = norma.y;
+    return distancia;
 }

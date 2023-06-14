@@ -21,11 +21,12 @@ struct poligono_t {
     void imprimir() const;  // Imprime por consola los puntos del poligono
 
     size_t cantidad_vertices() const;
-    bool obtener_vertice(const size_t pos, float *x, float *y) const;
+    bool obtener_vertice(const size_t pos, float &x, float &y) const;
+    bool obtener_vertice(const size_t pos, aVec2 &v) const;
 
-    bool agregar_vertice(float x, float y);
+    bool agregar_vertice(aVec2 xy);
 
-    void trasladar(float dx, float dy);
+    void trasladar(aVec2 d);
 
     void rotar(double rad);
     void rotar2(double rad);
@@ -38,7 +39,7 @@ struct poligono_t {
     bool dibujar(SDL_Renderer *renderer) const;
     bool abierto_dibujar(SDL_Renderer *renderer) const;
 
-    double distancia(float xp, float yp, float *nor_x, float *nor_y) const;
+    double distancia(aVec2 punto, aVec2 &norma) const;
 
    private:
     std::vector<aVec2> vertices;
