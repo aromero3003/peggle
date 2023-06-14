@@ -1,19 +1,24 @@
 #include "cannon.h"
 
+#include <SDL_render.h>
+
 #include <cmath>
 
 #include "config.h"
+#include "vec2.h"
 
-Cannon::Cannon(float x0, float y0)
-    : reference_tip(0, CANON_LARGO), bottom(x0, y0) {}
+Cannon::Cannon(aVec2 p0) : bottom(p0) {}
 
-void Cannon::tip(float &x, float &y) {
-    x = bottom.x + reference_tip.x;
-    y = bottom.y + reference_tip.y;
+aVec2 Cannon::tip() const {
+    aVec2 rotatedTip(std::sin(angle), std::cos(angle));
+    rotatedTip *= CANON_LARGO;
+    return bottom + rotatedTip;
 }
 
 void Cannon::update(float angle) {
-    if (angle > CANON_MAX or angle < -CANON_MAX) return;
-    reference_tip.set(std::sin(angle), std::cos(angle));
-    reference_tip *= CANON_LARGO;
+    if (angle <= CANON_MAX or angle >= -CANON_MAX) this->angle = angle;
+}
+
+void Cannon::draw(SDL_Renderer *r) {
+    SDL_RenderDrawLine(r, bottom.x, bottom.y, tip().x, tip().y);
 }
