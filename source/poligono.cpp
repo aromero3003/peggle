@@ -94,7 +94,7 @@ void poligono_t::rotar_centro2(double rad, aVec2 centro) {
 }
 
 // Determina si un punto de coordenadas px, py está dentro de un triángulo de
-// coordenadas ax, ay, bx ,by, cx, cy.
+// coordenadas A(x,y), B(x,y), C(x,y).
 static bool punto_en_triangulo(aVec2 p, aVec2 a, aVec2 b, aVec2 c) {
     //                                         B
     aVec2 pa = a - p; /*           Vector PA   /\ */
