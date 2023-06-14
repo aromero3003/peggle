@@ -9,17 +9,18 @@ class Cannon {
     Cannon(aVec2 p0);  // TODO que también reciba un largo de cannon
     Cannon(Cannon &&) = default;
     Cannon(const Cannon &) = delete;
-    Cannon &operator=(Cannon &&) = default;
+    Cannon &operator=(Cannon &&) = delete;
     Cannon &operator=(const Cannon &) = delete;
     ~Cannon() = default;
 
+    float angle() const;
     void update(float angle);
     aVec2 tip() const;
-    void draw(SDL_Renderer *renderer);
+    void draw(SDL_Renderer *renderer) const;
 
    private:
-    aVec2 bottom;
-    float angle;
+    const aVec2 bottom;
+    float rotation;
 };
 
 #endif /* __CANNON_H__ */
