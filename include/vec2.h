@@ -76,6 +76,11 @@ inline float aDot(const aVec2& a, const aVec2& b) {
     return a.x * b.x + a.y * b.y;
 }
 
+/// Perform the cross product on two vectors. In 2D this produces a scalar.
+inline float aCross(const aVec2& a, const aVec2& b) {
+    return a.x * b.y - a.y * b.x;
+}
+
 /// Add two vectors component-wise.
 inline aVec2 operator+(const aVec2& a, const aVec2& b) {
     return aVec2(a.x + b.x, a.y + b.y);
