@@ -5,13 +5,21 @@
 #include <stdlib.h>
 
 #include "config.h"
-#include "lectura.h"
 #include "tipos.h"
 
 poligono_t p(nullptr, 0);
 
-bool obstaculo_t::leer_cantidad_de_obstaculos(FILE *f, int16_t *cantidad) {
-    return leer_cantidad_obstaculos(f, cantidad);
+obstaculo_t::obstaculo_t(poligono_t p, color_t c, movimiento_t m, geometria_t g,
+                         float parametros[3])
+    : poligono(p),
+      color(c),
+      movimiento(m),
+      geometria(g),
+      tocado(false),
+      _dibujar(true) {
+    parametros[0] = parametros[0];
+    parametros[1] = parametros[1];
+    parametros[2] = parametros[2];
 }
 
 // Imprime por stdout los parametros de un obstaculo
@@ -45,44 +53,6 @@ obstaculo_t *obstaculo_t::crear(poligono_t *puntos, color_t color,
 bool obstaculo_cantidad_en_nivel(FILE *f, int16_t *cant) {
     if (f == NULL) return false;
     return fread(cant, sizeof(int16_t), 1, f) != 1;
-}
-
-// Levanta un obstaculo de un archivo
-obstaculo_t *obstaculo_t::levantar_obstaculo(FILE *f) {
-    color_t color;
-    movimiento_t mov;
-    geometria_t geo;
-
-    if (!leer_encabezado(f, &color, &mov, &geo)) {
-        // fprintf(stderr, "No se pudo leer\n");
-        return NULL;
-    }
-
-    // printf("%d, %d, %d\n",color, mov, geo);
-
-    float parametros[3] = {0};
-    int16_t param[3] = {0};
-
-    leer_movimiento(f, mov, param);
-
-    parametros[0] = param[0];
-    parametros[1] = param[1];
-    parametros[2] = param[2];
-
-    // printf("%x, %x, %x\n", param[0], param[1], param[2]);
-    // printf("%g, %g, %g\n", parametros[0], parametros[1], parametros[2]);
-
-    poligono_t *poligono = leer_geometria(f, geo);
-    if (poligono == NULL) return NULL;
-
-    obstaculo_t *obstaculo =
-        obstaculo->crear(poligono, color, mov, parametros, geo);
-    if (obstaculo == NULL) {
-        // p.destruir(poligono);
-        return NULL;
-    }
-
-    return obstaculo;
 }
 
 void obstaculo_t::destruir(obstaculo_t *obstaculo) { delete obstaculo; }

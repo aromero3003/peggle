@@ -2,21 +2,20 @@
 #define OBSTACULO_H
 
 #include <SDL2/SDL.h>
-#include <stdio.h>
 
 #include "poligono.h"
 #include "tipos.h"
 
 struct obstaculo_t {
-    bool leer_cantidad_de_obstaculos(FILE *f, int16_t *cantidad);
+    obstaculo_t() = default;
+    obstaculo_t(poligono_t p, color_t c, movimiento_t m, geometria_t g,
+                float parametros[3]);
 
     void imprimir_obstaculo(obstaculo_t *o) const;
 
     obstaculo_t *crear(poligono_t *puntos, color_t color, movimiento_t mov,
                        float parametros[3], geometria_t geo);
     void destruir(obstaculo_t *obs);
-
-    static obstaculo_t *levantar_obstaculo(FILE *f);
 
     void trasladar(obstaculo_t *obs, float dx, float dy);
     void rotar(obstaculo_t *obs, double rad);

@@ -10,7 +10,7 @@
 #include "bola.h"
 #include "config.h"
 #include "juego.h"
-#include "lectura.h"
+#include "loader.h"
 #include "obstaculo.h"
 #include "poligono.h"
 #include "recuperador.h"
@@ -187,11 +187,7 @@ int main(int argc, char *argv[]) {
 
     trayectoria_t tray;
 
-    FILE *f = fopen(argv[1], "rb");
-    if (f == NULL) {
-        fprintf(stderr, "No se pudo abrir\n");
-        return 1;
-    }
+    Loader loader(argv[1]);
 
     int16_t cant_obstaculos;
     int nivel = 0;
@@ -215,11 +211,10 @@ int main(int argc, char *argv[]) {
     game_state_t estado = GAME_RUNNING;
 
     while (estado) {
-        if (!leer_cantidad_obstaculos(
-                f, &cant_obstaculos)) {  // Si no pude leer más obstaculos, GAME
-                                         // OVER
+        cant_obstaculos = loader.leer_cantidad_de_obstaculos();
+        if (cant_obstaculos == 0) {
+            // Si no pude leer más obstaculos, GAME OVER
             estado = GAME_OVER;
-            cant_obstaculos = 0;
         }
 
         size_t cantidad_naranjas = 0, naranjas_golpeados = 0;
@@ -233,9 +228,9 @@ int main(int argc, char *argv[]) {
 
         for (size_t i = 0; i < cant_obstaculos;
              i++) {  // Se levantan todos los obstáculos del nivel
-            obstaculo_t *nuevo = obstaculo_t::levantar_obstaculo(f);
-            if (nuevo->es_naranja(nuevo)) cantidad_naranjas++;
-            obstaculos.emplace_front(*nuevo);
+            obstaculo_t nuevo = loader.leer_obstaculo();
+            if (nuevo.es_naranja(&nuevo)) cantidad_naranjas++;
+            obstaculos.push_back(nuevo);
         }
 
         unsigned int ticks = SDL_GetTicks();
@@ -674,7 +669,6 @@ int main(int argc, char *argv[]) {
     //     tray);  // Por si se cerró el juego antes de que la bola toque el
     //     piso
     // recuperador_destruir(recuperador);
-    fclose(f);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
