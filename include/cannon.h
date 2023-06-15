@@ -3,10 +3,13 @@
 
 #include <SDL_render.h>
 
+#include "bola.h"
 #include "vec2.h"
+
 class Cannon {
    public:
-    Cannon(aVec2 p0);  // TODO que también reciba un largo de cannon
+    // TODO que también reciba un largo de cannon
+    Cannon(aVec2 p0, bola_t &bala);
     Cannon(Cannon &&) = default;
     Cannon(const Cannon &) = delete;
     Cannon &operator=(Cannon &&) = delete;
@@ -15,11 +18,16 @@ class Cannon {
 
     float angle() const;
     void update(float angle);
+
+    bool fire();
+    bool reload();
+
     aVec2 tip() const;
     void draw(SDL_Renderer *renderer) const;
 
    private:
     const aVec2 bottom;
+    bola_t &bullet;
     float rotation;
 };
 

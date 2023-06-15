@@ -35,7 +35,7 @@ typedef size_t puntaje_t;
 // double computar_posicion(double pi, double vi, double dt);
 // double computar_velocidad(double vi, double a, double dt);
 
-void reflejar(aVec2 norm, aVec2 &c, aVec2 &v);
+// void reflejar(aVec2 norm, aVec2 &c, aVec2 &v);
 
 // Funciones de la bola
 

@@ -23,7 +23,9 @@ struct bola_t {
 
     bool dibujar(SDL_Renderer *renderer) const;
 
-   private:
+    void imprimir();
+
+    // private:
     aVec2 centro;
     aVec2 velocidad;
     poligono_t forma;

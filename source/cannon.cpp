@@ -4,10 +4,11 @@
 
 #include <cmath>
 
+#include "bola.h"
 #include "config.h"
 #include "vec2.h"
 
-Cannon::Cannon(aVec2 p0) : bottom(p0) {}
+Cannon::Cannon(aVec2 p0, bola_t &bala) : bottom(p0), bullet(bala) {}
 
 aVec2 Cannon::tip() const {
     aVec2 rotatedTip(std::sin(rotation), std::cos(rotation));
@@ -17,8 +18,21 @@ aVec2 Cannon::tip() const {
 
 float Cannon::angle() const { return rotation; }
 
+bool Cannon::fire() {
+    // if (bullet.esta_cayendo()) return false;
+    return bullet.eyectar(rotation);
+}
+
+bool Cannon::reload() {
+    if (not bullet.esta_cayendo()) return false;
+    bullet.reset();
+    bullet.set_position(tip());
+    return true;
+}
+
 void Cannon::update(float angle) {
     if (angle <= CANON_MAX or angle >= -CANON_MAX) rotation = angle;
+    if (not bullet.esta_cayendo()) bullet.set_position(tip());
 }
 
 void Cannon::draw(SDL_Renderer *r) const {
