@@ -367,7 +367,7 @@ int main(int argc, char *argv[]) {
 
                     // Dibujamos la bola:
                     {
-                        bola_t bola(c.x, c.y, BOLA_RADIO, 10);
+                        bola_t bola(c, BOLA_RADIO, 10);
                         bola.dibujar(renderer);
                     }
                     // bola_destruir(bola);
