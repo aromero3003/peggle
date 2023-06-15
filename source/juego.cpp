@@ -10,15 +10,6 @@
 #include "tipos.h"
 #include "vec2.h"
 
-void reflejar(aVec2 norm, aVec2 &c, aVec2 &v) {
-    float proy = aDot(norm, v);
-
-    if (proy >= 0) return;
-
-    v -= 2 * norm * proy;
-    c += norm * 0.1;
-}
-
 // ------------------------------------------ VIDAS
 // ------------------------------------------
 

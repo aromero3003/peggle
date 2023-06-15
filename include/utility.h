@@ -13,4 +13,13 @@ inline aVec2 computar_posicion(aVec2 pi, aVec2 vi, double dt) {
     return vi * dt + pi;
 }
 
+inline void reflejar(aVec2 norm, aVec2 &c, aVec2 &v) {
+    float proy = aDot(norm, v);
+
+    if (proy >= 0) return;
+
+    v -= 2 * norm * proy;
+    c += norm * 0.1;
+}
+
 #endif /* __UTILITY_H__ */
