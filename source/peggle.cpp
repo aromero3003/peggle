@@ -160,8 +160,9 @@ int main(int argc, char *argv[]) {
     Renderer r(renderer);
     int dormir = 0;
 
-    Cannon canon(aVec2(CANON_X, CANON_Y));  // Ángulo del cañón
-    bool cayendo = false;                   // ¿Hay bola disparada?
+    bola_t b(BOLA_RADIO, BOLA_RESOL);
+    Cannon canon(aVec2(CANON_X, CANON_Y), b);  // Ángulo del cañón
+    bool cayendo = false;                      // ¿Hay bola disparada?
 
     aVec2 c;  // Centro de la bola
     aVec2 v;  // Velocidad de la bola
