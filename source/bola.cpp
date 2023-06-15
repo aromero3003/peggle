@@ -33,7 +33,10 @@ void bola_t::reset() {
     // TODO volver a posicion de origen
 }
 
-aVec2 bola_t::get_velocidad() { return velocidad; }
+bool bola_t::esta_cayendo() const { return cayendo; }
+
+aVec2 bola_t::position() const { return centro; }
+aVec2 bola_t::get_velocidad() const { return velocidad; }
 
 void bola_t::set_position(aVec2 p) {
     forma.trasladar(p - centro);
@@ -45,6 +48,22 @@ void bola_t::actualizar(double dt) {
     velocidad = ROZAMIENTO * computar_velocidad(velocidad, g, dt);
     centro = computar_posicion(centro, velocidad, dt);
     // checkear si la bola está estancada
+}
+
+void bola_t::rebotar_si_hay_pared() {
+    if (centro.x < MIN_X + BOLA_RADIO or centro.x > MAX_X - BOLA_RADIO)
+        velocidad.x *= -1;
+    if (centro.y < MIN_Y + BOLA_RADIO) velocidad.y *= -1;
+}
+
+void bola_t::reflejar(aVec2 norm) {
+    float proy = aDot(norm, velocidad);
+
+    if (proy >= 0) return;
+
+    velocidad -= 2 * norm * proy;
+    centro += norm * 0.1;
+    velocidad *= PLASTICIDAD;
 }
 
 bool bola_t::dibujar(SDL_Renderer *renderer) const {

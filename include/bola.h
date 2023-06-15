@@ -10,9 +10,14 @@ struct bola_t {
 
     void reset();
     void actualizar(double dt);
+    void rebotar_si_hay_pared();
+    void reflejar(aVec2 norm);
 
     void set_position(aVec2 p);
-    aVec2 get_velocidad();
+
+    aVec2 position() const;
+    aVec2 get_velocidad() const;
+    bool esta_cayendo() const;
 
     bool eyectar(float angle);
 
