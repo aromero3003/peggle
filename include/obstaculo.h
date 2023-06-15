@@ -15,7 +15,7 @@ struct obstaculo_t {
 
     void trasladar(float dx, float dy);
     void rotar(double rad);
-    void rotar_centro(double rad, float cx, float cy);
+    void rotar_centro(double rad, aVec2 centro);
 
     // FUNCIONES PARA MOVER EL OBSTACULO
     void mover_inmovil(double dt);
@@ -36,7 +36,7 @@ struct obstaculo_t {
     bool get_dibujar() const;
     void set_dibujar(bool state);
 
-    double distancia(float xp, float yp, float *nor_x, float *nor_y) const;
+    double distancia(aVec2 p, aVec2 &nor) const;
 
    private:
     poligono_t poligono;

@@ -50,8 +50,8 @@ void obstaculo_t::trasladar(float dx, float dy) {
 
 void obstaculo_t::rotar(double rad) { poligono.rotar2(rad); }
 
-void obstaculo_t::rotar_centro(double rad, float cx, float cy) {
-    poligono.rotar_centro2(rad, aVec2(cx, cy));
+void obstaculo_t::rotar_centro(double rad, aVec2 c) {
+    poligono.rotar_centro2(rad, c);
 }
 
 // FUNCIONES PARA MOVER EL OBSTACULO
@@ -68,7 +68,7 @@ void obstaculo_t::mover_horizontal(double dt) {
 }
 
 void obstaculo_t::mover_circular(double dt) {
-    rotar_centro(parametros[2] * dt * 60, parametros[0], parametros[1]);
+    rotar_centro(parametros[2] * dt * 60, aVec2(parametros[0], parametros[1]));
 }
 
 // static const void (*const funciones_obstaculo_mover[])(obstaculo_t
@@ -124,13 +124,6 @@ void obstaculo_t::set_dibujar(bool state) { _dibujar = state; }
 
 bool obstaculo_t::get_dibujar() const { return _dibujar; }
 
-double obstaculo_t::distancia(float xp, float yp, float *nor_x,
-                              float *nor_y) const {
-    // return poligono.distancia(xp, yp, nor_x, nor_y);
-    aVec2 p(xp, yp);
-    aVec2 norma(*nor_x, *nor_y);
-    double distancia = poligono.distancia(p, norma);
-    *nor_x = norma.x;
-    *nor_y = norma.y;
-    return distancia;
+double obstaculo_t::distancia(aVec2 p, aVec2 &norma) const {
+    return poligono.distancia(p, norma);
 }

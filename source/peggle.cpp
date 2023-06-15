@@ -406,16 +406,15 @@ int main(int argc, char *argv[]) {
 
                     // Dibujasmos los obstaculos y realizamos la interacción con
                     // la bola
-                    float nor_x, nor_y;
+                    aVec2 norma;
 
                     for (auto &obs : obstaculos) {
                         if (obs.get_dibujar()) {
                             obs.dibujar(renderer);
-                            if (obs.distancia(c.x, c.y, &nor_x, &nor_y) <
-                                BOLA_RADIO) {
-                                reflejar(nor_x, nor_y, &c.x, &c.y, &v.x, &v.y);
-                                v.y *= PLASTICIDAD;
-                                v.x *= PLASTICIDAD;
+                            if (obs.distancia(c, norma) < BOLA_RADIO) {
+                                reflejar(norma.x, norma.y, &c.x, &c.y, &v.x,
+                                         &v.y);
+                                v *= PLASTICIDAD;
                                 if (!obs.es_gris()) {
                                     if (obs.es_naranja() &&
                                         obs.get_dibujar() == true &&
