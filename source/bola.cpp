@@ -9,8 +9,8 @@
 
 const aVec2 g(0, G);
 
-bola_t::bola_t(float cx, float cy, float radio, int resolucion)
-    : centro(cx, cy),
+bola_t::bola_t(aVec2 c, float radio, unsigned int resolucion)
+    : centro(c),
       velocidad(aVec2Zero),
       forma(radio, resolucion),
       radio(radio),
@@ -18,10 +18,26 @@ bola_t::bola_t(float cx, float cy, float radio, int resolucion)
     forma.trasladar(centro);
 }
 
+bola_t::bola_t(float radio, unsigned int resolucion)
+    : bola_t(aVec2Zero, radio, resolucion) {}
+
 bool bola_t::eyectar(float angle) {
     if (cayendo) return false;
     velocidad.set(BOLA_VI * std::cos(angle), BOLA_VI * std::sin(angle));
     return true;
+}
+
+void bola_t::reset() {
+    velocidad.setZero();
+    cayendo = false;
+    // TODO volver a posicion de origen
+}
+
+aVec2 bola_t::get_velocidad() { return velocidad; }
+
+void bola_t::set_position(aVec2 p) {
+    forma.trasladar(p - centro);
+    centro = p - centro;
 }
 
 void bola_t::actualizar(double dt) {

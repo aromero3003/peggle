@@ -1,10 +1,11 @@
 #include "vidas.h"
 
 #include "config.h"
+#include "vec2.h"
 
 vidas_t::vidas_t(size_t n, float cx, float cy) {
     for (int i = 0; i < n - 1; i++)
-        figuras.emplace_back(cx, cy + BOLA_RADIO * 3 * i, BOLA_RADIO,
+        figuras.emplace_back(aVec2(cx, cy + BOLA_RADIO * 3 * i), BOLA_RADIO,
                              BOLA_RESOL);
     dibujadas = n - 1;
 }
