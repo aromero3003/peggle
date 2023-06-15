@@ -1,12 +1,13 @@
 #include "trayectoria.h"
 
 #include "config.h"
+#include "utility.h"
 #include "vec2.h"
 
 trayectoria_t::trayectoria_t() : linea(nullptr, 0) {}
 
-bool trayectoria_t::agregar_coordenada(float x, float y) {
-    linea.agregar_vertice(aVec2(x, y));
+bool trayectoria_t::agregar_coordenada(aVec2 p) {
+    linea.agregar_vertice(p);
     return true;
 }
 
@@ -15,24 +16,13 @@ bool trayectoria_t::dibujar(SDL_Renderer* renderer) {
     return true;
 }
 
-double computar_velocidad(double vi, double a, double dt) {
-    return vi + (a * dt);
-}
-
-double computar_posicion(double pi, double vi, double dt) {
-    return pi + (vi * dt);
-}
-
-trayectoria_t calcular(float xi, float yi, float vxi, float vyi, float a,
-                       float dt) {
+trayectoria_t calcular(aVec2 pi, aVec2 vi, aVec2 a, float dt) {
     trayectoria_t actual;
-    while (xi > MIN_X && xi < MAX_X && yi < MAX_Y) {
-        actual.agregar_coordenada(xi, yi);
-        vyi = computar_velocidad(vyi, a, dt);
-        vxi *= ROZAMIENTO;
-        vyi *= ROZAMIENTO;
-        xi = computar_posicion(xi, vxi, dt);
-        yi = computar_posicion(yi, vyi, dt);
+    while (pi.x > MIN_X and pi.x < MAX_X and pi.y < MAX_Y) {
+        actual.agregar_coordenada(pi);
+        vi = computar_velocidad(vi, a, dt);
+        vi *= ROZAMIENTO;
+        pi = computar_posicion(pi, vi, dt);
     }
     return actual;
 }

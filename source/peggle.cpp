@@ -17,9 +17,13 @@
 #include "poligono.h"
 #include "recuperador.h"
 #include "trayectoria.h"
+#include "utility.h"
+#include "vec2.h"
 #include "vidas.h"
 
 #define DT (1.0 / JUEGO_FPS)
+
+const aVec2 G_VEC(0.0f, G);
 
 void resetear_obstaculos(obstaculo_t &obs) {
     obs.set_tocado(false);
@@ -157,12 +161,12 @@ int main(int argc, char *argv[]) {
     Cannon canon(aVec2(CANON_X, CANON_Y));  // Ángulo del cañón
     bool cayendo = false;                   // ¿Hay bola disparada?
 
-    float cx, cy;  // Centro de la bola
-    float vx, vy;  // Velocidad de la bola
+    aVec2 c;  // Centro de la bola
+    aVec2 v;  // Velocidad de la bola
 
-    int bola_estancada_vy;  // Estos 3 son parametros para calcular el modulo de
-    int bola_estancada_x;  // la posición y empezar un contador para determinar
-    int bola_estancada_y;  // si la bola quedó estancada;
+    aVec2 v_estancada;  // Estos 2 parametros para calcular el modulo de
+    aVec2 p_estancada;  // la posición y empezar un contador para
+    //                           determinar si la bola quedó estancada;
 
     bool bola_recuperada =
         false;  // Para saber si la bola entró al recuperador de bolas
@@ -292,25 +296,22 @@ int main(int argc, char *argv[]) {
 
                     if (cayendo) {
                         // Si la bola está cayendo actualizamos su posición
-                        vy = computar_velocidad(vy, G, DT);
-                        vx *= ROZAMIENTO;
-                        vy *= ROZAMIENTO;
-                        cx = computar_posicion(cx, vx, DT);
-                        cy = computar_posicion(cy, vy, DT);
+                        v = computar_velocidad(v, G_VEC, DT) * ROZAMIENTO;
+                        c = computar_posicion(c, v, DT);
 
                         // Se computa la velocidad en el siguiente instante para
                         // comparar con la actual luego y determinar  si quedó
                         // estancada
-                        bola_estancada_vy = computar_velocidad(vy, G, DT);
-                        bola_estancada_x =
-                            computar_posicion(cx, vx * ROZAMIENTO, DT);
-                        bola_estancada_y = computar_posicion(
-                            cy, bola_estancada_vy * ROZAMIENTO, DT);
+                        v_estancada = computar_velocidad(v, G_VEC, DT);
+                        p_estancada = computar_posicion(c, v_estancada, DT);
+                        //     computar_posicion(cx, vx * ROZAMIENTO, DT);
+                        // bola_estancada_y = computar_posicion(
+                        //     cy, bola_estancada_vy * ROZAMIENTO, DT);
 
                         // Se agrega una coordenada cada que el contador supera
                         // 5
                         if (contador_trayectoria > 5) {
-                            tray.agregar_coordenada(cx, cy);
+                            tray.agregar_coordenada(c);
                             contador_trayectoria = 0;
                         }
                         tray.dibujar(renderer);
@@ -318,10 +319,11 @@ int main(int argc, char *argv[]) {
                     } else {
                         // Si la bola no se disparó establecemos condiciones
                         // iniciales
-                        cx = canon.tip().x;
-                        cy = canon.tip().y;
-                        vx = BOLA_VI * sin(canon.angle());
-                        vy = BOLA_VI * cos(canon.angle());
+
+                        c = canon.tip();
+                        v = aVec2(std::sin(canon.angle()),
+                                  std::cos(canon.angle()));
+                        v *= BOLA_VI;
                         // trayectoria_destruir(tray);
                         // tray = NULL;
                         bola_recuperada = false;
@@ -329,7 +331,7 @@ int main(int argc, char *argv[]) {
                                                          naranjas_golpeados);
                         {
                             trayectoria_t calculada =
-                                calcular(cx, cy, vx, vy, G, 0.01);
+                                calcular(c, v, G_VEC, 0.01);
                             calculada.dibujar(renderer);
                         }
                         // trayectoria_t calculada =
@@ -339,12 +341,12 @@ int main(int argc, char *argv[]) {
                     }
 
                     // Rebote contra las paredes:
-                    if (cx < MIN_X + BOLA_RADIO || cx > MAX_X - BOLA_RADIO)
-                        vx = -vx;
-                    if (cy < MIN_Y + BOLA_RADIO) vy = -vy;
+                    if (c.x < MIN_X + BOLA_RADIO || c.x > MAX_X - BOLA_RADIO)
+                        v.x = -v.x;
+                    if (c.y < MIN_Y + BOLA_RADIO) v.y = -v.y;
 
                     // Se salió de la pantalla:
-                    if (cy > MAX_Y - BOLA_RADIO) {
+                    if (c.y > MAX_Y - BOLA_RADIO) {
                         cayendo = false;
                         for (obstaculo_t &obs : obstaculos) {
                             if (obs.get_tocado()) obs.set_dibujar(false);
@@ -361,9 +363,8 @@ int main(int argc, char *argv[]) {
                         }
                     }
 
-                    if (modulo(0, vy) < 15 ||
-                        modulo(bola_estancada_x - cx, bola_estancada_y - cy) <
-                            0.5)
+                    if (modulo(0, v.y) < 15 ||
+                        modulo(p_estancada.x - c.x, p_estancada.y - c.y) < 0.5)
                         bola_trabada++;
                     else
                         bola_trabada = 0;
@@ -379,7 +380,7 @@ int main(int argc, char *argv[]) {
                     canon.draw(renderer);
 
                     // Dibujamos la bola:
-                    bola_t bola(cx, cy, BOLA_RADIO, 10);
+                    bola_t bola(c.x, c.y, BOLA_RADIO, 10);
                     bola.dibujar(renderer);
                     // bola_destruir(bola);
 
@@ -400,7 +401,7 @@ int main(int argc, char *argv[]) {
                     // Dibujamos el recuperador de bolas
                     recuperador.dibujar(renderer);
                     recuperador.mover(1);
-                    if (recuperador.bola_recuperada(cx, cy))
+                    if (recuperador.bola_recuperada(c.x, c.y))
                         bola_recuperada = true;
 
                     // Dibujasmos los obstaculos y realizamos la interacción con
@@ -410,11 +411,11 @@ int main(int argc, char *argv[]) {
                     for (auto &obs : obstaculos) {
                         if (obs.get_dibujar()) {
                             obs.dibujar(renderer);
-                            if (obs.distancia(cx, cy, &nor_x, &nor_y) <
+                            if (obs.distancia(c.x, c.y, &nor_x, &nor_y) <
                                 BOLA_RADIO) {
-                                reflejar(nor_x, nor_y, &cx, &cy, &vx, &vy);
-                                vy *= PLASTICIDAD;
-                                vx *= PLASTICIDAD;
+                                reflejar(nor_x, nor_y, &c.x, &c.y, &v.x, &v.y);
+                                v.y *= PLASTICIDAD;
+                                v.x *= PLASTICIDAD;
                                 if (!obs.es_gris()) {
                                     if (obs.es_naranja() &&
                                         obs.get_dibujar() == true &&

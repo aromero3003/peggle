@@ -1,6 +1,7 @@
 #include "bola.h"
 
 #include "config.h"
+#include "utility.h"
 #include "vec2.h"
 
 //------------------------------------------ BOLA
@@ -16,10 +17,6 @@ bola_t::bola_t(float cx, float cy, float radio, int resolucion)
       cayendo(false) {
     forma.trasladar(centro);
 }
-
-aVec2 computar_velocidad(aVec2 vi, aVec2 a, double dt) { return a * dt + vi; }
-
-aVec2 computar_posicion(aVec2 pi, aVec2 vi, double dt) { return vi * dt + pi; }
 
 bool bola_t::eyectar(float angle) {
     if (cayendo) return false;

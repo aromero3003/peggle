@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include "poligono.h"
+#include "vec2.h"
 
 class trayectoria_t {
    public:
@@ -13,15 +14,14 @@ class trayectoria_t {
     trayectoria_t &operator=(const trayectoria_t &) = default;
     ~trayectoria_t() = default;
 
-    bool agregar_coordenada(float x, float y);
+    bool agregar_coordenada(aVec2 p);
     bool dibujar(SDL_Renderer *renderer);
 
    private:
     poligono_t linea;
 };
 
-trayectoria_t calcular(float xi, float yi, float vxi, float vyi, float a,
-                       float dt);
+trayectoria_t calcular(aVec2 pi, aVec2 vi, aVec2 a, float dt);
 
 double computar_velocidad(double vi, double a, double dt);
 
