@@ -16,6 +16,7 @@
 #include "obstaculo.h"
 #include "poligono.h"
 #include "recuperador.h"
+#include "renderer.h"
 #include "trayectoria.h"
 #include "utility.h"
 #include "vec2.h"
@@ -156,6 +157,7 @@ int main(int argc, char *argv[]) {
                                 &renderer);
     SDL_SetWindowTitle(window, "Peggle");
 
+    Renderer r(renderer);
     int dormir = 0;
 
     Cannon canon(aVec2(CANON_X, CANON_Y));  // Ángulo del cañón
@@ -376,11 +378,7 @@ int main(int argc, char *argv[]) {
                     if (!vidas.estan_agotadas()) vidas.dibujar(renderer);
 
                     // Dibujamos las paredes:
-                    SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0x00);
-                    SDL_RenderDrawLine(renderer, MIN_X, MIN_Y, MAX_X, MIN_Y);
-                    SDL_RenderDrawLine(renderer, MIN_X, MAX_Y, MAX_X, MAX_Y);
-                    SDL_RenderDrawLine(renderer, MIN_X, MAX_Y, MIN_X, MIN_Y);
-                    SDL_RenderDrawLine(renderer, MAX_X, MAX_Y, MAX_X, MIN_Y);
+                    r.drawScenario();
 
                     // Dibujamos el vector de velocidad:
                     //        SDL_RenderDrawLine(renderer, cx, cy, cx + vx, cy +
