@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "obstaculo.h"
+#include "vec2.h"
 
 // ESTRUCTURAS de los tdas
 
@@ -34,11 +35,7 @@ typedef size_t puntaje_t;
 // double computar_posicion(double pi, double vi, double dt);
 // double computar_velocidad(double vi, double a, double dt);
 
-double modulo(float vx, float vy);
-float producto_interno(float ax, float ay, float bx, float by);
-
-void reflejar(float norm_x, float norm_y, float *cx, float *cy, float *vx,
-              float *vy);
+void reflejar(aVec2 norm, aVec2 &c, aVec2 &v);
 
 // Funciones de la bola
 

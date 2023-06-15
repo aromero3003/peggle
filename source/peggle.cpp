@@ -270,11 +270,6 @@ int main(int argc, char *argv[]) {
                     {
                         bola_t dibujito(MAX_X + 40, MAX_Y - 50, 10,
                                         RESOL_BOLA_OBS);
-                        // bola_t *dibujito =
-                        //     bola_crear(MAX_X + 40, MAX_Y - 50, 10,
-                        //     RESOL_BOLA_OBS);
-                        // bola_dibujar(renderer, dibujito);
-                        // bola_destruir(dibujito);
                         dibujito.dibujar(renderer);
                     }
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
@@ -334,10 +329,6 @@ int main(int argc, char *argv[]) {
                                 calcular(c, v, G_VEC, 0.01);
                             calculada.dibujar(renderer);
                         }
-                        // trayectoria_t calculada =
-                        //     trayectoria_calcular(cx, cy, vx, vy, G, 0.01);
-                        // trayectoria_dibujar(renderer, calculada);
-                        // trayectoria_destruir(calculada);
                     }
 
                     // Rebote contra las paredes:
@@ -350,8 +341,6 @@ int main(int argc, char *argv[]) {
                         cayendo = false;
                         for (obstaculo_t &obs : obstaculos) {
                             if (obs.get_tocado()) obs.set_dibujar(false);
-                            // if (obs.get_tocado(&obs))
-                            //     obs.set_dibujar(&obs, false);
                         }
                         if (!bola_recuperada) {
                             if (!vidas.estan_agotadas())
@@ -363,8 +352,7 @@ int main(int argc, char *argv[]) {
                         }
                     }
 
-                    if (modulo(0, v.y) < 15 ||
-                        modulo(p_estancada.x - c.x, p_estancada.y - c.y) < 0.5)
+                    if (fabs(v.y) < 15 || aDistance(c, p_estancada) < 0.5)
                         bola_trabada++;
                     else
                         bola_trabada = 0;
@@ -372,16 +360,16 @@ int main(int argc, char *argv[]) {
                     if (bola_trabada > 120)
                         for (auto &obs : obstaculos) {
                             if (obs.get_tocado()) obs.set_dibujar(false);
-                            // if (obs.get_tocado(&obs))
-                            //     obs.set_dibujar(&obs, false);
                         }
 
                     // Dibujamos el cañón:
                     canon.draw(renderer);
 
                     // Dibujamos la bola:
-                    bola_t bola(c.x, c.y, BOLA_RADIO, 10);
-                    bola.dibujar(renderer);
+                    {
+                        bola_t bola(c.x, c.y, BOLA_RADIO, 10);
+                        bola.dibujar(renderer);
+                    }
                     // bola_destruir(bola);
 
                     // Dibujamos las vidas
@@ -412,8 +400,7 @@ int main(int argc, char *argv[]) {
                         if (obs.get_dibujar()) {
                             obs.dibujar(renderer);
                             if (obs.distancia(c, norma) < BOLA_RADIO) {
-                                reflejar(norma.x, norma.y, &c.x, &c.y, &v.x,
-                                         &v.y);
+                                reflejar(norma, c, v);
                                 v *= PLASTICIDAD;
                                 if (!obs.es_gris()) {
                                     if (obs.es_naranja() &&

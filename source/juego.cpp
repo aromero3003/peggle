@@ -8,6 +8,7 @@
 #include "obstaculo.h"
 #include "poligono.h"
 #include "tipos.h"
+#include "vec2.h"
 
 // struct bola {
 //     poligono_t forma;
@@ -97,24 +98,19 @@ double computar_posicion(double pi, double vi, double dt) {
 }
 
 */
-double modulo(float vx, float vy) { return sqrt(vx * vx + vy * vy); }
-
-float producto_interno(float ax, float ay, float bx, float by) {
-    return ax * bx + ay * by;
-}
-
-void reflejar(float norm_x, float norm_y, float *cx, float *cy, float *vx,
-              float *vy) {
-    float proy = producto_interno(norm_x, norm_y, *vx, *vy);
+void reflejar(aVec2 norm, aVec2 &c, aVec2 &v) {
+    float proy = aDot(norm, v);
 
     if (proy >= 0) return;
 
-    *vx -= 2 * norm_x * proy;
-    *vy -= 2 * norm_y * proy;
+    v -= 2 * norm * proy;
+    // *vx -= 2 * norm_x * proy;
+    // *vy -= 2 * norm_y * proy;
 
     // Además empujamos a la bola hacia afuera para que no se pegue
-    *cx += norm_x * 0.1;
-    *cy += norm_y * 0.1;
+    // *cx += norm_x * 0.1;
+    // *cy += norm_y * 0.1;
+    c += norm * 0.1;
 }
 
 // ------------------------------------------ VIDAS
