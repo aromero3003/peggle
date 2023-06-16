@@ -18,6 +18,7 @@ struct bola_t {
     aVec2 position() const;
     aVec2 get_velocidad() const;
     bool esta_cayendo() const;
+    bool esta_trabada() const;
 
     bool eyectar(float angle);
 
@@ -28,6 +29,9 @@ struct bola_t {
     aVec2 velocidad;
     float radio;
     bool cayendo;
+
+    bool stucked;
+    uint8_t iterations_stucked;
 };
 
 #endif /* __BOLA_H__ */

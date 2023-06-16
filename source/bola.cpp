@@ -75,3 +75,5 @@ void bola_t::reflejar(aVec2 norm) {
     // centro += norm * 0.1;
     velocidad *= PLASTICIDAD;
 }
+
+bool bola_t::esta_trabada() const { return stucked; }
