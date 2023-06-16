@@ -2,6 +2,8 @@
 #define __TRAYECTORIA_H__
 #include <SDL.h>
 
+#include <vector>
+
 #include "poligono.h"
 #include "vec2.h"
 
@@ -18,7 +20,7 @@ class trayectoria_t {
     bool dibujar(SDL_Renderer *renderer);
 
    private:
-    poligono_t linea;
+    std::vector<aVec2> linea;
 };
 
 trayectoria_t calcular(aVec2 pi, aVec2 vi, aVec2 a, float dt);
