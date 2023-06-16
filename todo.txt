@@ -5,3 +5,7 @@ Arreglar bug al leer obstaculos en movimiento
 Quién debería calcular posicion en cada instante?
     1. La pelota contener una trayectoria, calcularla y agregarle puntos
     2. La trayectoria, la pelota le consulta a la trayectoria cual es su siguiente coordenada
+    3. La trayectoria está deshabilitada momentanemanete
+
+Cada poligono debería ser una clase derivada. Círculo se dibuja de manera diferente.
+Cada obstaculo también

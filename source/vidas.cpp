@@ -5,8 +5,8 @@
 
 vidas_t::vidas_t(size_t n, float cx, float cy) {
     for (int i = 0; i < n - 1; i++)
-        figuras.emplace_back(aVec2(cx, cy + BOLA_RADIO * 3 * i), BOLA_RADIO,
-                             BOLA_RESOL);
+        figuras.emplace_back(aVec2(cx / 2, cy / 2 + BOLA_RADIO * 3 * i),
+                             BOLA_RADIO, BOLA_RESOL);
     dibujadas = n - 1;
 }
 

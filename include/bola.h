@@ -21,7 +21,7 @@ struct bola_t {
 
     bool eyectar(float angle);
 
-    bool dibujar(SDL_Renderer *renderer) const;
+    bool dibujar(SDL_Renderer *renderer);
 
     void imprimir();
 

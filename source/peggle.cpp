@@ -257,6 +257,7 @@ int main(int argc, char *argv[]) {
                         }
 
                         if (event.type == SDL_MOUSEBUTTONDOWN) {
+                            canon.fire();
                             if (!cayendo) {
                                 cayendo = true;
                                 tray = trayectoria_t();
@@ -292,16 +293,19 @@ int main(int argc, char *argv[]) {
                     vidas_escribir(renderer, font, &vidas, MIN_X / 4, MIN_Y);
 #endif
 
+                    b.actualizar(DT);
                     if (cayendo) {
                         // Si la bola está cayendo actualizamos su posición
-                        v = computar_velocidad(v, G_VEC, DT) * ROZAMIENTO;
-                        c = computar_posicion(c, v, DT);
+                        // v = computar_velocidad(v, G_VEC, DT) * ROZAMIENTO;
+                        // c = computar_posicion(c, v, DT);
 
                         // Se computa la velocidad en el siguiente instante para
                         // comparar con la actual luego y determinar  si quedó
                         // estancada
-                        v_estancada = computar_velocidad(v, G_VEC, DT);
-                        p_estancada = computar_posicion(c, v_estancada, DT);
+                        v_estancada =
+                            computar_velocidad(b.velocidad, G_VEC, DT);
+                        p_estancada =
+                            computar_posicion(b.centro, v_estancada, DT);
                         //     computar_posicion(cx, vx * ROZAMIENTO, DT);
                         // bola_estancada_y = computar_posicion(
                         //     cy, bola_estancada_vy * ROZAMIENTO, DT);
@@ -318,30 +322,32 @@ int main(int argc, char *argv[]) {
                         // Si la bola no se disparó establecemos condiciones
                         // iniciales
 
-                        c = canon.tip();
-                        v = aVec2(std::sin(canon.angle()),
-                                  std::cos(canon.angle()));
-                        v *= BOLA_VI;
+                        // c = canon.tip();
+                        // v = aVec2(std::sin(canon.angle()),
+                        //           std::cos(canon.angle()));
+                        // v *= BOLA_VI;
                         // trayectoria_destruir(tray);
                         // tray = NULL;
                         bola_recuperada = false;
                         puntaje_actualizar_multiplicador(&multiplicador,
                                                          naranjas_golpeados);
-                        {
-                            trayectoria_t calculada =
-                                calcular(c, v, G_VEC, 0.01);
-                            calculada.dibujar(renderer);
-                        }
+                        // {
+                        //     trayectoria_t calculada =
+                        //         calcular(c, v, G_VEC, 0.01);
+                        //     calculada.dibujar(renderer);
+                        // }
                     }
 
                     // Rebote contra las paredes:
-                    if (c.x < MIN_X + BOLA_RADIO || c.x > MAX_X - BOLA_RADIO)
-                        v.x = -v.x;
-                    if (c.y < MIN_Y + BOLA_RADIO) v.y = -v.y;
+                    // if (c.x < MIN_X + BOLA_RADIO || c.x > MAX_X - BOLA_RADIO)
+                    //     v.x = -v.x;
+                    // if (c.y < MIN_Y + BOLA_RADIO) v.y = -v.y;
 
                     // Se salió de la pantalla:
-                    if (c.y > MAX_Y - BOLA_RADIO) {
+                    if (b.centro.y > MAX_Y - BOLA_RADIO) {
                         cayendo = false;
+                        canon.reload();
+                        b.reset();
                         for (obstaculo_t &obs : obstaculos) {
                             if (obs.get_tocado()) obs.set_dibujar(false);
                         }
@@ -355,7 +361,8 @@ int main(int argc, char *argv[]) {
                         }
                     }
 
-                    if (fabs(v.y) < 15 || aDistance(c, p_estancada) < 0.5)
+                    if (fabs(b.velocidad.y) < 15 ||
+                        aDistance(b.centro, p_estancada) < 0.5)
                         bola_trabada++;
                     else
                         bola_trabada = 0;
@@ -369,10 +376,11 @@ int main(int argc, char *argv[]) {
                     canon.draw(renderer);
 
                     // Dibujamos la bola:
-                    {
-                        bola_t bola(c, BOLA_RADIO, 10);
-                        bola.dibujar(renderer);
-                    }
+                    b.dibujar(renderer);
+                    // {
+                    //     bola_t bola(c, BOLA_RADIO, 10);
+                    //     bola.dibujar(renderer);
+                    // }
                     // bola_destruir(bola);
 
                     // Dibujamos las vidas
@@ -388,7 +396,7 @@ int main(int argc, char *argv[]) {
                     // Dibujamos el recuperador de bolas
                     recuperador.dibujar(renderer);
                     recuperador.mover(1);
-                    if (recuperador.bola_recuperada(c.x, c.y))
+                    if (recuperador.bola_recuperada(b.centro.x, b.centro.y))
                         bola_recuperada = true;
 
                     // Dibujasmos los obstaculos y realizamos la interacción con
@@ -398,9 +406,10 @@ int main(int argc, char *argv[]) {
                     for (auto &obs : obstaculos) {
                         if (obs.get_dibujar()) {
                             obs.dibujar(renderer);
-                            if (obs.distancia(c, norma) < BOLA_RADIO) {
-                                reflejar(norma, c, v);
-                                v *= PLASTICIDAD;
+                            if (obs.distancia(b.centro, norma) < BOLA_RADIO) {
+                                // reflejar(norma, c, v);
+                                // v *= PLASTICIDAD;
+                                b.reflejar(norma);
                                 if (!obs.es_gris()) {
                                     if (obs.es_naranja() &&
                                         obs.get_dibujar() == true &&

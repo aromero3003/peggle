@@ -31,9 +31,9 @@ bool bola_t::eyectar(float angle) {
 }
 #include <iostream>
 void bola_t::imprimir() {
-    // std::cout << "Centro: (" << centro.x << ";" << centro.y << ") ";
-    // std::cout << std::fixed << std::setprecision(2);
-    // forma.imprimir();
+    std::cout << "Centro: (" << centro.x << ";" << centro.y << ") ";
+    std::cout << std::fixed << std::setprecision(2);
+    forma.imprimir();
 }
 void bola_t::reset() {
     velocidad.setZero();
@@ -47,17 +47,20 @@ aVec2 bola_t::position() const { return centro; }
 aVec2 bola_t::get_velocidad() const { return velocidad; }
 
 void bola_t::set_position(aVec2 p) {
-    forma.trasladar(-centro);
-    forma.trasladar(p);
+    // forma.trasladar(-centro);
+    // forma.imprimir();
+    // forma.trasladar();
     centro = p;
+    // forma.trasladar(p);
+    // centro = p;
 }
 
 void bola_t::actualizar(double dt) {
     if (not cayendo) return;
     velocidad = ROZAMIENTO * computar_velocidad(velocidad, g, dt);
     aVec2 nuevo_centro = computar_posicion(centro, velocidad, dt);
-    std::cout << "nuevo centro = " << nuevo_centro.x << " " << nuevo_centro.y
-              << std::endl;
+    // std::cout << "nuevo centro = " << nuevo_centro.x << " " << nuevo_centro.y
+    //           << std::endl;
     set_position(nuevo_centro);
     // checkear si la bola está estancada
     rebotar_si_hay_pared();
@@ -80,6 +83,9 @@ void bola_t::reflejar(aVec2 norm) {
     velocidad *= PLASTICIDAD;
 }
 
-bool bola_t::dibujar(SDL_Renderer *renderer) const {
-    return forma.dibujar(renderer);
+bool bola_t::dibujar(SDL_Renderer *renderer) {
+    forma.trasladar(centro);
+    forma.dibujar(renderer);
+    forma.trasladar(-centro);
+    return true;
 }

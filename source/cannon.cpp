@@ -27,6 +27,7 @@ bool Cannon::reload() {
     if (not bullet.esta_cayendo()) return false;
     bullet.reset();
     bullet.set_position(tip());
+    bullet.imprimir();
     return true;
 }
 
