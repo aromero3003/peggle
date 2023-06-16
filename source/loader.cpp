@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <ios>
 #include <iostream>
-#include <vector>
+#include <list>
 
 #include "level.h"
 #include "obstaculo.h"
@@ -29,8 +29,7 @@ Loader::Loader(const char *path) : file(path, std::ios::binary) {
 bool Loader::can_continue() { return not file.eof(); }
 
 Level Loader::read_level() {
-    std::vector<obstaculo_t> obs =
-        leer_obstaculos(leer_cantidad_de_obstaculos());
+    std::list<obstaculo_t> obs = leer_obstaculos(leer_cantidad_de_obstaculos());
     // return Level(leer_obstaculos(leer_cantidad_de_obstaculos()));
     return Level(obs);
 }
@@ -71,8 +70,8 @@ obstaculo_t Loader::leer_obstaculo() {
     return obstaculo_t(poligono, col, mov, geo, parametros);
 }
 
-std::vector<obstaculo_t> Loader::leer_obstaculos(size_t n) {
-    std::vector<obstaculo_t> obstaculos;
+std::list<obstaculo_t> Loader::leer_obstaculos(size_t n) {
+    std::list<obstaculo_t> obstaculos;
     for (size_t i = 0; i < n; i++) obstaculos.emplace_back(leer_obstaculo());
     return obstaculos;
 }

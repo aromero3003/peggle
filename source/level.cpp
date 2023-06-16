@@ -7,7 +7,7 @@
 #include "obstaculo.h"
 #include "vec2.h"
 
-Level::Level(std::vector<obstaculo_t> &obstaculos)
+Level::Level(std::list<obstaculo_t> &obstaculos)
     : obstaculos(obstaculos), naranjas(0), naranjas_golpeados(0) {
     for (const obstaculo_t &obs : obstaculos) naranjas += obs.es_naranja();
 }

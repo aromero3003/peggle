@@ -3,7 +3,7 @@
 
 #include <cstddef>
 #include <fstream>
-#include <vector>
+#include <list>
 
 #include "level.h"
 #include "obstaculo.h"
@@ -22,7 +22,7 @@ class Loader {
 
     size_t leer_cantidad_de_obstaculos();
     obstaculo_t leer_obstaculo();
-    std::vector<obstaculo_t> leer_obstaculos(size_t n);
+    std::list<obstaculo_t> leer_obstaculos(size_t n);
 
     void leer_encabezado(color_t &col, movimiento_t &mov, geometria_t &geo);
 

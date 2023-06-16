@@ -3,14 +3,14 @@
 
 #include <SDL_render.h>
 
-#include <vector>
+#include <list>
 
 #include "bola.h"
 #include "obstaculo.h"
 
 class Level {
    public:
-    Level(std::vector<obstaculo_t> &obstaculos);
+    Level(std::list<obstaculo_t> &obstaculos);
     Level(Level &&) = default;
     Level(const Level &) = delete;
     Level &operator=(Level &&) = default;
@@ -24,7 +24,7 @@ class Level {
     void draw(SDL_Renderer *renderer);
 
    private:
-    std::vector<obstaculo_t> obstaculos;
+    std::list<obstaculo_t> obstaculos;
     size_t naranjas, naranjas_golpeados;
     size_t score, multiplier;
 };
