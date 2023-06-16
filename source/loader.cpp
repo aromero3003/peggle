@@ -3,7 +3,10 @@
 #include <cstdint>
 #include <ios>
 #include <iostream>
+#include <vector>
 
+#include "level.h"
+#include "obstaculo.h"
 #include "tipos.h"
 #include "vec2.h"
 
@@ -21,6 +24,15 @@ Loader::Loader(const char *path) : file(path, std::ios::binary) {
         std::cerr << "Error opening " << path << std::endl;
         throw -1;  // TODO añadir excepcion
     }
+}
+
+bool Loader::can_continue() { return not file.eof(); }
+
+Level Loader::read_level() {
+    std::vector<obstaculo_t> obs =
+        leer_obstaculos(leer_cantidad_de_obstaculos());
+    // return Level(leer_obstaculos(leer_cantidad_de_obstaculos()));
+    return Level(obs);
 }
 
 size_t Loader::leer_cantidad_de_obstaculos() {
@@ -59,6 +71,12 @@ obstaculo_t Loader::leer_obstaculo() {
     return obstaculo_t(poligono, col, mov, geo, parametros);
 }
 
+std::vector<obstaculo_t> Loader::leer_obstaculos(size_t n) {
+    std::vector<obstaculo_t> obstaculos;
+    for (size_t i = 0; i < n; i++) obstaculos.emplace_back(leer_obstaculo());
+    return obstaculos;
+}
+
 void Loader::leer_encabezado(color_t &col, movimiento_t &mov,
                              geometria_t &geo) {
     uint8_t encabezado;
@@ -72,14 +90,14 @@ void Loader::leer_encabezado(color_t &col, movimiento_t &mov,
 bool Loader::leer_movimiento_inmovil(int16_t parametros[]) { return true; }
 
 bool Loader::leer_movimiento_circular(int16_t parametros[]) {
-    return (bool)file.read((char *)parametros, 4);
+    return (bool)file.read(reinterpret_cast<char *>(&parametros), 4);
     // if (file.read(parametros, SIZE16B, 3, f) != 3) return false;
     // printf("mov %d, %d, %d\n",parametros[0], parametros[1], parametros[2] );
     return true;
 }
 
 bool Loader::leer_movimiento_horizontal(int16_t parametros[]) {
-    return (bool)file.read((char *)parametros, SIZE16B * 3);
+    return (bool)file.read(reinterpret_cast<char *>(&parametros), SIZE16B * 3);
     // printf("mov %d, %d, %d\n",parametros[0], parametros[1], parametros[2] );
 }
 

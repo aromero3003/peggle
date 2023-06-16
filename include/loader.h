@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 
+#include "level.h"
 #include "obstaculo.h"
 #include "tipos.h"
 class Loader {
@@ -15,6 +16,9 @@ class Loader {
     Loader &operator=(Loader &&) = default;
     Loader &operator=(const Loader &) = delete;
     ~Loader();
+
+    bool can_continue();
+    Level read_level();
 
     size_t leer_cantidad_de_obstaculos();
     obstaculo_t leer_obstaculo();
