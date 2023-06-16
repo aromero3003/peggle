@@ -175,7 +175,6 @@ int main(int argc, char *argv[]) {
 
     Loader loader(argv[1]);
 
-    int16_t cant_obstaculos;
     int nivel = 0;
 
     vidas_t vidas(VIDAS_INICIALES, 60, MIN_Y + BOLA_RADIO);
@@ -197,30 +196,15 @@ int main(int argc, char *argv[]) {
     game_state_t estado = GAME_RUNNING;
 
     while (estado) {
-        cant_obstaculos = loader.leer_cantidad_de_obstaculos();
-        if (cant_obstaculos == 0) {
+        if (not loader.can_continue()) {
             // Si no pude leer más obstaculos, GAME OVER
             estado = GAME_OVER;
         }
-
-        size_t cantidad_naranjas = 0, naranjas_golpeados = 0;
-        puntaje_t puntaje_en_nivel = 0;
-        int multiplicador = 1;
-        nivel++;
-
+        // nivel++;
         vidas.resetear();  // Se setean las vidas a la cantidad inicial
 
-        std::list<obstaculo_t> obstaculos;
-
-        for (size_t i = 0; i < cant_obstaculos;
-             i++) {  // Se levantan todos los obstáculos del nivel
-            obstaculo_t nuevo = loader.leer_obstaculo();
-            if (nuevo.es_naranja()) cantidad_naranjas++;
-            obstaculos.push_back(nuevo);
-        }
-
+        Level level = loader.read_level();
         unsigned int ticks = SDL_GetTicks();
-
         bool pasar_nivel = false;
 #ifdef TTF
         uint8_t color_ = 0xFF;
@@ -297,8 +281,7 @@ int main(int argc, char *argv[]) {
                     } else {
                         tray = trayectoria_t();
                         bola_recuperada = false;
-                        puntaje_actualizar_multiplicador(&multiplicador,
-                                                         naranjas_golpeados);
+                        level.update_multiplier();
                         // {
                         //     trayectoria_t calculada =
                         //         calcular(c, v, G_VEC, 0.01);
@@ -310,9 +293,7 @@ int main(int argc, char *argv[]) {
                     if (b.centro.y > MAX_Y - BOLA_RADIO) {
                         canon.reload();
                         b.reset();
-                        for (obstaculo_t &obs : obstaculos) {
-                            if (obs.get_tocado()) obs.set_dibujar(false);
-                        }
+                        level.clean_touched_obstacles();
                         if (!bola_recuperada) {
                             if (!vidas.estan_agotadas())
                                 vidas.quitar();
@@ -324,8 +305,7 @@ int main(int argc, char *argv[]) {
                     }
 
                     if (b.esta_trabada()) {
-                        for (auto &obs : obstaculos)
-                            if (obs.get_tocado()) obs.set_dibujar(false);
+                        level.clean_touched_obstacles();
                     }
 
                     // Dibujamos el cañón:
@@ -353,33 +333,15 @@ int main(int argc, char *argv[]) {
 
                     // Dibujamos los obstaculos y realizamos la interacción con
                     // la bola
-                    aVec2 norma;
+                    level.handle_collisions(b);
+                    level.move_obstacles(DT);
+                    level.draw(renderer);
 
-                    for (auto &obs : obstaculos) {
-                        if (obs.get_dibujar()) {
-                            obs.dibujar(renderer);
-                            if (obs.distancia(b.centro, norma) < BOLA_RADIO) {
-                                b.reflejar(norma);
-                                if (!obs.es_gris()) {
-                                    if (obs.es_naranja() &&
-                                        obs.get_dibujar() == true &&
-                                        obs.get_tocado() == false)
-                                        naranjas_golpeados++;
-                                    puntaje_actualizar(&puntaje_en_nivel, obs,
-                                                       multiplicador);
-                                    obs.set_tocado(true);
-                                }
-                            }
-                        }
-                        obs.mover(DT);
-                    }
-
-                    if (naranjas_golpeados == cantidad_naranjas) {
+                    if (level.is_completed()) {
                         canon.reload();
                         b.reset();
                         estado = GAME_LEVEL_UP;
-                        naranjas_golpeados = 0;
-                        puntaje_total += puntaje_en_nivel;
+                        // puntaje_total += puntaje_en_nivel;
                         SDL_Delay(300);
                         break;
                     }
@@ -442,14 +404,16 @@ int main(int argc, char *argv[]) {
                         }
 
                         if (event.type == SDL_MOUSEBUTTONDOWN) {
-                            naranjas_golpeados = 0;
-                            puntaje_en_nivel = 0;
+                            // naranjas_golpeados = 0;
+                            // puntaje_en_nivel = 0;
                             estado = GAME_RUNNING;
+                            /*
                             for (auto &obs : obstaculos) {
                                 resetear_obstaculos(obs);
                                 // obs.set_tocado(&obs, false);
                                 // obs.set_dibujar(&obs, true);
                             }
+                            */
                             vidas.resetear();
 #ifdef TTF
                             contador_game_over = CONTADOR_GAME_OVER;
@@ -462,9 +426,10 @@ int main(int argc, char *argv[]) {
 
                         continue;
                     }
-                    for (auto &obs : obstaculos) {
-                        return obs.dibujar((SDL_Renderer *)renderer);
-                    }
+                    level.draw(renderer);
+                    // for (auto &obs : obstaculos) {
+                    //     return obs.dibujar((SDL_Renderer *)renderer);
+                    // }
 
 #ifdef TTF
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0x60, 0x00, 0x00);
