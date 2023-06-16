@@ -164,13 +164,6 @@ int main(int argc, char *argv[]) {
     Cannon canon(aVec2(CANON_X, CANON_Y), b);  // Ángulo del cañón
     bool cayendo = false;                      // ¿Hay bola disparada?
 
-    // aVec2 c;  // Centro de la bola
-    // aVec2 v;  // Velocidad de la bola
-
-    aVec2 v_estancada;  // Estos 2 parametros para calcular el modulo de
-    aVec2 p_estancada;  // la posición y empezar un contador para
-    //                           determinar si la bola quedó estancada;
-
     bool bola_recuperada =
         false;  // Para saber si la bola entró al recuperador de bolas
 
@@ -229,9 +222,7 @@ int main(int argc, char *argv[]) {
 
         unsigned int ticks = SDL_GetTicks();
 
-        int bola_trabada = 0;  // Contador para saber si la bola quedó estancada
         bool pasar_nivel = false;
-        ;
 #ifdef TTF
         uint8_t color_ = 0xFF;
         int color_cambiar = -1;
@@ -298,15 +289,7 @@ int main(int argc, char *argv[]) {
 #endif
 
                     b.actualizar(DT);
-                    if (cayendo) {
-                        // Se computa la velocidad en el siguiente instante para
-                        // comparar con la actual luego y determinar  si quedó
-                        // estancada
-                        v_estancada =
-                            computar_velocidad(b.velocidad, G_VEC, DT);
-                        p_estancada =
-                            computar_posicion(b.centro, v_estancada, DT);
-
+                    if (b.esta_cayendo()) {
                         // Se agrega una coordenada cada que el contador supera
                         // 5
                         if (contador_trayectoria > 5) {
@@ -345,16 +328,10 @@ int main(int argc, char *argv[]) {
                         }
                     }
 
-                    if (fabs(b.velocidad.y) < 15 ||
-                        aDistance(b.centro, p_estancada) < 0.5)
-                        bola_trabada++;
-                    else
-                        bola_trabada = 0;
-
-                    if (bola_trabada > 120)
-                        for (auto &obs : obstaculos) {
+                    if (b.esta_trabada()) {
+                        for (auto &obs : obstaculos)
                             if (obs.get_tocado()) obs.set_dibujar(false);
-                        }
+                    }
 
                     // Dibujamos el cañón:
                     r.drawCannon(canon);

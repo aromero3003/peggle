@@ -1,5 +1,6 @@
 #include "bola.h"
 
+#include <cmath>
 #include <iomanip>
 
 #include "config.h"
@@ -54,6 +55,16 @@ void bola_t::actualizar(double dt) {
     aVec2 nuevo_centro = computar_posicion(centro, velocidad, dt);
     // std::cout << "nuevo centro = " << nuevo_centro.x << " " << nuevo_centro.y
     //           << std::endl;
+    if (std::fabs(velocidad.y) < 15 and aDistance(centro, nuevo_centro) < 0.5)
+        iterations_stucked++;
+    else {
+        iterations_stucked = 0;
+        stucked = false;
+    }
+
+    if (iterations_stucked > 120) {
+        stucked = true;
+    }
     set_position(nuevo_centro);
     // checkear si la bola está estancada
     rebotar_si_hay_pared();
