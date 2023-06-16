@@ -376,7 +376,8 @@ int main(int argc, char *argv[]) {
                     canon.draw(renderer);
 
                     // Dibujamos la bola:
-                    b.dibujar(renderer);
+                    // b.dibujar(renderer);
+                    r.drawBall(b);
                     // {
                     //     bola_t bola(c, BOLA_RADIO, 10);
                     //     bola.dibujar(renderer);
@@ -384,7 +385,8 @@ int main(int argc, char *argv[]) {
                     // bola_destruir(bola);
 
                     // Dibujamos las vidas
-                    if (!vidas.estan_agotadas()) vidas.dibujar(renderer);
+                    if (!vidas.estan_agotadas())
+                        r.drawLifes(vidas);  // vidas.dibujar(renderer);
 
                     // Dibujamos las paredes:
                     r.drawScenario();

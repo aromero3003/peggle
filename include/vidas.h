@@ -1,25 +1,27 @@
 #ifndef __VIDAS_H__
 #define __VIDAS_H__
 
+#include <cstddef>
 #include <vector>
 
-#include "bola.h"
+#include "vec2.h"
 
 struct vidas_t {
-    vidas_t(size_t n, float cx, float cy);
+    vidas_t(unsigned int n, float cx, float cy);
 
     // void vidas_agregar(vidas_t *vidas);
     void quitar();
 
-    size_t restantes();
-    bool estan_agotadas();
+    size_t restantes() const;
+    bool estan_agotadas() const;
+    aVec2 position() const;
 
-    bool dibujar(SDL_Renderer *renderer);
     void resetear();
 
    private:
-    std::vector<bola_t> figuras;
-    int dibujadas;
+    aVec2 start_position;
+    unsigned int total;
+    unsigned int dibujadas;
 };
 
 #endif /* __VIDAS_H__ */

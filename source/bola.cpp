@@ -12,13 +12,7 @@
 const aVec2 g(0, G);
 
 bola_t::bola_t(aVec2 c, float radio, unsigned int resolucion)
-    : centro(c),
-      velocidad(aVec2Zero),
-      forma(radio, resolucion),
-      radio(radio),
-      cayendo(false) {
-    forma.trasladar(centro);
-}
+    : centro(c), velocidad(aVec2Zero), radio(radio), cayendo(false) {}
 
 bola_t::bola_t(float radio, unsigned int resolucion)
     : bola_t(aVec2Zero, radio, resolucion) {}
@@ -31,9 +25,8 @@ bool bola_t::eyectar(float angle) {
 }
 #include <iostream>
 void bola_t::imprimir() {
-    std::cout << "Centro: (" << centro.x << ";" << centro.y << ") ";
     std::cout << std::fixed << std::setprecision(2);
-    forma.imprimir();
+    std::cout << "Centro: (" << centro.x << ";" << centro.y << ") ";
 }
 void bola_t::reset() {
     velocidad.setZero();
@@ -81,11 +74,4 @@ void bola_t::reflejar(aVec2 norm) {
     // velocidad -= 2 * norm * proy;
     // centro += norm * 0.1;
     velocidad *= PLASTICIDAD;
-}
-
-bool bola_t::dibujar(SDL_Renderer *renderer) {
-    forma.trasladar(centro);
-    forma.dibujar(renderer);
-    forma.trasladar(-centro);
-    return true;
 }

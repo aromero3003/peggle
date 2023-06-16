@@ -21,14 +21,11 @@ struct bola_t {
 
     bool eyectar(float angle);
 
-    bool dibujar(SDL_Renderer *renderer);
-
     void imprimir();
 
     // private:
     aVec2 centro;
     aVec2 velocidad;
-    poligono_t forma;
     float radio;
     bool cayendo;
 };
