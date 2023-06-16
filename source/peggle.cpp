@@ -251,22 +251,26 @@ int main(int argc, char *argv[]) {
                             break;
                         }
 
-                        if (event.type == SDL_KEYUP) {
-                            if (event.key.keysym.sym == SDLK_q)
-                                estado = GAME_LEVEL_UP;
-                        }
+                        switch (event.type) {
+                            case SDL_KEYUP:
+                                if (event.key.keysym.sym == SDLK_q)
+                                    estado = GAME_LEVEL_UP;
+                                break;
 
-                        if (event.type == SDL_MOUSEBUTTONDOWN) {
-                            canon.fire();
-                            if (!cayendo) {
-                                cayendo = true;
-                                tray = trayectoria_t();
-                            }
-                        } else if (event.type == SDL_MOUSEMOTION) {
-                            canon.update(atan2(event.motion.x - CANON_X,
-                                               event.motion.y - CANON_Y));
+                            case SDL_MOUSEBUTTONDOWN:
+                                canon.fire();
+                                if (!cayendo) {
+                                    cayendo = true;
+                                    // tray = trayectoria_t();
+                                }
+                            case SDL_MOUSEMOTION:
+                                canon.update(atan2(event.motion.x - CANON_X,
+                                                   event.motion.y - CANON_Y));
+                                break;
+                            default:
+                                continue;
+                                break;
                         }
-                        continue;
                     }
 #ifdef TTF
                     // escribir_texto(renderer, font, "Peggle", 100, 20);
@@ -295,10 +299,6 @@ int main(int argc, char *argv[]) {
 
                     b.actualizar(DT);
                     if (cayendo) {
-                        // Si la bola está cayendo actualizamos su posición
-                        // v = computar_velocidad(v, G_VEC, DT) * ROZAMIENTO;
-                        // c = computar_posicion(c, v, DT);
-
                         // Se computa la velocidad en el siguiente instante para
                         // comparar con la actual luego y determinar  si quedó
                         // estancada
@@ -306,9 +306,6 @@ int main(int argc, char *argv[]) {
                             computar_velocidad(b.velocidad, G_VEC, DT);
                         p_estancada =
                             computar_posicion(b.centro, v_estancada, DT);
-                        //     computar_posicion(cx, vx * ROZAMIENTO, DT);
-                        // bola_estancada_y = computar_posicion(
-                        //     cy, bola_estancada_vy * ROZAMIENTO, DT);
 
                         // Se agrega una coordenada cada que el contador supera
                         // 5
@@ -319,15 +316,6 @@ int main(int argc, char *argv[]) {
                         tray.dibujar(renderer);
                         contador_trayectoria++;
                     } else {
-                        // Si la bola no se disparó establecemos condiciones
-                        // iniciales
-
-                        // c = canon.tip();
-                        // v = aVec2(std::sin(canon.angle()),
-                        //           std::cos(canon.angle()));
-                        // v *= BOLA_VI;
-                        // trayectoria_destruir(tray);
-                        // tray = NULL;
                         bola_recuperada = false;
                         puntaje_actualizar_multiplicador(&multiplicador,
                                                          naranjas_golpeados);
@@ -337,11 +325,6 @@ int main(int argc, char *argv[]) {
                         //     calculada.dibujar(renderer);
                         // }
                     }
-
-                    // Rebote contra las paredes:
-                    // if (c.x < MIN_X + BOLA_RADIO || c.x > MAX_X - BOLA_RADIO)
-                    //     v.x = -v.x;
-                    // if (c.y < MIN_Y + BOLA_RADIO) v.y = -v.y;
 
                     // Se salió de la pantalla:
                     if (b.centro.y > MAX_Y - BOLA_RADIO) {
@@ -395,7 +378,7 @@ int main(int argc, char *argv[]) {
                     if (recuperador.bola_recuperada(b.centro.x, b.centro.y))
                         bola_recuperada = true;
 
-                    // Dibujasmos los obstaculos y realizamos la interacción con
+                    // Dibujamos los obstaculos y realizamos la interacción con
                     // la bola
                     aVec2 norma;
 
@@ -403,8 +386,6 @@ int main(int argc, char *argv[]) {
                         if (obs.get_dibujar()) {
                             obs.dibujar(renderer);
                             if (obs.distancia(b.centro, norma) < BOLA_RADIO) {
-                                // reflejar(norma, c, v);
-                                // v *= PLASTICIDAD;
                                 b.reflejar(norma);
                                 if (!obs.es_gris()) {
                                     if (obs.es_naranja() &&
