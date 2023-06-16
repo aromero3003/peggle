@@ -18,27 +18,6 @@ add_executable(Peggle source/juego.cpp ./source/level.cpp source/renderer.cpp so
 target_include_directories(Peggle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 find_package(SDL2 REQUIRED)
+target_link_libraries(Peggle SDL2_ttf) # hacer opcional
 target_link_libraries(Peggle ${SDL2_LIBRARIES})
 include_directories(Peggle ${SDL2_INCLUDE_DIRS})
-
-
-
-# add_executable(testSFML ./.main_renderer.cpp src/ball.cpp src/vec2.cpp)
-# target_include_directories(testSFML PRIVATE "${PROJECT_BINARY_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/include)
-# target_link_libraries(testSFML sfml-graphics)
-
-# Including SFML
-
-# # Including CxxTest
-#
-# file(GLOB_RECURSE TEST_FOO_HEADERS test/poligonotest.h)
-#
-# find_package(CxxTest)
-# if(CXXTEST_FOUND)
-#     include_directories(${CXXTEST_INCLUDE_DIR})
-#     enable_testing()
-#     CXXTEST_ADD_TEST(unittest-poligon runner-poligon.cpp src/poligono.cpp ${TEST_FOO_HEADERS})
-#     target_include_directories(unittest-poligon PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-# endif()
-#
-
