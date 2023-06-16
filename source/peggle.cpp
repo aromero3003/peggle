@@ -164,8 +164,8 @@ int main(int argc, char *argv[]) {
     Cannon canon(aVec2(CANON_X, CANON_Y), b);  // Ángulo del cañón
     bool cayendo = false;                      // ¿Hay bola disparada?
 
-    aVec2 c;  // Centro de la bola
-    aVec2 v;  // Velocidad de la bola
+    // aVec2 c;  // Centro de la bola
+    // aVec2 v;  // Velocidad de la bola
 
     aVec2 v_estancada;  // Estos 2 parametros para calcular el modulo de
     aVec2 p_estancada;  // la posición y empezar un contador para
@@ -310,12 +310,13 @@ int main(int argc, char *argv[]) {
                         // Se agrega una coordenada cada que el contador supera
                         // 5
                         if (contador_trayectoria > 5) {
-                            tray.agregar_coordenada(c);
+                            tray.agregar_coordenada(b.centro);
                             contador_trayectoria = 0;
                         }
                         tray.dibujar(renderer);
                         contador_trayectoria++;
                     } else {
+                        tray = trayectoria_t();
                         bola_recuperada = false;
                         puntaje_actualizar_multiplicador(&multiplicador,
                                                          naranjas_golpeados);
