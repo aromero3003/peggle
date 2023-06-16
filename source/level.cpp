@@ -38,7 +38,8 @@ size_t Level::update_score(const obstaculo_t &obs) {
             break;
     }
     // *puntos_totales = *puntos_totales + puntaje_azul * multiplicador;
-    return score += puntaje_azul * multiplier;
+    score += puntaje_azul * multiplier;
+    return puntaje_azul * multiplier;
 }
 
 size_t Level::update_multiplier() {
