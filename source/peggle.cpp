@@ -163,8 +163,8 @@ int main(int argc, char *argv[]) {
     bola_t b(BOLA_RADIO, BOLA_RESOL);
     Cannon canon(aVec2(CANON_X, CANON_Y), b);  // Ángulo del cañón
 
-    size_t contador_trayectoria =
-        20;  // contador para actualizar la trayectoria en intervalos de 5
+    // contador para actualizar la trayectoria en intervalos de 5
+    size_t contador_trayectoria = 0;
 
     puntaje_t puntaje_total = 0;
 
@@ -293,19 +293,8 @@ int main(int argc, char *argv[]) {
                             vidas.quitar();
                         }
                         canon.reload();
-                        b.reset();
                         level.update_multiplier();
                         level.clean_touched_obstacles();
-                        /*
-                        if (!bola_recuperada) {
-                            if (!vidas.estan_agotadas())
-                                vidas.quitar();
-                            else {
-                                estado = GAME_LEVEL_FAILED;
-                                break;
-                            }
-                        }
-                        */
                     }
 
                     if (b.esta_trabada()) level.clean_touched_obstacles();
@@ -331,7 +320,6 @@ int main(int argc, char *argv[]) {
 
                     if (level.is_completed()) {
                         canon.reload();
-                        b.reset();
                         estado = GAME_LEVEL_UP;
                         // puntaje_total += puntaje_en_nivel;
                         SDL_Delay(300);
