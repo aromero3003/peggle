@@ -8,7 +8,11 @@
 #include "vec2.h"
 
 Level::Level(std::list<obstaculo_t> &obstaculos)
-    : obstaculos(obstaculos), naranjas(0), naranjas_golpeados(0) {
+    : obstaculos(obstaculos),
+      naranjas(0),
+      naranjas_golpeados(0),
+      score(0),
+      multiplier(1) {
     for (const obstaculo_t &obs : obstaculos) naranjas += obs.es_naranja();
 }
 
@@ -34,7 +38,7 @@ size_t Level::update_score(const obstaculo_t &obs) {
             break;
     }
     // *puntos_totales = *puntos_totales + puntaje_azul * multiplicador;
-    return puntaje_azul * multiplier;
+    return score += puntaje_azul * multiplier;
 }
 
 size_t Level::update_multiplier() {
@@ -59,6 +63,7 @@ void Level::handle_collisions(bola_t &bola) {
                 naranjas_golpeados += obs.es_naranja() and obs.get_dibujar() and
                                       not obs.get_tocado();
                 // puntaje_actualizar(&puntaje_en_nivel, obs, multiplicador);
+                update_score(obs);
                 obs.set_tocado(true);
             }
         }
