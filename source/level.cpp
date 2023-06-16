@@ -71,12 +71,17 @@ void Level::handle_collisions(bola_t &bola) {
     }
 }
 
+void Level::move_obstacles(double dt) {
+    for (auto &obs : obstaculos) obs.mover(dt);
+}
+
 void Level::clean_touched_obstacles() {
     for (auto &obs : obstaculos)
         if (obs.get_tocado()) obs.set_dibujar(false);
 }
 
+bool Level::is_completed() const { return naranjas == naranjas_golpeados; }
+
 void Level::draw(SDL_Renderer *r) {
-    for (auto &obs : obstaculos)
-        if (obs.get_tocado()) obs.set_dibujar(false);
+    for (auto &obs : obstaculos) obs.dibujar(r);
 }

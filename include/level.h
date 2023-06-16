@@ -17,11 +17,14 @@ class Level {
     Level &operator=(const Level &) = delete;
     ~Level() = default;
 
+    void move_obstacles(double dt);
     void handle_collisions(bola_t &bola);
     void clean_touched_obstacles();
     size_t update_score(const obstaculo_t &obs);
     size_t update_multiplier();
     void draw(SDL_Renderer *renderer);
+
+    bool is_completed() const;
 
    private:
     std::list<obstaculo_t> obstaculos;
