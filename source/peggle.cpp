@@ -373,16 +373,10 @@ int main(int argc, char *argv[]) {
                         }
 
                     // Dibujamos el cañón:
-                    canon.draw(renderer);
+                    r.drawCannon(canon);
 
                     // Dibujamos la bola:
-                    // b.dibujar(renderer);
                     r.drawBall(b);
-                    // {
-                    //     bola_t bola(c, BOLA_RADIO, 10);
-                    //     bola.dibujar(renderer);
-                    // }
-                    // bola_destruir(bola);
 
                     // Dibujamos las vidas
                     if (!vidas.estan_agotadas())
@@ -474,14 +468,10 @@ int main(int argc, char *argv[]) {
 #endif
 
                     // Dibujamos el cañón:
-                    canon.draw(renderer);
+                    r.drawCannon(canon);
 
                     // Dibujamos las paredes:
-                    SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0x00);
-                    SDL_RenderDrawLine(renderer, MIN_X, MIN_Y, MAX_X, MIN_Y);
-                    SDL_RenderDrawLine(renderer, MIN_X, MAX_Y, MAX_X, MAX_Y);
-                    SDL_RenderDrawLine(renderer, MIN_X, MAX_Y, MIN_X, MIN_Y);
-                    SDL_RenderDrawLine(renderer, MAX_X, MAX_Y, MAX_X, MIN_Y);
+                    r.drawScenario();
 
                     break;
                 }
@@ -572,15 +562,10 @@ int main(int argc, char *argv[]) {
 #endif
 
                     // Dibujamos el cañón:
-                    SDL_SetRenderDrawColor(renderer, 0xFE, 0XFE, 0XFE, 0X00);
-                    canon.draw(renderer);
+                    r.drawCannon(canon);
 
                     // Dibujamos las paredes:
-                    SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0x00);
-                    SDL_RenderDrawLine(renderer, MIN_X, MIN_Y, MAX_X, MIN_Y);
-                    SDL_RenderDrawLine(renderer, MIN_X, MAX_Y, MAX_X, MAX_Y);
-                    SDL_RenderDrawLine(renderer, MIN_X, MAX_Y, MIN_X, MIN_Y);
-                    SDL_RenderDrawLine(renderer, MAX_X, MAX_Y, MAX_X, MIN_Y);
+                    r.drawScenario();
                 }
 
                 break;
@@ -616,11 +601,7 @@ int main(int argc, char *argv[]) {
 #endif
 
                     // Dibujamos las paredes:
-                    SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0x00);
-                    SDL_RenderDrawLine(renderer, MIN_X, MIN_Y, MAX_X, MIN_Y);
-                    SDL_RenderDrawLine(renderer, MIN_X, MAX_Y, MAX_X, MAX_Y);
-                    SDL_RenderDrawLine(renderer, MIN_X, MAX_Y, MIN_X, MIN_Y);
-                    SDL_RenderDrawLine(renderer, MAX_X, MAX_Y, MAX_X, MIN_Y);
+                    r.drawScenario();
 
                     break;
 

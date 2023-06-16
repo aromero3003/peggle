@@ -3,7 +3,9 @@
 #include <SDL_render.h>
 
 #include "bola.h"
+#include "cannon.h"
 #include "config.h"
+#include "vec2.h"
 
 Renderer::Renderer(SDL_Renderer *renderer) : r(renderer) {}
 
@@ -13,6 +15,11 @@ void Renderer::drawScenario() const {
     SDL_RenderDrawLine(r, MIN_X, MAX_Y, MAX_X, MAX_Y);
     SDL_RenderDrawLine(r, MIN_X, MAX_Y, MIN_X, MIN_Y);
     SDL_RenderDrawLine(r, MAX_X, MAX_Y, MAX_X, MIN_Y);
+}
+
+void Renderer::drawCannon(const Cannon &cannon) const {
+    aVec2 cannon_tip = cannon.tip();
+    SDL_RenderDrawLine(r, CANON_X, CANON_Y, cannon_tip.x, cannon_tip.y);
 }
 
 void drawCircle(SDL_Renderer *renderer, float center_x, float center_y,
