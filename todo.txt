@@ -2,6 +2,8 @@ Arreglar bug al leer obstaculos en movimiento
    Probablemente sea un casteo (char *) de 2bytes
    Hay que usar reinterpret_cast<char *>(& variable)
 
+Arreglar bug el cañon se pasa del limite al mover el mouse
+
 Quién debería calcular posicion en cada instante?
     1. La pelota contener una trayectoria, calcularla y agregarle puntos
     2. La trayectoria, la pelota le consulta a la trayectoria cual es su siguiente coordenada
