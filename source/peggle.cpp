@@ -162,7 +162,6 @@ int main(int argc, char *argv[]) {
 
     bola_t b(BOLA_RADIO, BOLA_RESOL);
     Cannon canon(aVec2(CANON_X, CANON_Y), b);  // Ángulo del cañón
-    bool cayendo = false;                      // ¿Hay bola disparada?
 
     bool bola_recuperada =
         false;  // Para saber si la bola entró al recuperador de bolas
@@ -250,10 +249,7 @@ int main(int argc, char *argv[]) {
 
                             case SDL_MOUSEBUTTONDOWN:
                                 canon.fire();
-                                if (!cayendo) {
-                                    cayendo = true;
-                                    // tray = trayectoria_t();
-                                }
+                                // tray = trayectoria_t();
                             case SDL_MOUSEMOTION:
                                 canon.update(atan2(event.motion.x - CANON_X,
                                                    event.motion.y - CANON_Y));
@@ -312,7 +308,6 @@ int main(int argc, char *argv[]) {
 
                     // Se salió de la pantalla:
                     if (b.centro.y > MAX_Y - BOLA_RADIO) {
-                        cayendo = false;
                         canon.reload();
                         b.reset();
                         for (obstaculo_t &obs : obstaculos) {
@@ -380,11 +375,12 @@ int main(int argc, char *argv[]) {
                     }
 
                     if (naranjas_golpeados == cantidad_naranjas) {
+                        canon.reload();
+                        b.reset();
                         estado = GAME_LEVEL_UP;
                         naranjas_golpeados = 0;
                         puntaje_total += puntaje_en_nivel;
                         SDL_Delay(300);
-                        cayendo = false;
                         break;
                     }
                     break;
