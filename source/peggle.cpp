@@ -163,9 +163,6 @@ int main(int argc, char *argv[]) {
     bola_t b(BOLA_RADIO, BOLA_RESOL);
     Cannon canon(aVec2(CANON_X, CANON_Y), b);  // Ángulo del cañón
 
-    bool bola_recuperada =
-        false;  // Para saber si la bola entró al recuperador de bolas
-
     size_t contador_trayectoria =
         20;  // contador para actualizar la trayectoria en intervalos de 5
 
@@ -268,10 +265,9 @@ int main(int argc, char *argv[]) {
                     vidas_escribir(renderer, font, &vidas, MIN_X / 4, MIN_Y);
 #endif
 
-                    b.actualizar(DT);
                     if (b.esta_cayendo()) {
-                        // Se agrega una coordenada cada que el contador supera
-                        // 5
+                        b.actualizar(DT);
+                        // Se agrega una coordenada cada 5 iteraciones
                         if (contador_trayectoria > 5) {
                             tray.agregar_coordenada(b.centro);
                             contador_trayectoria = 0;
@@ -280,8 +276,6 @@ int main(int argc, char *argv[]) {
                         contador_trayectoria++;
                     } else {
                         tray = trayectoria_t();
-                        bola_recuperada = false;
-                        level.update_multiplier();
                         // {
                         //     trayectoria_t calculada =
                         //         calcular(c, v, G_VEC, 0.01);
@@ -291,9 +285,18 @@ int main(int argc, char *argv[]) {
 
                     // Se salió de la pantalla:
                     if (b.centro.y > MAX_Y - BOLA_RADIO) {
+                        if (not recuperador.recuperar(b)) {
+                            if (vidas.estan_agotadas()) {
+                                estado = GAME_LEVEL_FAILED;
+                                break;
+                            }
+                            vidas.quitar();
+                        }
                         canon.reload();
                         b.reset();
+                        level.update_multiplier();
                         level.clean_touched_obstacles();
+                        /*
                         if (!bola_recuperada) {
                             if (!vidas.estan_agotadas())
                                 vidas.quitar();
@@ -302,24 +305,15 @@ int main(int argc, char *argv[]) {
                                 break;
                             }
                         }
+                        */
                     }
 
-                    if (b.esta_trabada()) {
-                        level.clean_touched_obstacles();
-                    }
+                    if (b.esta_trabada()) level.clean_touched_obstacles();
 
-                    // Dibujamos el cañón:
-                    r.drawCannon(canon);
-
-                    // Dibujamos la bola:
-                    r.drawBall(b);
-
-                    // Dibujamos las vidas
-                    if (!vidas.estan_agotadas())
-                        r.drawLifes(vidas);  // vidas.dibujar(renderer);
-
-                    // Dibujamos las paredes:
-                    r.drawScenario();
+                    r.drawCannon(canon);  // Dibujamos el cañón:
+                    r.drawBall(b);        // Dibujamos la bola:
+                    r.drawScenario();     // Dibujamos las paredes:
+                    r.drawLifes(vidas);   // Dibujamos las vidas
 
                     // Dibujamos el vector de velocidad:
                     //        SDL_RenderDrawLine(renderer, cx, cy, cx + vx, cy +
@@ -328,8 +322,6 @@ int main(int argc, char *argv[]) {
                     // Dibujamos el recuperador de bolas
                     recuperador.dibujar(renderer);
                     recuperador.mover(1);
-                    if (recuperador.bola_recuperada(b.centro.x, b.centro.y))
-                        bola_recuperada = true;
 
                     // Dibujamos los obstaculos y realizamos la interacción con
                     // la bola

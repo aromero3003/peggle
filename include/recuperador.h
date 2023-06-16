@@ -1,6 +1,7 @@
 #ifndef __RECUPERADOR_H__
 #define __RECUPERADOR_H__
 
+#include "bola.h"
 #include "poligono.h"
 
 class recuperador_t {
@@ -16,7 +17,7 @@ class recuperador_t {
     void mover(float dt);
     void dibujar(SDL_Renderer *renderer) const;
 
-    bool bola_recuperada(float cx, float cy) const;
+    bool recuperar(bola_t &b) const;
 
    private:
     poligono_t r;

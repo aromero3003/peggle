@@ -1,5 +1,6 @@
 #include "recuperador.h"
 
+#include "bola.h"
 #include "config.h"
 #include "vec2.h"
 
@@ -20,6 +21,6 @@ void recuperador_t::dibujar(SDL_Renderer *renderer) const {
     r.dibujar(renderer);
 }
 
-bool recuperador_t::bola_recuperada(float cx, float cy) const {
-    return r.punto_dentro(aVec2(cx, cy));
+bool recuperador_t::recuperar(bola_t &bola) const {
+    return r.punto_dentro(bola.position());
 }
