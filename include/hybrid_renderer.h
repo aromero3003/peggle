@@ -6,6 +6,7 @@
 #include "level.h"
 #include "lifes.h"
 #include "renderer.h"
+#include "vec2.h"
 
 class HybridRenderer : public Renderer {
    public:
@@ -25,6 +26,8 @@ class HybridRenderer : public Renderer {
 
    private:
     TTF_Font *font;
+
+    void writeText(const char *s, aVec2 position, bool centered);
 };
 
 #endif /* __HYBRID_RENDERER_H__ */

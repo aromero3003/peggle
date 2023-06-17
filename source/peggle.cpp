@@ -148,11 +148,13 @@ int main(int argc, char *argv[]) {
 
     // SDL_Init(SDL_INIT_VIDEO);
 
-#ifdef TTF2
+    // #ifdef TTF2
+    //     HybridRenderer r(VENTANA_ANCHO, VENTANA_ALTO, 0);
+    // #else
+    //     Renderer r(VENTANA_ANCHO, VENTANA_ALTO, 0);
+    // #endif  // TTF2
+
     HybridRenderer r(VENTANA_ANCHO, VENTANA_ALTO, 0);
-#else
-    Renderer r(VENTANA_ANCHO, VENTANA_ALTO, 0);
-#endif  // TTF2
 
 #ifdef TTF
     TTF_Init();
@@ -179,7 +181,6 @@ int main(int argc, char *argv[]) {
 
     Lifes vidas(VIDAS_INICIALES, 60, MIN_Y + BOLA_RADIO);
     Retriever recuperador(60, 10, 0.6);
-    // game_state_t estado = GAME_RUNNING;
 
     while (game.state) {
         if (game.current_level + 1 == game.getTotalLevels()) {
@@ -194,6 +195,7 @@ int main(int argc, char *argv[]) {
         int color_cambiar = -1;
         int contador_game_over = CONTADOR_GAME_OVER;
 #endif
+
         while (game.state) {
             r.setColor(0x00, 0x00, 0x00, 0x00);
             r.clear();
@@ -303,6 +305,7 @@ int main(int argc, char *argv[]) {
                     r.drawLifes(vidas);
                     r.drawRetriever(recuperador);
                     r.drawLevel(level);
+                    r.drawTitle();
 
                     if (level->is_completed()) {
                         canon.reload();
@@ -358,7 +361,7 @@ int main(int argc, char *argv[]) {
 
                     r.drawCannon(canon);  // Dibujamos el cañón:
                     r.drawScenario();     // Dibujamos las paredes:
-
+                    r.drawTitle();
                     break;
                 }
 
@@ -442,6 +445,7 @@ int main(int argc, char *argv[]) {
                     r.drawLevel(level);
                     r.drawCannon(canon);  // Dibujamos el cañón
                     r.drawScenario();     // Dibujamos las paredes
+                    r.drawTitle();
                 }
 
                 break;
@@ -477,6 +481,7 @@ int main(int argc, char *argv[]) {
 #endif
 
                     r.drawScenario();  // Dibujamos las paredes:
+                    r.drawTitle();
                     break;
 
                 default:
