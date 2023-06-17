@@ -3,6 +3,8 @@
 
 #include <SDL_ttf.h>
 
+#include <string>
+
 #include "level.h"
 #include "lifes.h"
 #include "renderer.h"
@@ -27,7 +29,8 @@ class HybridRenderer : public Renderer {
    private:
     TTF_Font *font;
 
-    void writeText(const char *s, aVec2 position, bool centered);
+    void writeText(const std::string &s, aVec2 position, bool centered,
+                   float scale);
 };
 
 #endif /* __HYBRID_RENDERER_H__ */

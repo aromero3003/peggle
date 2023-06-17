@@ -64,7 +64,7 @@ void Renderer::drawCircle(aVec2 center, float radius,
     float angle = 0.0f;
 
     // Set the draw color to red
-    SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
+    // SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
 
     // Draw the outline of the circle using multiple lines
     for (uint32_t i = 0; i < num_segments; ++i) {

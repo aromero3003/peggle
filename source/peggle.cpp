@@ -44,25 +44,6 @@ void resetear_obstaculos(Obstacle &obs) {
 // ESCRIBEN TEXTO EN LA PANTALLA
 // -------------------------------------------------------------
 
-void escribir_texto(SDL_Renderer *renderer, TTF_Font *font, const char *s,
-                    int x, int y, uint8_t r, uint8_t g, uint8_t b) {
-    SDL_Color color = {r, g, b};  // Estaría bueno si la función recibe un
-                                  // enumerativo con el color, ¿no?
-    SDL_Surface *surface = TTF_RenderText_Solid(font, s, color);
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-    SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = surface->w;
-    rect.h = surface->h;
-
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
-
-    SDL_DestroyTexture(texture);
-    SDL_FreeSurface(surface);
-}
-
 void puntaje_escribir(SDL_Renderer *renderer, TTF_Font *font, puntaje_t puntaje,
                       int x, int y) {
     char p[20];
@@ -81,54 +62,6 @@ void puntaje_escribir(SDL_Renderer *renderer, TTF_Font *font, puntaje_t puntaje,
     SDL_RenderCopy(renderer, texture, NULL, &rect);
     SDL_DestroyTexture(texture);
     SDL_FreeSurface(surface);
-}
-
-void puntaje_multiplicador_escribir(SDL_Renderer *renderer, TTF_Font *font,
-                                    int multiplicador, int x, int y) {
-    char m[4];
-    sprintf(m, "x%d", multiplicador);
-
-    SDL_Color color = {255, 255, 255};
-    SDL_Surface *surface = TTF_RenderText_Solid(font, m, color);
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-    SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = surface->w * 0.8;
-    rect.h = surface->h * 0.8;
-
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
-    SDL_DestroyTexture(texture);
-    SDL_FreeSurface(surface);
-}
-
-void nivel_escribir(SDL_Renderer *renderer, TTF_Font *font, int nivel, int x,
-                    int y) {
-    char n[10];
-    sprintf(n, "Nivel %d", nivel);
-
-    SDL_Color color = {255, 255, 255};
-    SDL_Surface *surface = TTF_RenderText_Solid(font, n, color);
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-    SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = surface->w * 0.8;
-    rect.h = surface->h * 0.8;
-
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
-    SDL_DestroyTexture(texture);
-    SDL_FreeSurface(surface);
-}
-
-void vidas_escribir(SDL_Renderer *renderer, TTF_Font *font, Lifes *vidas, int x,
-                    int y) {
-    char v[3];
-    size_t aux = vidas->restantes();
-    sprintf(v, "%zd", aux);
-    escribir_texto(renderer, font, v, x, y, 0xFF, 0xFF, 0xFF);
 }
 
 void escribir_numero(SDL_Renderer *renderer, TTF_Font *font, int contador,
@@ -228,30 +161,6 @@ int main(int argc, char *argv[]) {
                                 break;
                         }
                     }
-#ifdef TTF
-                    // escribir_texto(renderer, font, "Peggle", 100, 20);
-                    SDL_SetRenderDrawColor(renderer, 0xFF, 0x60, 0x00, 0x00);
-                    {
-                        Ball dibujito(MAX_X + 40, MAX_Y - 50, 10,
-                                      RESOL_BOLA_OBS);
-                        dibujito.dibujar(renderer);
-                    }
-                    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
-
-                    char contador_golpeados[6];
-                    sprintf(contador_golpeados, "%zd/%zd", naranjas_golpeados,
-                            cantidad_naranjas);
-                    escribir_texto(renderer, font, contador_golpeados,
-                                   MAX_X + 15, MAX_Y - 30, 0xFF, 0xFF, 0xFF);
-                    escribir_texto(renderer, font, "Peggle", MAX_X / 2, 20,
-                                   0xFF, 0xFF, 0xFF);
-                    puntaje_escribir(renderer, font, puntaje_en_nivel, 600,
-                                     MIN_Y / 2);
-                    puntaje_multiplicador_escribir(renderer, font,
-                                                   multiplicador, 730, 50);
-                    nivel_escribir(renderer, font, nivel, MIN_X, MIN_Y / 2);
-                    vidas_escribir(renderer, font, &vidas, MIN_X / 4, MIN_Y);
-#endif
 
                     if (b.esta_cayendo()) {
                         b.actualizar(DT);
@@ -393,19 +302,7 @@ int main(int argc, char *argv[]) {
                         continue;
                     }
 #ifdef TTF
-                    SDL_SetRenderDrawColor(renderer, 0xFF, 0x60, 0x00, 0x00);
-                    {
-                        Ball dibujito(MAX_X + 40, MAX_Y - 50, 10,
-                                      RESOL_BOLA_OBS);
-                        dibujito.dibujar(renderer);
-                    }
-                    //     bola_crear(MAX_X + 40, MAX_Y - 50, 10,
-                    //     RESOL_BOLA_OBS);
-                    // bola_dibujar(renderer, dibujito);
-                    // bola_destruir(dibujito);
-
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
-
                     escribir_texto(renderer, font, "OOPs Nivel Fallido!", 290,
                                    MIN_Y + 18, 0xFF, 0xFF, 0xFF);
                     escribir_texto(renderer, font, "Haz click para reintentar",
@@ -423,23 +320,6 @@ int main(int argc, char *argv[]) {
                         game.state = GAME_OVER;
                         break;
                     }
-
-                    char contador_golpeados[6];
-                    sprintf(contador_golpeados, "%zd/%zd", naranjas_golpeados,
-                            cantidad_naranjas);
-                    escribir_texto(renderer, font, contador_golpeados,
-                                   MAX_X + 15, MAX_Y - 30, 0xFF, 0xFF, 0xFF);
-
-                    sprintf(contador_golpeados, "%d", 0);
-                    escribir_texto(renderer, font, contador_golpeados,
-                                   MIN_X / 4, MIN_Y, 0xFF, 0xFF, 0xFF);
-
-                    escribir_texto(renderer, font, "Peggle", MAX_X / 2, 20,
-                                   0xFF, 0xFF, 0xFF);
-                    puntaje_multiplicador_escribir(renderer, font,
-                                                   multiplicador, 730, 50);
-                    nivel_escribir(renderer, font, nivel, MIN_X, MIN_Y / 2);
-
 #endif
                     // level->draw(renderer);
                     r.drawLevel(level);
