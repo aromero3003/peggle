@@ -18,9 +18,9 @@ obstaculo_t::obstaculo_t(poligono_t p, color_t c, movimiento_t m, geometria_t g,
       geometria(g),
       tocado(false),
       _dibujar(true) {
-    parametros[0] = parametros[0];
-    parametros[1] = parametros[1];
-    parametros[2] = parametros[2];
+    this->parametros[0] = parametros[0];
+    this->parametros[1] = parametros[1];
+    this->parametros[2] = parametros[2];
 }
 
 // Imprime por stdout los parametros de un obstaculo
