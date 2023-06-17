@@ -1,7 +1,3 @@
-Arreglar bug al leer obstaculos en movimiento
-   Probablemente sea un casteo (char *) de 2bytes
-   Hay que usar reinterpret_cast<char *>(& variable)
-
 Arreglar bug el cañon se pasa del limite al mover el mouse
 
 Quién debería calcular posicion en cada instante?
