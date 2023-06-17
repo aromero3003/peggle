@@ -62,12 +62,10 @@ obstaculo_t Loader::leer_obstaculo() {
     parametros[1] = param[1];
     parametros[2] = param[2];
 
-    // printf("%x, %x, %x\n", param[0], param[1], param[2]);
-    // printf("%g, %g, %g\n", parametros[0], parametros[1], parametros[2]);
-
-    poligono_t poligono = leer_geometria(geo);
-
-    return obstaculo_t(poligono, col, mov, geo, parametros);
+    // std::cout << parametros[0] << " " << parametros[1] << " " <<
+    // parametros[2]
+    //           << std::endl;
+    return obstaculo_t(leer_geometria(geo), col, mov, geo, parametros);
 }
 
 std::list<obstaculo_t> Loader::leer_obstaculos(size_t n) {
@@ -86,18 +84,17 @@ void Loader::leer_encabezado(color_t &col, movimiento_t &mov,
     geo = (geometria_t)(encabezado & MASK_FORM);
 }
 
-bool Loader::leer_movimiento_inmovil(int16_t parametros[]) { return true; }
-
-bool Loader::leer_movimiento_circular(int16_t parametros[]) {
-    return (bool)file.read(reinterpret_cast<char *>(&parametros), 4);
-    // if (file.read(parametros, SIZE16B, 3, f) != 3) return false;
-    // printf("mov %d, %d, %d\n",parametros[0], parametros[1], parametros[2] );
+bool Loader::leer_movimiento_inmovil(int16_t parametros[]) {
+    parametros[0] = parametros[1] = parametros[2] = 0;
     return true;
 }
 
+bool Loader::leer_movimiento_circular(int16_t parametros[]) {
+    return (bool)file.read(reinterpret_cast<char *>(parametros), SIZE16B * 3);
+}
+
 bool Loader::leer_movimiento_horizontal(int16_t parametros[]) {
-    return (bool)file.read(reinterpret_cast<char *>(&parametros), SIZE16B * 3);
-    // printf("mov %d, %d, %d\n",parametros[0], parametros[1], parametros[2] );
+    return (bool)file.read(reinterpret_cast<char *>(parametros), SIZE16B * 3);
 }
 
 // Funcion para usar la tabla de funciones_leer_m
@@ -137,18 +134,10 @@ poligono_t Loader::leer_geometria_rectangulo() {
         throw -1;
     }
 
-    // int16_t param[5]
-
     float vertices[][2] = {{(float)-ancho / 2, (float)-alto / 2},
                            {(float)ancho / 2, (float)-alto / 2},
                            {(float)ancho / 2, (float)alto / 2},
                            {(float)-ancho / 2, (float)alto / 2}};
-    /*for (size_t i = 0; i < 4; i++) {
-        printf("%g ", vertices[i][0]);
-        printf("%g  ", vertices[i][1]);
-    }
-    putchar('\n');
-    */
     poligono_t poligono(vertices, 4);
 
     // printf("angul = %g x: %d y: %d\n",(double)angulo, x, y);
