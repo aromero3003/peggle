@@ -7,12 +7,15 @@
 #include "settings.h"
 #include "vec2.h"
 
+size_t Level::global_count = 0;
+
 Level::Level(std::list<Obstacle> &obstaculos)
     : obstaculos(obstaculos),
       naranjas(0),
       naranjas_golpeados(0),
       score(0),
-      multiplier(1) {
+      multiplier(1),
+      id(++global_count) {
     for (const Obstacle &obs : obstaculos) naranjas += obs.es_naranja();
 }
 
@@ -91,6 +94,8 @@ void Level::clean_touched_obstacles() {
 }
 
 bool Level::is_completed() const { return naranjas == naranjas_golpeados; }
+
+size_t Level::get_id() const { return id; }
 
 void Level::draw(SDL_Renderer *r) {
     for (auto &obs : obstaculos) obs.dibujar(r);

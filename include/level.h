@@ -26,11 +26,14 @@ class Level {
     void draw(SDL_Renderer *renderer);
 
     bool is_completed() const;
+    size_t get_id() const;
 
    private:
     std::list<Obstacle> obstaculos;
+    size_t id;
     size_t naranjas, naranjas_golpeados;
     size_t score, multiplier;
+    static size_t global_count;  // Increiblemente ILEGAL
 };
 
 #endif /* __LEVEL_H__ */
