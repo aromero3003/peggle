@@ -1,8 +1,8 @@
-#include "trayectoria.h"
+#include "trajectory.h"
 
 #include <SDL_render.h>
 
-#include "config.h"
+#include "settings.h"
 #include "utility.h"
 #include "vec2.h"
 

@@ -1,4 +1,4 @@
-#include "poligono.h"
+#include "polygon.h"
 
 #include <SDL2/SDL.h>
 #include <math.h>
@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 
-#include "config.h"
+#include "settings.h"
 #include "vec2.h"
 
 // Crea un polígono de n vertices en R2

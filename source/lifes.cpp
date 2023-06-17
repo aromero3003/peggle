@@ -1,6 +1,6 @@
-#include "vidas.h"
+#include "lifes.h"
 
-#include "config.h"
+#include "settings.h"
 #include "vec2.h"
 
 Lifes::Lifes(unsigned int n, float cx, float cy)

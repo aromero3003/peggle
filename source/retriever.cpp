@@ -1,7 +1,7 @@
-#include "recuperador.h"
+#include "retriever.h"
 
-#include "bola.h"
-#include "config.h"
+#include "ball.h"
+#include "settings.h"
 #include "vec2.h"
 
 Retriever::Retriever(float ancho, float alto, float velocidad)

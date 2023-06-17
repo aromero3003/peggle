@@ -6,8 +6,8 @@
 #include <list>
 
 #include "level.h"
-#include "obstaculo.h"
-#include "tipos.h"
+#include "obstacle.h"
+#include "types.h"
 #include "vec2.h"
 
 #define MASK_COLOR 0x3  // 0011

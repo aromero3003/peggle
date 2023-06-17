@@ -1,9 +1,9 @@
 #ifndef __CANNON_H__
 #define __CANNON_H__
 
-#include <SDL_render.h>
+#include <SDL2/SDL_render.h>
 
-#include "bola.h"
+#include "ball.h"
 #include "vec2.h"
 
 class Cannon {

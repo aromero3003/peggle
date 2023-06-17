@@ -1,7 +1,7 @@
-#ifndef __BOLA_H__
-#define __BOLA_H__
+#ifndef __BALL_H__
+#define __BALL_H__
 
-#include "poligono.h"
+#include "polygon.h"
 #include "vec2.h"
 
 struct Ball {
@@ -34,4 +34,4 @@ struct Ball {
     uint8_t iterations_stucked;
 };
 
-#endif /* __BOLA_H__ */
+#endif /* __BALL_H__ */

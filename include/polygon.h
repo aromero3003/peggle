@@ -1,5 +1,5 @@
-#ifndef POLIGONO_H
-#define POLIGONO_H
+#ifndef __POLYGON_H__
+#define __POLYGON_H__
 
 #include <SDL2/SDL.h>
 #include <stdbool.h>

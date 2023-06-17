@@ -13,8 +13,22 @@ endif()
 
 # Export compile commands for completion engines (optional)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-add_executable(Peggle source/juego.cpp ./source/level.cpp source/renderer.cpp source/peggle.cpp source/cannon.cpp source/poligono.cpp source/obstaculo.cpp source/vec2.cpp source/bola.cpp source/vidas.cpp source/recuperador.cpp source/trayectoria.cpp source/loader.cpp)
+set(SOURCES 
+  source/vec2.cpp
+  source/ball.cpp
+  source/game.cpp
+  source/lifes.cpp
+  source/level.cpp
+  source/loader.cpp
+  source/peggle.cpp
+  source/cannon.cpp
+  source/polygon.cpp
+  source/renderer.cpp
+  source/obstacle.cpp
+  source/retriever.cpp
+  source/trajectory.cpp
+)
+add_executable(Peggle ${SOURCES})
 target_include_directories(Peggle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 find_package(SDL2 REQUIRED)

@@ -8,19 +8,19 @@
 #include <iostream>
 #include <list>
 
-#include "bola.h"
+#include "ball.h"
 #include "cannon.h"
-#include "config.h"
-#include "juego.h"
+#include "game.h"
+#include "lifes.h"
 #include "loader.h"
-#include "obstaculo.h"
-#include "poligono.h"
-#include "recuperador.h"
+#include "obstacle.h"
+#include "polygon.h"
 #include "renderer.h"
-#include "trayectoria.h"
+#include "retriever.h"
+#include "settings.h"
+#include "trajectory.h"
 #include "utility.h"
 #include "vec2.h"
-#include "vidas.h"
 
 #define DT (1.0 / JUEGO_FPS)
 

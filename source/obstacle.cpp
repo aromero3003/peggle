@@ -1,4 +1,4 @@
-#include "obstaculo.h"
+#include "obstacle.h"
 
 #include <SDL2/SDL.h>
 #include <stdbool.h>
@@ -6,8 +6,8 @@
 
 #include <iostream>
 
-#include "config.h"
-#include "tipos.h"
+#include "settings.h"
+#include "types.h"
 #include "vec2.h"
 
 Obstacle::Obstacle(Polygon p, color_t c, movimiento_t m, geometria_t g,

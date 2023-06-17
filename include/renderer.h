@@ -6,12 +6,13 @@
 
 #include <cstdint>
 
-#include "bola.h"
+#include "ball.h"
 #include "cannon.h"
 #include "level.h"
-#include "recuperador.h"
-#include "trayectoria.h"
-#include "vidas.h"
+#include "lifes.h"
+#include "retriever.h"
+#include "trajectory.h"
+
 class Renderer {
    public:
     Renderer(int width, int height, uint32_t flags);

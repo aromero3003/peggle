@@ -6,8 +6,8 @@
 #include <list>
 
 #include "level.h"
-#include "obstaculo.h"
-#include "tipos.h"
+#include "obstacle.h"
+#include "types.h"
 class Loader {
    public:
     Loader(const char *path);

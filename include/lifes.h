@@ -1,5 +1,5 @@
-#ifndef __VIDAS_H__
-#define __VIDAS_H__
+#ifndef __LIFES_H__
+#define __LIFES_H__
 
 #include <cstddef>
 #include <vector>
@@ -24,4 +24,4 @@ struct Lifes {
     unsigned int dibujadas;
 };
 
-#endif /* __VIDAS_H__ */
+#endif /* __LIFES_H__ */

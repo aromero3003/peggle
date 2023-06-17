@@ -2,9 +2,9 @@
 
 #include <SDL_render.h>
 
-#include "bola.h"
-#include "config.h"
-#include "obstaculo.h"
+#include "ball.h"
+#include "obstacle.h"
+#include "settings.h"
 #include "vec2.h"
 
 Level::Level(std::list<Obstacle> &obstaculos)

@@ -1,9 +1,9 @@
-#include "bola.h"
+#include "ball.h"
 
 #include <cmath>
 #include <iomanip>
 
-#include "config.h"
+#include "settings.h"
 #include "utility.h"
 #include "vec2.h"
 

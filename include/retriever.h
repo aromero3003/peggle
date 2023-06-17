@@ -1,8 +1,8 @@
-#ifndef __RECUPERADOR_H__
-#define __RECUPERADOR_H__
+#ifndef __RETRIEVER_H__
+#define __RETRIEVER_H__
 
-#include "bola.h"
-#include "poligono.h"
+#include "ball.h"
+#include "polygon.h"
 
 class Retriever {
    public:
@@ -26,4 +26,4 @@ class Retriever {
     float ancho;
 };
 
-#endif /* __RECUPERADOR_H__ */
+#endif /* __RETRIEVER_H__ */

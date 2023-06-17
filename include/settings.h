@@ -1,5 +1,5 @@
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#ifndef _SETTINGS_H_
+#define _SETTINGS_H_
 
 #ifndef PI
 #define PI 3.14159265358979323846
@@ -50,4 +50,4 @@
 #define PLASTICIDAD 0.8
 #define ROZAMIENTO 0.9999
 
-#endif  // _CONFIG_H_
+#endif  // _SETTINGS_H_

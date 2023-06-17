@@ -5,8 +5,8 @@
 
 #include <list>
 
-#include "bola.h"
-#include "obstaculo.h"
+#include "ball.h"
+#include "obstacle.h"
 
 class Level {
    public:

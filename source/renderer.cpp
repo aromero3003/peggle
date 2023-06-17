@@ -4,10 +4,10 @@
 #include <SDL_render.h>
 #include <SDL_video.h>
 
-#include "bola.h"
+#include "ball.h"
 #include "cannon.h"
-#include "config.h"
-#include "trayectoria.h"
+#include "settings.h"
+#include "trajectory.h"
 #include "vec2.h"
 
 Renderer::Renderer(int width, int height, uint32_t flags) {

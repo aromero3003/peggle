@@ -1,10 +1,10 @@
-#ifndef OBSTACULO_H
-#define OBSTACULO_H
+#ifndef __OBSTACLE_H__
+#define __OBSTACLE_H__
 
 #include <SDL2/SDL.h>
 
-#include "poligono.h"
-#include "tipos.h"
+#include "polygon.h"
+#include "types.h"
 
 struct Obstacle {
     Obstacle() = delete;

@@ -4,8 +4,8 @@
 
 #include <cmath>
 
-#include "bola.h"
-#include "config.h"
+#include "ball.h"
+#include "settings.h"
 #include "vec2.h"
 
 Cannon::Cannon(aVec2 p0, Ball &bala) : bottom(p0), ball(bala) {}
