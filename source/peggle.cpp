@@ -20,9 +20,9 @@
 #include "settings.h"
 #include "trajectory.h"
 #include "utility.h"
-#include "vec2.h"
 
 #define DT (1.0 / JUEGO_FPS)
+#define TTF2
 
 const aVec2 G_VEC(0.0f, G);
 
@@ -32,6 +32,10 @@ void resetear_obstaculos(Obstacle &obs) {
 }
 
 #define DT (1.0 / JUEGO_FPS)
+
+#ifdef TTF2
+#include "hybrid_renderer.h"
+#endif  // TTF2
 
 #ifdef TTF
 #include <SDL2/SDL_ttf.h>
@@ -143,7 +147,12 @@ int main(int argc, char *argv[]) {
     // }
 
     // SDL_Init(SDL_INIT_VIDEO);
+
+#ifdef TTF2
+    HybridRenderer r(VENTANA_ANCHO, VENTANA_ALTO, 0);
+#else
     Renderer r(VENTANA_ANCHO, VENTANA_ALTO, 0);
+#endif  // TTF2
 
 #ifdef TTF
     TTF_Init();

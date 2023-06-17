@@ -27,6 +27,7 @@ set(SOURCES
   source/obstacle.cpp
   source/retriever.cpp
   source/trajectory.cpp
+  source/hybrid_renderer.cpp
 )
 add_executable(Peggle ${SOURCES})
 target_include_directories(Peggle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

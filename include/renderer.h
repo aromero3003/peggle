@@ -35,7 +35,7 @@ class Renderer {
     void present();
     void clear();
 
-   private:
+   protected:
     SDL_Window *w;
     SDL_Renderer *r;
 
