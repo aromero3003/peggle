@@ -150,15 +150,7 @@ int main(int argc, char *argv[]) {
     TTF_Font *font = TTF_OpenFont("resources/FreeSansBold.ttf", 24);
 #endif
 
-    // SDL_Window *window;
-    // SDL_Renderer *renderer;
     SDL_Event event;
-
-    // SDL_CreateWindowAndRenderer(VENTANA_ANCHO, VENTANA_ALTO, 0, &window,
-    //                             &renderer);
-    // SDL_SetWindowTitle(window, "Peggle");
-
-    // Renderer r(renderer);
     int dormir = 0;
 
     Ball b(aVec2(CANON_X, CANON_Y + CANON_LARGO), BOLA_RADIO, BOLA_RESOL);
@@ -177,21 +169,7 @@ int main(int argc, char *argv[]) {
     Game game(loader);
 
     Lifes vidas(VIDAS_INICIALES, 60, MIN_Y + BOLA_RADIO);
-    // if (vidas == NULL) {
-    //     fclose(f);
-    //     SDL_DestroyRenderer(renderer);
-    //     SDL_DestroyWindow(window);
-    //     return 3;
-    // }
-    // Retriever *recuperador = recuperador_crear(60, 10, 0.6);
     Retriever recuperador(60, 10, 0.6);
-    // if (recuperador == NULL) {
-    //     fclose(f);
-    //     SDL_DestroyRenderer(renderer);
-    //     SDL_DestroyWindow(window);
-    //     return 3;
-    // }
-
     // game_state_t estado = GAME_RUNNING;
 
     while (game.state) {
@@ -208,11 +186,8 @@ int main(int argc, char *argv[]) {
         int contador_game_over = CONTADOR_GAME_OVER;
 #endif
         while (game.state) {
-            // SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
             r.setColor(0x00, 0x00, 0x00, 0x00);
-            // SDL_RenderClear(renderer);
             r.clear();
-            // SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
             r.setColor(0xFF, 0xFF, 0xFF, 0x00);
             switch (game.state) {
                 ///////////////////////////////////////////////// JUEGO
@@ -302,24 +277,23 @@ int main(int argc, char *argv[]) {
 
                     if (b.esta_trabada()) level->clean_touched_obstacles();
 
-                    r.drawCannon(canon);  // Dibujamos el cañón:
-                    r.drawBall(b);        // Dibujamos la bola:
-                    r.drawScenario();     // Dibujamos las paredes:
-                    r.drawLifes(vidas);   // Dibujamos las vidas
-                    r.drawRetriever(recuperador);
                     // Dibujamos el vector de velocidad:
                     //        SDL_RenderDrawLine(renderer, cx, cy, cx + vx, cy +
                     //        vy);
 
-                    // Dibujamos el recuperador de bolas
                     recuperador.mover(1);
 
-                    // Dibujamos los obstaculos y realizamos la interacción con
-                    // la bola
+                    /* Realizamos la interacción con la bola */
                     level->handle_collisions(b);
                     level->move_obstacles(DT);
+
+                    /* Dibujamos los elementos del juego */
+                    r.drawCannon(canon);
+                    r.drawBall(b);
+                    r.drawScenario();
+                    r.drawLifes(vidas);
+                    r.drawRetriever(recuperador);
                     r.drawLevel(level);
-                    // level->draw(renderer);
 
                     if (level->is_completed()) {
                         canon.reload();
@@ -346,7 +320,6 @@ int main(int argc, char *argv[]) {
                             if (game.current_level + 1 == game.getTotalLevels())
                                 game.state = GAME_OVER;
                             else {
-                                // game.state = GAME_RUNNING;
                                 game.state = GAME_RUNNING;
                                 canon.reload();
                                 game.current_level++;
@@ -374,11 +347,8 @@ int main(int argc, char *argv[]) {
                                    260, 230, color_, color_, color_);
 #endif
 
-                    // Dibujamos el cañón:
-                    r.drawCannon(canon);
-
-                    // Dibujamos las paredes:
-                    r.drawScenario();
+                    r.drawCannon(canon);  // Dibujamos el cañón:
+                    r.drawScenario();     // Dibujamos las paredes:
 
                     break;
                 }
@@ -396,16 +366,8 @@ int main(int argc, char *argv[]) {
                         }
 
                         if (event.type == SDL_MOUSEBUTTONDOWN) {
-                            // naranjas_golpeados = 0;
-                            // puntaje_en_nivel = 0;
                             game.state = GAME_RUNNING;
-                            /*
-                            for (auto &obs : obstaculos) {
-                                resetear_obstaculos(obs);
-                                // obs.set_tocado(&obs, false);
-                                // obs.set_dibujar(&obs, true);
-                            }
-                            */
+                            level->reset(); /* OJO */
                             vidas.resetear();
 #ifdef TTF
                             contador_game_over = CONTADOR_GAME_OVER;
@@ -505,16 +467,13 @@ int main(int argc, char *argv[]) {
                                    color_, color_, color_);
 #endif
 
-                    // Dibujamos las paredes:
-                    r.drawScenario();
-
+                    r.drawScenario();  // Dibujamos las paredes:
                     break;
 
                 default:
                     break;
             }
 
-            // SDL_RenderPresent(renderer);
             r.present();
             ticks = SDL_GetTicks() - ticks;
             if (dormir) {
@@ -525,19 +484,9 @@ int main(int argc, char *argv[]) {
             ticks = SDL_GetTicks();
         }
     }
-
-    // trayectoria_destruir(
-    //     tray);  // Por si se cerró el juego antes de que la bola toque el
-    //     piso
-    // recuperador_destruir(recuperador);
-
-    // SDL_DestroyRenderer(renderer);
-    // SDL_DestroyWindow(window);
-
 #ifdef TTF
     TTF_CloseFont(font);
     TTF_Quit();
 #endif
-    // SDL_Quit();
     return 0;
 }
