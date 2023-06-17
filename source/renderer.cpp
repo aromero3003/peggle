@@ -22,13 +22,8 @@ void Renderer::drawCannon(const Cannon &cannon) const {
     SDL_RenderDrawLine(r, CANON_X, CANON_Y, cannon_tip.x, cannon_tip.y);
 }
 
-void drawCircle(SDL_Renderer *renderer, float center_x, float center_y,
-                uint32_t radius, uint32_t num_segments) {
-    // Calculate the integer coordinates and radius
-    int x = static_cast<int>(center_x);
-    int y = static_cast<int>(center_y);
-    int r = static_cast<int>(radius);
-
+void drawCircle(SDL_Renderer *renderer, aVec2 center, float radius,
+                uint32_t num_segments) {
     // Calculate the angle step between line segments
     float angle_step = (2.0f * M_PI) / static_cast<float>(num_segments);
     float angle = 0.0f;
@@ -38,24 +33,23 @@ void drawCircle(SDL_Renderer *renderer, float center_x, float center_y,
 
     // Draw the outline of the circle using multiple lines
     for (uint32_t i = 0; i < num_segments; ++i) {
-        int x1 = static_cast<int>(x + r * cos(angle));
-        int y1 = static_cast<int>(y + r * sin(angle));
-        int x2 = static_cast<int>(x + r * cos(angle + angle_step));
-        int y2 = static_cast<int>(y + r * sin(angle + angle_step));
+        float x1 = center.x + radius * cos(angle);
+        float y1 = center.y + radius * sin(angle);
+        float x2 = center.x + radius * cos(angle + angle_step);
+        float y2 = center.y + radius * sin(angle + angle_step);
 
-        SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+        SDL_RenderDrawLineF(renderer, x1, y1, x2, y2);
 
         angle += angle_step;
     }
 }
 
 void Renderer::drawBall(const Ball &ball) const {
-    drawCircle(r, ball.position().x, ball.position().y, BOLA_RADIO, 100);
+    drawCircle(r, ball.position(), BOLA_RADIO, 100);
 }
 
 void Renderer::drawLifes(const Lifes &vidas) const {
     aVec2 p = vidas.position();
-    for (size_t i = 0; i < vidas.restantes(); i++, p.y += BOLA_RADIO * 3) {
-        drawCircle(r, p.x, p.y, BOLA_RADIO, BOLA_RESOL);
-    }
+    for (size_t i = 0; i < vidas.restantes(); i++, p.y += BOLA_RADIO * 3)
+        drawCircle(r, p, BOLA_RADIO, BOLA_RESOL);
 }
