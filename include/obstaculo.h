@@ -8,6 +8,11 @@
 
 struct obstaculo_t {
     obstaculo_t() = delete;
+    obstaculo_t(obstaculo_t &&) = default;
+    obstaculo_t(const obstaculo_t &other) = default;
+    obstaculo_t &operator=(obstaculo_t &&) = default;
+    obstaculo_t &operator=(const obstaculo_t &) = default;
+
     obstaculo_t(poligono_t p, color_t c, movimiento_t m, geometria_t g,
                 float parametros[3]);
 
