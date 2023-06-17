@@ -22,6 +22,7 @@ class Level {
     void clean_touched_obstacles();
     size_t update_score(const obstaculo_t &obs);
     size_t update_multiplier();
+    void reset();
     void draw(SDL_Renderer *renderer);
 
     bool is_completed() const;

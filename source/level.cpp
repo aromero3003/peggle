@@ -71,6 +71,16 @@ void Level::handle_collisions(bola_t &bola) {
     }
 }
 
+void Level::reset() {
+    naranjas_golpeados = 0;
+    score = 0;
+    multiplier = 1;
+    for (auto &obs : obstaculos) {
+        obs.set_tocado(false);
+        obs.set_dibujar(true);
+    }
+}
+
 void Level::move_obstacles(double dt) {
     for (auto &obs : obstaculos) obs.mover(dt);
 }
