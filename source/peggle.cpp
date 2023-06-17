@@ -170,9 +170,11 @@ int main(int argc, char *argv[]) {
 
     trayectoria_t tray;
 
-    Loader loader(argv[1]);
+    // Loader loader(argv[1]);
+    Loader loader2(argv[1]);
 
     int nivel = 0;
+    Game game(loader2);
 
     vidas_t vidas(VIDAS_INICIALES, 60, MIN_Y + BOLA_RADIO);
     // if (vidas == NULL) {
@@ -190,42 +192,39 @@ int main(int argc, char *argv[]) {
     //     return 3;
     // }
 
-    game_state_t estado = GAME_RUNNING;
+    // game_state_t estado = GAME_RUNNING;
 
-    while (estado) {
-        if (not loader.can_continue()) {
-            // Si no pude leer más obstaculos, GAME OVER
-            estado = GAME_OVER;
+    while (game.state) {
+        if (game.current_level + 1 == game.getTotalLevels()) {
+            game.state = GAME_OVER;
         }
-        // nivel++;
         vidas.resetear();  // Se setean las vidas a la cantidad inicial
 
-        Level level = loader.read_level();
+        Level *level = game.getCurrentLevel();
         unsigned int ticks = SDL_GetTicks();
-        bool pasar_nivel = false;
 #ifdef TTF
         uint8_t color_ = 0xFF;
         int color_cambiar = -1;
         int contador_game_over = CONTADOR_GAME_OVER;
 #endif
-        while (!pasar_nivel && estado) {
+        while (game.state) {
             SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
             SDL_RenderClear(renderer);
             SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
-            switch (estado) {
+            switch (game.state) {
                 ///////////////////////////////////////////////// JUEGO
                 /// CORRIENDO /////////////////////////////////////////////////
                 case GAME_RUNNING: {
                     if (SDL_PollEvent(&event)) {
                         if (event.type == SDL_QUIT) {
-                            estado = GAME_CLOSE;
+                            game.state = GAME_CLOSE;
                             break;
                         }
 
                         switch (event.type) {
                             case SDL_KEYUP:
                                 if (event.key.keysym.sym == SDLK_q)
-                                    estado = GAME_LEVEL_UP;
+                                    game.state = GAME_LEVEL_UP;
                                 break;
 
                             case SDL_MOUSEBUTTONDOWN:
@@ -287,17 +286,17 @@ int main(int argc, char *argv[]) {
                     if (b.centro.y > MAX_Y - BOLA_RADIO) {
                         if (not recuperador.recuperar(b)) {
                             if (vidas.estan_agotadas()) {
-                                estado = GAME_LEVEL_FAILED;
+                                game.state = GAME_LEVEL_FAILED;
                                 break;
                             }
                             vidas.quitar();
                         }
                         canon.reload();
-                        level.update_multiplier();
-                        level.clean_touched_obstacles();
+                        level->update_multiplier();
+                        level->clean_touched_obstacles();
                     }
 
-                    if (b.esta_trabada()) level.clean_touched_obstacles();
+                    if (b.esta_trabada()) level->clean_touched_obstacles();
 
                     r.drawCannon(canon);  // Dibujamos el cañón:
                     r.drawBall(b);        // Dibujamos la bola:
@@ -314,13 +313,13 @@ int main(int argc, char *argv[]) {
 
                     // Dibujamos los obstaculos y realizamos la interacción con
                     // la bola
-                    level.handle_collisions(b);
-                    level.move_obstacles(DT);
-                    level.draw(renderer);
+                    level->handle_collisions(b);
+                    level->move_obstacles(DT);
+                    level->draw(renderer);
 
-                    if (level.is_completed()) {
+                    if (level->is_completed()) {
                         canon.reload();
-                        estado = GAME_LEVEL_UP;
+                        game.state = GAME_LEVEL_UP;
                         // puntaje_total += puntaje_en_nivel;
                         SDL_Delay(300);
                         break;
@@ -335,13 +334,20 @@ int main(int argc, char *argv[]) {
                 {
                     if (SDL_PollEvent(&event)) {
                         if (event.type == SDL_QUIT) {
-                            estado = GAME_CLOSE;
+                            game.state = GAME_CLOSE;
                             break;
                         }
 
                         if (event.type == SDL_MOUSEBUTTONDOWN) {
-                            estado = GAME_RUNNING;
-                            pasar_nivel = true;
+                            if (game.current_level + 1 == game.getTotalLevels())
+                                game.state = GAME_OVER;
+                            else {
+                                // game.state = GAME_RUNNING;
+                                game.state = GAME_RUNNING;
+                                canon.reload();
+                                game.current_level++;
+                                level = game.getCurrentLevel();
+                            }
                             break;
                         } else if (event.type == SDL_MOUSEMOTION) {
                             canon.update(atan2(event.motion.x - CANON_X,
@@ -377,16 +383,18 @@ int main(int argc, char *argv[]) {
                     // FALLIDO /////////////////////////////////////////////////
                 case GAME_LEVEL_FAILED:  // Caso no se pasó de nivel
                 {
+                    vidas.resetear();
+                    level->reset();
                     if (SDL_PollEvent(&event)) {
                         if (event.type == SDL_QUIT) {
-                            estado = GAME_CLOSE;
+                            game.state = GAME_CLOSE;
                             break;
                         }
 
                         if (event.type == SDL_MOUSEBUTTONDOWN) {
                             // naranjas_golpeados = 0;
                             // puntaje_en_nivel = 0;
-                            estado = GAME_RUNNING;
+                            game.state = GAME_RUNNING;
                             /*
                             for (auto &obs : obstaculos) {
                                 resetear_obstaculos(obs);
@@ -434,7 +442,7 @@ int main(int argc, char *argv[]) {
                     }
                     if (color_ == 127) contador_game_over--;
                     if (contador_game_over < 0) {
-                        estado = GAME_OVER;
+                        game.state = GAME_OVER;
                         break;
                     }
 
@@ -455,7 +463,7 @@ int main(int argc, char *argv[]) {
                     nivel_escribir(renderer, font, nivel, MIN_X, MIN_Y / 2);
 
 #endif
-                    level.draw(renderer);
+                    level->draw(renderer);
                     r.drawCannon(canon);  // Dibujamos el cañón
                     r.drawScenario();     // Dibujamos las paredes
                 }
@@ -468,12 +476,12 @@ int main(int argc, char *argv[]) {
 
                     if (SDL_PollEvent(&event)) {
                         if (event.type == SDL_QUIT) {
-                            estado = GAME_CLOSE;
+                            game.state = GAME_CLOSE;
                             break;
                         }
 
                         if (event.type == SDL_MOUSEBUTTONDOWN) {
-                            estado = GAME_CLOSE;
+                            game.state = GAME_CLOSE;
                             break;
                         }
 
