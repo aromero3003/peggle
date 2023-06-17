@@ -137,10 +137,10 @@ void escribir_numero(SDL_Renderer *renderer, TTF_Font *font, int contador,
 #endif
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << "<levels_path.bin" << std::endl;
-        return 1;
-    }
+    // if (argc != 2) {
+    //     std::cerr << "Usage: " << argv[0] << "<levels_path.bin" << std::endl;
+    //     return 1;
+    // }
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -170,11 +170,10 @@ int main(int argc, char *argv[]) {
 
     Trajectory tray;
 
-    // Loader loader(argv[1]);
-    Loader loader2(argv[1]);
+    Loader loader("../resources/levels.bin");
 
     int nivel = 0;
-    Game game(loader2);
+    Game game(loader);
 
     Lifes vidas(VIDAS_INICIALES, 60, MIN_Y + BOLA_RADIO);
     // if (vidas == NULL) {
