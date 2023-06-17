@@ -18,10 +18,7 @@ aVec2 Cannon::tip() const {
 
 float Cannon::angle() const { return rotation; }
 
-bool Cannon::fire() {
-    // if (bullet.esta_cayendo()) return false;
-    return bullet.eyectar(rotation);
-}
+bool Cannon::fire() { return bullet.eyectar(rotation); }
 
 bool Cannon::reload() {
     if (not bullet.esta_cayendo()) return false;
@@ -32,7 +29,7 @@ bool Cannon::reload() {
 }
 
 void Cannon::update(float angle) {
-    if (angle <= CANON_MAX or angle >= -CANON_MAX) rotation = angle;
+    if (angle <= CANON_MAX and angle >= -CANON_MAX) rotation = angle;
     if (not bullet.esta_cayendo()) bullet.set_position(tip());
 }
 

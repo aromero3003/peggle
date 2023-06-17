@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
     Renderer r(renderer);
     int dormir = 0;
 
-    bola_t b(BOLA_RADIO, BOLA_RESOL);
+    bola_t b(aVec2(CANON_X, CANON_Y + CANON_LARGO), BOLA_RADIO, BOLA_RESOL);
     Cannon canon(aVec2(CANON_X, CANON_Y), b);  // Ángulo del cañón
 
     // contador para actualizar la trayectoria en intervalos de 5
