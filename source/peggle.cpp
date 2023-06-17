@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef TTF
     TTF_Init();
-    TTF_Font *font = TTF_OpenFont("../resources/FreeSansBold.ttf", 24);
+    TTF_Font *font = TTF_OpenFont("resources/FreeSansBold.ttf", 24);
 #endif
 
     SDL_Window *window;
@@ -170,7 +170,7 @@ int main(int argc, char *argv[]) {
 
     Trajectory tray;
 
-    Loader loader("../resources/levels.bin");
+    Loader loader("resources/levels.bin");
 
     int nivel = 0;
     Game game(loader);
