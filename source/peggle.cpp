@@ -142,22 +142,23 @@ int main(int argc, char *argv[]) {
     //     return 1;
     // }
 
-    SDL_Init(SDL_INIT_VIDEO);
+    // SDL_Init(SDL_INIT_VIDEO);
+    Renderer r(VENTANA_ANCHO, VENTANA_ALTO, 0);
 
 #ifdef TTF
     TTF_Init();
     TTF_Font *font = TTF_OpenFont("resources/FreeSansBold.ttf", 24);
 #endif
 
-    SDL_Window *window;
-    SDL_Renderer *renderer;
+    // SDL_Window *window;
+    // SDL_Renderer *renderer;
     SDL_Event event;
 
-    SDL_CreateWindowAndRenderer(VENTANA_ANCHO, VENTANA_ALTO, 0, &window,
-                                &renderer);
-    SDL_SetWindowTitle(window, "Peggle");
+    // SDL_CreateWindowAndRenderer(VENTANA_ANCHO, VENTANA_ALTO, 0, &window,
+    //                             &renderer);
+    // SDL_SetWindowTitle(window, "Peggle");
 
-    Renderer r(renderer);
+    // Renderer r(renderer);
     int dormir = 0;
 
     Ball b(aVec2(CANON_X, CANON_Y + CANON_LARGO), BOLA_RADIO, BOLA_RESOL);
@@ -207,9 +208,12 @@ int main(int argc, char *argv[]) {
         int contador_game_over = CONTADOR_GAME_OVER;
 #endif
         while (game.state) {
-            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
-            SDL_RenderClear(renderer);
-            SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
+            // SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+            r.setColor(0x00, 0x00, 0x00, 0x00);
+            // SDL_RenderClear(renderer);
+            r.clear();
+            // SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
+            r.setColor(0xFF, 0xFF, 0xFF, 0x00);
             switch (game.state) {
                 ///////////////////////////////////////////////// JUEGO
                 /// CORRIENDO /////////////////////////////////////////////////
@@ -270,7 +274,8 @@ int main(int argc, char *argv[]) {
                             tray.agregar_coordenada(b.centro);
                             contador_trayectoria = 0;
                         }
-                        tray.dibujar(renderer);
+                        // tray.dibujar(renderer);
+                        r.drawTrajectory(tray);
                         contador_trayectoria++;
                     } else {
                         tray = Trajectory();
@@ -301,20 +306,20 @@ int main(int argc, char *argv[]) {
                     r.drawBall(b);        // Dibujamos la bola:
                     r.drawScenario();     // Dibujamos las paredes:
                     r.drawLifes(vidas);   // Dibujamos las vidas
-
+                    r.drawRetriever(recuperador);
                     // Dibujamos el vector de velocidad:
                     //        SDL_RenderDrawLine(renderer, cx, cy, cx + vx, cy +
                     //        vy);
 
                     // Dibujamos el recuperador de bolas
-                    recuperador.dibujar(renderer);
                     recuperador.mover(1);
 
                     // Dibujamos los obstaculos y realizamos la interacción con
                     // la bola
                     level->handle_collisions(b);
                     level->move_obstacles(DT);
-                    level->draw(renderer);
+                    r.drawLevel(level);
+                    // level->draw(renderer);
 
                     if (level->is_completed()) {
                         canon.reload();
@@ -462,7 +467,8 @@ int main(int argc, char *argv[]) {
                     nivel_escribir(renderer, font, nivel, MIN_X, MIN_Y / 2);
 
 #endif
-                    level->draw(renderer);
+                    // level->draw(renderer);
+                    r.drawLevel(level);
                     r.drawCannon(canon);  // Dibujamos el cañón
                     r.drawScenario();     // Dibujamos las paredes
                 }
@@ -508,7 +514,8 @@ int main(int argc, char *argv[]) {
                     break;
             }
 
-            SDL_RenderPresent(renderer);
+            // SDL_RenderPresent(renderer);
+            r.present();
             ticks = SDL_GetTicks() - ticks;
             if (dormir) {
                 SDL_Delay(dormir);
@@ -524,13 +531,13 @@ int main(int argc, char *argv[]) {
     //     piso
     // recuperador_destruir(recuperador);
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    // SDL_DestroyRenderer(renderer);
+    // SDL_DestroyWindow(window);
 
 #ifdef TTF
     TTF_CloseFont(font);
     TTF_Quit();
 #endif
-    SDL_Quit();
+    // SDL_Quit();
     return 0;
 }
