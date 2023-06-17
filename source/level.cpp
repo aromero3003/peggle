@@ -2,6 +2,8 @@
 
 #include <SDL_render.h>
 
+#include <cstddef>
+
 #include "ball.h"
 #include "obstacle.h"
 #include "settings.h"
@@ -96,6 +98,14 @@ void Level::clean_touched_obstacles() {
 bool Level::is_completed() const { return naranjas == naranjas_golpeados; }
 
 size_t Level::get_id() const { return id; }
+
+size_t Level::get_hit_oranges() const { return naranjas_golpeados; }
+
+size_t Level::get_total_oranges() const { return naranjas; }
+
+size_t Level::get_multiplier() const { return multiplier; }
+
+size_t Level::get_score() const { return score; }
 
 void Level::draw(SDL_Renderer *r) {
     for (auto &obs : obstaculos) obs.dibujar(r);

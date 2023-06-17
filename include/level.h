@@ -3,6 +3,7 @@
 
 #include <SDL_render.h>
 
+#include <cstddef>
 #include <list>
 
 #include "ball.h"
@@ -27,6 +28,10 @@ class Level {
 
     bool is_completed() const;
     size_t get_id() const;
+    size_t get_hit_oranges() const;
+    size_t get_total_oranges() const;
+    size_t get_multiplier() const;
+    size_t get_score() const;
 
    private:
     std::list<Obstacle> obstaculos;
