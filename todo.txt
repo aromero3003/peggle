@@ -7,3 +7,5 @@ Quién debería calcular posicion en cada instante?
 
 Cada poligono debería ser una clase derivada. Círculo se dibuja de manera diferente.
 Cada obstaculo también
+
+Cambiar el hardcodeo de archivo de Fuentes y de Niveles
