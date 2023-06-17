@@ -7,14 +7,14 @@
 #include "poligono.h"
 #include "vec2.h"
 
-class trayectoria_t {
+class Trajectory {
    public:
-    trayectoria_t();
-    trayectoria_t(trayectoria_t &&) = default;
-    trayectoria_t(const trayectoria_t &) = default;
-    trayectoria_t &operator=(trayectoria_t &&) = default;
-    trayectoria_t &operator=(const trayectoria_t &) = default;
-    ~trayectoria_t() = default;
+    Trajectory();
+    Trajectory(Trajectory &&) = default;
+    Trajectory(const Trajectory &) = default;
+    Trajectory &operator=(Trajectory &&) = default;
+    Trajectory &operator=(const Trajectory &) = default;
+    ~Trajectory() = default;
 
     bool agregar_coordenada(aVec2 p);
     bool dibujar(SDL_Renderer *renderer);
@@ -23,7 +23,7 @@ class trayectoria_t {
     std::vector<aVec2> linea;
 };
 
-trayectoria_t calcular(aVec2 pi, aVec2 vi, aVec2 a, float dt);
+Trajectory calcular(aVec2 pi, aVec2 vi, aVec2 a, float dt);
 
 double computar_velocidad(double vi, double a, double dt);
 

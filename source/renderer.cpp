@@ -49,11 +49,11 @@ void drawCircle(SDL_Renderer *renderer, float center_x, float center_y,
     }
 }
 
-void Renderer::drawBall(const bola_t &ball) const {
+void Renderer::drawBall(const Ball &ball) const {
     drawCircle(r, ball.position().x, ball.position().y, BOLA_RADIO, 100);
 }
 
-void Renderer::drawLifes(const vidas_t &vidas) const {
+void Renderer::drawLifes(const Lifes &vidas) const {
     aVec2 p = vidas.position();
     for (size_t i = 0; i < vidas.restantes(); i++, p.y += BOLA_RADIO * 3) {
         drawCircle(r, p.x, p.y, BOLA_RADIO, BOLA_RESOL);

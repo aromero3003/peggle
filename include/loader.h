@@ -21,14 +21,14 @@ class Loader {
     Level read_level();
 
     size_t leer_cantidad_de_obstaculos();
-    obstaculo_t leer_obstaculo();
-    std::list<obstaculo_t> leer_obstaculos(size_t n);
+    Obstacle leer_obstaculo();
+    std::list<Obstacle> leer_obstaculos(size_t n);
 
     void leer_encabezado(color_t &col, movimiento_t &mov, geometria_t &geo);
 
     bool leer_movimiento(movimiento_t movimiento, int16_t parametros[]);
 
-    poligono_t leer_geometria(geometria_t geometria);
+    Polygon leer_geometria(geometria_t geometria);
 
    private:
     std::ifstream file;
@@ -43,9 +43,9 @@ class Loader {
     bool leer_movimiento_circular(int16_t parametros[]);
     bool leer_movimiento_horizontal(int16_t parametros[]);
 
-    poligono_t leer_geometria_circulo();
-    poligono_t leer_geometria_rectangulo();
-    poligono_t leer_geometria_poligono();
+    Polygon leer_geometria_circulo();
+    Polygon leer_geometria_rectangulo();
+    Polygon leer_geometria_poligono();
 };
 
 #endif /* __LOADER_H__ */

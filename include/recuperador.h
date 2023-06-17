@@ -4,23 +4,23 @@
 #include "bola.h"
 #include "poligono.h"
 
-class recuperador_t {
+class Retriever {
    public:
-    recuperador_t() = delete;
-    recuperador_t(recuperador_t &&) = default;
-    recuperador_t(const recuperador_t &) = default;
-    recuperador_t &operator=(recuperador_t &&) = default;
-    recuperador_t &operator=(const recuperador_t &) = default;
-    ~recuperador_t() = default;
+    Retriever() = delete;
+    Retriever(Retriever &&) = default;
+    Retriever(const Retriever &) = default;
+    Retriever &operator=(Retriever &&) = default;
+    Retriever &operator=(const Retriever &) = default;
+    ~Retriever() = default;
 
-    recuperador_t(float ancho, float alto, float velocidad);
+    Retriever(float ancho, float alto, float velocidad);
     void mover(float dt);
     void dibujar(SDL_Renderer *renderer) const;
 
-    bool recuperar(bola_t &b) const;
+    bool recuperar(Ball &b) const;
 
    private:
-    poligono_t r;
+    Polygon r;
     float velocidad;
     float xi;
     float ancho;

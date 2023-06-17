@@ -13,16 +13,15 @@
 #include "vec2.h"
 
 // Crea un polígono de n vertices en R2
-poligono_t::poligono_t(float vertices[][2], size_t n) : vertices(n) {
+Polygon::Polygon(float vertices[][2], size_t n) : vertices(n) {
     for (size_t i = 0; i < n; i++) {
         this->vertices[i].set(vertices[i][0], vertices[i][1]);
     }
 }
 
-poligono_t::poligono_t(const std::vector<aVec2> &vertices)
-    : vertices(vertices) {}
+Polygon::Polygon(const std::vector<aVec2> &vertices) : vertices(vertices) {}
 
-poligono_t::poligono_t(float radio, size_t resolucion) : vertices(resolucion) {
+Polygon::Polygon(float radio, size_t resolucion) : vertices(resolucion) {
     int angulo = 360 / resolucion;
     for (aVec2 &v : vertices) {
         v.set(0., radio);
@@ -30,67 +29,67 @@ poligono_t::poligono_t(float radio, size_t resolucion) : vertices(resolucion) {
     }
 }
 
-poligono_t::poligono_t(const poligono_t &other) : vertices(other.vertices) {}
+Polygon::Polygon(const Polygon &other) : vertices(other.vertices) {}
 
-poligono_t &poligono_t::operator=(const poligono_t &other) {
+Polygon &Polygon::operator=(const Polygon &other) {
     if (this == &other) return *this;
     this->vertices = other.vertices;
     return *this;
 }
 
 // Devuelve la cantidad de vértices de un polígono
-size_t poligono_t::cantidad_vertices() const { return vertices.size(); }
+size_t Polygon::cantidad_vertices() const { return vertices.size(); }
 
 // Devuelve true y por interfaz las coordenadas del vértice pos o false si no se
 // puede
-bool poligono_t::obtener_vertice(size_t pos, float &x, float &y) const {
+bool Polygon::obtener_vertice(size_t pos, float &x, float &y) const {
     if (cantidad_vertices() <= pos) return false;  // raise exception
     x = vertices[pos].x;
     y = vertices[pos].y;
     return true;
 }
 
-bool poligono_t::obtener_vertice(size_t pos, aVec2 &v) const {
+bool Polygon::obtener_vertice(size_t pos, aVec2 &v) const {
     if (cantidad_vertices() <= pos) return false;  // raise exception
     v = vertices[pos];
     return true;
 }
 
 // Agrega un vértice a un polígono
-bool poligono_t::agregar_vertice(aVec2 xy) {
+bool Polygon::agregar_vertice(aVec2 xy) {
     vertices.emplace_back(xy);
     return true;
 }
 
 // Traslada un polígono de n vértices dx en el eje de las abscisas, y dy en le
 // eje de las ordenadas.
-void poligono_t::trasladar(aVec2 d) {
+void Polygon::trasladar(aVec2 d) {
     for (aVec2 &vertex : vertices) vertex += d;
 }
 
 // Rota un polígono de n vértices una rad cantidad de radianes.
-void poligono_t::rotar(double rad) {
+void Polygon::rotar(double rad) {
     for (aVec2 &v : vertices) {
         v.set(v.x * cos(rad) - v.y * sin(rad), v.x * sin(rad) + v.y * cos(rad));
     }
 }
 
-void poligono_t::rotar2(double rad) {
+void Polygon::rotar2(double rad) {
     double angulo = rad * PI / 180;
     rotar(angulo);
 }
 
 // Rota un poligono respecto a un centro
-void poligono_t::rotar_centro(double rad, aVec2 centro) {
-    poligono_t::trasladar(-centro);
-    poligono_t::rotar(rad);
-    poligono_t::trasladar(centro);
+void Polygon::rotar_centro(double rad, aVec2 centro) {
+    Polygon::trasladar(-centro);
+    Polygon::rotar(rad);
+    Polygon::trasladar(centro);
 }
 
-void poligono_t::rotar_centro2(double rad, aVec2 centro) {
-    poligono_t::trasladar(-centro);
-    poligono_t::rotar2(rad);
-    poligono_t::trasladar(centro);
+void Polygon::rotar_centro2(double rad, aVec2 centro) {
+    Polygon::trasladar(-centro);
+    Polygon::rotar2(rad);
+    Polygon::trasladar(centro);
 }
 
 // Determina si un punto de coordenadas px, py está dentro de un triángulo de
@@ -109,7 +108,7 @@ static bool punto_en_triangulo(aVec2 p, aVec2 a, aVec2 b, aVec2 c) {
 
 // Determina si un punto de coordenadas px, py está contenido en un polígono de
 // n vértices.
-bool poligono_t::punto_dentro(aVec2 p) const {
+bool Polygon::punto_dentro(aVec2 p) const {
     for (size_t i = 1; i < vertices.size() - 1; i++)
         if (punto_en_triangulo(p, vertices[0], vertices[i], vertices[i + 1]) ==
             true)
@@ -118,7 +117,7 @@ bool poligono_t::punto_dentro(aVec2 p) const {
 }
 
 // Imprimir las coordenadas de los vertices de un polígono.
-void poligono_t::imprimir() const {
+void Polygon::imprimir() const {
     for (const aVec2 &vertex : vertices)
         std::cout << "  (" << vertex.x << " ; " << vertex.y << ") ";
     std::cout << std::endl;
@@ -129,7 +128,7 @@ void poligono_t::imprimir() const {
 }
 
 // Dibuja un poligono cerrado sobre un SDL_Renderer
-bool poligono_t::dibujar(SDL_Renderer *renderer) const {
+bool Polygon::dibujar(SDL_Renderer *renderer) const {
     if (renderer == NULL) return false;
     for (size_t i = 0; i + 1 < vertices.size(); i++) {
         SDL_RenderDrawLine(renderer, vertices[i].x, vertices[i].y,
@@ -144,7 +143,7 @@ bool poligono_t::dibujar(SDL_Renderer *renderer) const {
 }
 
 // Dibuja un poligono abierto sobre un SDL_Renderer
-bool poligono_t::abierto_dibujar(SDL_Renderer *renderer) const {
+bool Polygon::abierto_dibujar(SDL_Renderer *renderer) const {
     if (renderer == NULL) return false;
     for (size_t i = 0; i + 1 < vertices.size(); i++) {
         SDL_RenderDrawLine(renderer, vertices[i].x, vertices[i].y,
@@ -168,7 +167,7 @@ static aVec2 punto_mas_cercano(aVec2 xy0, aVec2 xy1, aVec2 p) {
 }
 
 // Devuelve por interfaz el punto del polígono más cercano al punto (xp;yp)
-double poligono_t::distancia(aVec2 punto, aVec2 &norma) const {
+double Polygon::distancia(aVec2 punto, aVec2 &norma) const {
     double d = 1 / 0.0;
     size_t idx = 0;
     size_t cant = cantidad_vertices();

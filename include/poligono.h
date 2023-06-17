@@ -9,14 +9,14 @@
 
 #include "vec2.h"
 
-struct poligono_t {
-    poligono_t() = delete;
-    poligono_t(float vertices[][2], size_t n);
-    poligono_t(const std::vector<aVec2> &vertices);
-    poligono_t(float radio, size_t resolucion);
-    poligono_t(const poligono_t &p);
+struct Polygon {
+    Polygon() = delete;
+    Polygon(float vertices[][2], size_t n);
+    Polygon(const std::vector<aVec2> &vertices);
+    Polygon(float radio, size_t resolucion);
+    Polygon(const Polygon &p);
 
-    poligono_t &operator=(const poligono_t &other);
+    Polygon &operator=(const Polygon &other);
 
     void imprimir() const;  // Imprime por consola los puntos del poligono
 

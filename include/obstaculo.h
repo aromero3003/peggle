@@ -6,15 +6,15 @@
 #include "poligono.h"
 #include "tipos.h"
 
-struct obstaculo_t {
-    obstaculo_t() = delete;
-    obstaculo_t(obstaculo_t &&) = default;
-    obstaculo_t(const obstaculo_t &other) = default;
-    obstaculo_t &operator=(obstaculo_t &&) = default;
-    obstaculo_t &operator=(const obstaculo_t &) = default;
+struct Obstacle {
+    Obstacle() = delete;
+    Obstacle(Obstacle &&) = default;
+    Obstacle(const Obstacle &other) = default;
+    Obstacle &operator=(Obstacle &&) = default;
+    Obstacle &operator=(const Obstacle &) = default;
 
-    obstaculo_t(poligono_t p, color_t c, movimiento_t m, geometria_t g,
-                float parametros[3]);
+    Obstacle(Polygon p, color_t c, movimiento_t m, geometria_t g,
+             float parametros[3]);
 
     void imprimir_obstaculo() const;
 
@@ -44,7 +44,7 @@ struct obstaculo_t {
     double distancia(aVec2 p, aVec2 &nor) const;
 
    private:
-    poligono_t poligono;
+    Polygon poligono;
 
     color_t color;
 

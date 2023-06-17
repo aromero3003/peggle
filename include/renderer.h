@@ -16,9 +16,9 @@ class Renderer {
     ~Renderer() = default;
 
     void drawScenario() const;
-    void drawBall(const bola_t &ball) const;
+    void drawBall(const Ball &ball) const;
     void drawCannon(const Cannon &cannon) const;
-    void drawLifes(const vidas_t &vidas) const;
+    void drawLifes(const Lifes &vidas) const;
 
    private:
     SDL_Renderer *r;

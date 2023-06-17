@@ -6,10 +6,10 @@
 
 #include "vec2.h"
 
-struct vidas_t {
-    vidas_t(unsigned int n, float cx, float cy);
+struct Lifes {
+    Lifes(unsigned int n, float cx, float cy);
 
-    // void vidas_agregar(vidas_t *vidas);
+    // void vidas_agregar(Lifes *vidas);
     void quitar();
 
     size_t restantes() const;

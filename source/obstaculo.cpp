@@ -10,8 +10,8 @@
 #include "tipos.h"
 #include "vec2.h"
 
-obstaculo_t::obstaculo_t(poligono_t p, color_t c, movimiento_t m, geometria_t g,
-                         float parametros[3])
+Obstacle::Obstacle(Polygon p, color_t c, movimiento_t m, geometria_t g,
+                   float parametros[3])
     : poligono(p),
       color(c),
       movimiento(m),
@@ -24,7 +24,7 @@ obstaculo_t::obstaculo_t(poligono_t p, color_t c, movimiento_t m, geometria_t g,
 }
 
 // Imprime por stdout los parametros de un obstaculo
-void obstaculo_t::imprimir_obstaculo() const {
+void Obstacle::imprimir_obstaculo() const {
     // printf("Mov: %d For: %d Col: %d\n", movimiento, geometria, color);
     std::cout << "Mov :" << movimiento << " For: " << geometria
               << " Col: " << color << std::endl;
@@ -38,27 +38,27 @@ bool obstaculo_cantidad_en_nivel(FILE *f, int16_t *cant) {
     return fread(cant, sizeof(int16_t), 1, f) != 1;
 }
 
-bool obstaculo_t::es_gris() const { return color == COLOR_GRIS; }
+bool Obstacle::es_gris() const { return color == COLOR_GRIS; }
 
-bool obstaculo_t::es_naranja() const { return color == COLOR_NARANJA; }
+bool Obstacle::es_naranja() const { return color == COLOR_NARANJA; }
 
-color_t obstaculo_t::get_color() const { return color; }
+color_t Obstacle::get_color() const { return color; }
 
-void obstaculo_t::trasladar(float dx, float dy) {
+void Obstacle::trasladar(float dx, float dy) {
     poligono.trasladar(aVec2(dx, dy));
 }
 
-void obstaculo_t::rotar(double rad) { poligono.rotar2(rad); }
+void Obstacle::rotar(double rad) { poligono.rotar2(rad); }
 
-void obstaculo_t::rotar_centro(double rad, aVec2 c) {
+void Obstacle::rotar_centro(double rad, aVec2 c) {
     poligono.rotar_centro2(rad, c);
 }
 
 // FUNCIONES PARA MOVER EL OBSTACULO
 
-void obstaculo_t::mover_inmovil(double dt) { return; }
+void Obstacle::mover_inmovil(double dt) { return; }
 
-void obstaculo_t::mover_horizontal(double dt) {
+void Obstacle::mover_horizontal(double dt) {
     trasladar(parametros[2] * dt, 0);
 
     parametros[1] += (parametros[2] * dt);
@@ -67,11 +67,11 @@ void obstaculo_t::mover_horizontal(double dt) {
         parametros[2] = -parametros[2];
 }
 
-void obstaculo_t::mover_circular(double dt) {
+void Obstacle::mover_circular(double dt) {
     rotar_centro(parametros[2] * dt * 60, aVec2(parametros[0], parametros[1]));
 }
 
-// static const void (*const funciones_obstaculo_mover[])(obstaculo_t
+// static const void (*const funciones_obstaculo_mover[])(Obstacle
 // *obstaculo,
 //                                                        double dt) = {
 //     [INMOVIL] = obs.mover_inmovil,
@@ -79,7 +79,7 @@ void obstaculo_t::mover_circular(double dt) {
 //     [CIRCULAR] = obs.mover_circular};
 
 // Mover al obstaculo segun su movimiento
-void obstaculo_t::mover(double dt) {
+void Obstacle::mover(double dt) {
     if (movimiento == INMOVIL)
         mover_inmovil(dt);
     else if (movimiento == HORIZONTAL)
@@ -91,7 +91,7 @@ void obstaculo_t::mover(double dt) {
 }
 
 // Dibuja un obstaculo sobre un SDL_Renderer
-bool obstaculo_t::dibujar(SDL_Renderer *renderer) const {
+bool Obstacle::dibujar(SDL_Renderer *renderer) const {
     if (tocado)
         SDL_SetRenderDrawColor(renderer, 0xFF, 0XFF, 0x00, 0x00);
     else {
@@ -116,14 +116,14 @@ bool obstaculo_t::dibujar(SDL_Renderer *renderer) const {
     return _dibujar ? poligono.dibujar(renderer) : true;
 }
 
-void obstaculo_t::set_tocado(bool state) { tocado = state; }
+void Obstacle::set_tocado(bool state) { tocado = state; }
 
-bool obstaculo_t::get_tocado() const { return tocado; }
+bool Obstacle::get_tocado() const { return tocado; }
 
-void obstaculo_t::set_dibujar(bool state) { _dibujar = state; }
+void Obstacle::set_dibujar(bool state) { _dibujar = state; }
 
-bool obstaculo_t::get_dibujar() const { return _dibujar; }
+bool Obstacle::get_dibujar() const { return _dibujar; }
 
-double obstaculo_t::distancia(aVec2 p, aVec2 &norma) const {
+double Obstacle::distancia(aVec2 p, aVec2 &norma) const {
     return poligono.distancia(p, norma);
 }

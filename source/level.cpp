@@ -7,16 +7,16 @@
 #include "obstaculo.h"
 #include "vec2.h"
 
-Level::Level(std::list<obstaculo_t> &obstaculos)
+Level::Level(std::list<Obstacle> &obstaculos)
     : obstaculos(obstaculos),
       naranjas(0),
       naranjas_golpeados(0),
       score(0),
       multiplier(1) {
-    for (const obstaculo_t &obs : obstaculos) naranjas += obs.es_naranja();
+    for (const Obstacle &obs : obstaculos) naranjas += obs.es_naranja();
 }
 
-size_t Level::update_score(const obstaculo_t &obs) {
+size_t Level::update_score(const Obstacle &obs) {
     if (obs.get_tocado()) return 0;
 
     size_t puntaje_azul = 10;
@@ -51,7 +51,7 @@ size_t Level::update_multiplier() {
     return multiplier;
 }
 
-void Level::handle_collisions(bola_t &bola) {
+void Level::handle_collisions(Ball &bola) {
     for (auto &obs : obstaculos) {
         if (obs.get_dibujar()) {
             // obs.dibujar(renderer);

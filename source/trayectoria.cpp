@@ -6,14 +6,14 @@
 #include "utility.h"
 #include "vec2.h"
 
-trayectoria_t::trayectoria_t() {}
+Trajectory::Trajectory() {}
 
-bool trayectoria_t::agregar_coordenada(aVec2 p) {
+bool Trajectory::agregar_coordenada(aVec2 p) {
     linea.push_back(p);
     return true;
 }
 
-bool trayectoria_t::dibujar(SDL_Renderer* renderer) {
+bool Trajectory::dibujar(SDL_Renderer* renderer) {
     for (const aVec2& p : linea) {
         SDL_RenderDrawPointF(renderer, p.x, p.y);
     }
@@ -21,8 +21,8 @@ bool trayectoria_t::dibujar(SDL_Renderer* renderer) {
     return true;
 }
 
-trayectoria_t calcular(aVec2 pi, aVec2 vi, aVec2 a, float dt) {
-    trayectoria_t actual;
+Trajectory calcular(aVec2 pi, aVec2 vi, aVec2 a, float dt) {
+    Trajectory actual;
     while (pi.x > MIN_X and pi.x < MAX_X and pi.y < MAX_Y) {
         actual.agregar_coordenada(pi);
         vi = ROZAMIENTO * computar_velocidad(vi, a, dt);

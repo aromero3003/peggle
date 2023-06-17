@@ -26,7 +26,7 @@
 
 const aVec2 G_VEC(0.0f, G);
 
-void resetear_obstaculos(obstaculo_t &obs) {
+void resetear_obstaculos(Obstacle &obs) {
     obs.set_tocado(false);
     obs.set_dibujar(true);
 }
@@ -119,8 +119,8 @@ void nivel_escribir(SDL_Renderer *renderer, TTF_Font *font, int nivel, int x,
     SDL_FreeSurface(surface);
 }
 
-void vidas_escribir(SDL_Renderer *renderer, TTF_Font *font, vidas_t *vidas,
-                    int x, int y) {
+void vidas_escribir(SDL_Renderer *renderer, TTF_Font *font, Lifes *vidas, int x,
+                    int y) {
     char v[3];
     size_t aux = vidas->restantes();
     sprintf(v, "%zd", aux);
@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
     Renderer r(renderer);
     int dormir = 0;
 
-    bola_t b(aVec2(CANON_X, CANON_Y + CANON_LARGO), BOLA_RADIO, BOLA_RESOL);
+    Ball b(aVec2(CANON_X, CANON_Y + CANON_LARGO), BOLA_RADIO, BOLA_RESOL);
     Cannon canon(aVec2(CANON_X, CANON_Y), b);  // Ángulo del cañón
 
     // contador para actualizar la trayectoria en intervalos de 5
@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
 
     puntaje_t puntaje_total = 0;
 
-    trayectoria_t tray;
+    Trajectory tray;
 
     // Loader loader(argv[1]);
     Loader loader2(argv[1]);
@@ -176,15 +176,15 @@ int main(int argc, char *argv[]) {
     int nivel = 0;
     Game game(loader2);
 
-    vidas_t vidas(VIDAS_INICIALES, 60, MIN_Y + BOLA_RADIO);
+    Lifes vidas(VIDAS_INICIALES, 60, MIN_Y + BOLA_RADIO);
     // if (vidas == NULL) {
     //     fclose(f);
     //     SDL_DestroyRenderer(renderer);
     //     SDL_DestroyWindow(window);
     //     return 3;
     // }
-    // recuperador_t *recuperador = recuperador_crear(60, 10, 0.6);
-    recuperador_t recuperador(60, 10, 0.6);
+    // Retriever *recuperador = recuperador_crear(60, 10, 0.6);
+    Retriever recuperador(60, 10, 0.6);
     // if (recuperador == NULL) {
     //     fclose(f);
     //     SDL_DestroyRenderer(renderer);
@@ -229,7 +229,7 @@ int main(int argc, char *argv[]) {
 
                             case SDL_MOUSEBUTTONDOWN:
                                 canon.fire();
-                                // tray = trayectoria_t();
+                                // tray = Trajectory();
                             case SDL_MOUSEMOTION:
                                 canon.update(atan2(event.motion.x - CANON_X,
                                                    event.motion.y - CANON_Y));
@@ -243,8 +243,8 @@ int main(int argc, char *argv[]) {
                     // escribir_texto(renderer, font, "Peggle", 100, 20);
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0x60, 0x00, 0x00);
                     {
-                        bola_t dibujito(MAX_X + 40, MAX_Y - 50, 10,
-                                        RESOL_BOLA_OBS);
+                        Ball dibujito(MAX_X + 40, MAX_Y - 50, 10,
+                                      RESOL_BOLA_OBS);
                         dibujito.dibujar(renderer);
                     }
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
@@ -274,9 +274,9 @@ int main(int argc, char *argv[]) {
                         tray.dibujar(renderer);
                         contador_trayectoria++;
                     } else {
-                        tray = trayectoria_t();
+                        tray = Trajectory();
                         // {
-                        //     trayectoria_t calculada =
+                        //     Trajectory calculada =
                         //         calcular(c, v, G_VEC, 0.01);
                         //     calculada.dibujar(renderer);
                         // }
@@ -417,8 +417,8 @@ int main(int argc, char *argv[]) {
 #ifdef TTF
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0x60, 0x00, 0x00);
                     {
-                        bola_t dibujito(MAX_X + 40, MAX_Y - 50, 10,
-                                        RESOL_BOLA_OBS);
+                        Ball dibujito(MAX_X + 40, MAX_Y - 50, 10,
+                                      RESOL_BOLA_OBS);
                         dibujito.dibujar(renderer);
                     }
                     //     bola_crear(MAX_X + 40, MAX_Y - 50, 10,

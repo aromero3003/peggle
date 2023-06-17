@@ -12,35 +12,35 @@
 
 const aVec2 g(0, G);
 
-bola_t::bola_t(aVec2 c, float radio, unsigned int resolucion)
+Ball::Ball(aVec2 c, float radio, unsigned int resolucion)
     : centro(c), velocidad(aVec2Zero), radio(radio), cayendo(false) {}
 
-bola_t::bola_t(float radio, unsigned int resolucion)
-    : bola_t(aVec2Zero, radio, resolucion) {}
+Ball::Ball(float radio, unsigned int resolucion)
+    : Ball(aVec2Zero, radio, resolucion) {}
 
-bool bola_t::eyectar(float angle) {
+bool Ball::eyectar(float angle) {
     if (cayendo) return false;
     cayendo = true;
     velocidad.set(BOLA_VI * std::sin(angle), BOLA_VI * std::cos(angle));
     return true;
 }
 #include <iostream>
-void bola_t::imprimir() {
+void Ball::imprimir() {
     std::cout << std::fixed << std::setprecision(2);
     std::cout << "Centro: (" << centro.x << ";" << centro.y << ") ";
 }
-void bola_t::reset() {
+void Ball::reset() {
     velocidad.setZero();
     cayendo = false;
     // TODO volver a posicion de origen
 }
 
-bool bola_t::esta_cayendo() const { return cayendo; }
+bool Ball::esta_cayendo() const { return cayendo; }
 
-aVec2 bola_t::position() const { return centro; }
-aVec2 bola_t::get_velocidad() const { return velocidad; }
+aVec2 Ball::position() const { return centro; }
+aVec2 Ball::get_velocidad() const { return velocidad; }
 
-void bola_t::set_position(aVec2 p) {
+void Ball::set_position(aVec2 p) {
     // forma.trasladar(-centro);
     // forma.imprimir();
     // forma.trasladar();
@@ -49,7 +49,7 @@ void bola_t::set_position(aVec2 p) {
     // centro = p;
 }
 
-void bola_t::actualizar(double dt) {
+void Ball::actualizar(double dt) {
     if (not cayendo) return;
     velocidad = ROZAMIENTO * computar_velocidad(velocidad, g, dt);
     aVec2 nuevo_centro = computar_posicion(centro, velocidad, dt);
@@ -70,13 +70,13 @@ void bola_t::actualizar(double dt) {
     rebotar_si_hay_pared();
 }
 
-void bola_t::rebotar_si_hay_pared() {
+void Ball::rebotar_si_hay_pared() {
     if (centro.x < MIN_X + BOLA_RADIO or centro.x > MAX_X - BOLA_RADIO)
         velocidad.x = -velocidad.x;
     if (centro.y < MIN_Y + BOLA_RADIO) velocidad.y = -velocidad.y;
 }
 
-void bola_t::reflejar(aVec2 norm) {
+void Ball::reflejar(aVec2 norm) {
     ::reflejar(norm, centro, velocidad);
     // float proy = aDot(norm, velocidad);
     //
@@ -87,4 +87,4 @@ void bola_t::reflejar(aVec2 norm) {
     velocidad *= PLASTICIDAD;
 }
 
-bool bola_t::esta_trabada() const { return stucked; }
+bool Ball::esta_trabada() const { return stucked; }

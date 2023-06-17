@@ -29,7 +29,7 @@ Loader::Loader(const char *path) : file(path, std::ios::binary) {
 bool Loader::can_continue() { return not file.eof(); }
 
 Level Loader::read_level() {
-    std::list<obstaculo_t> obs = leer_obstaculos(leer_cantidad_de_obstaculos());
+    std::list<Obstacle> obs = leer_obstaculos(leer_cantidad_de_obstaculos());
     // return Level(leer_obstaculos(leer_cantidad_de_obstaculos()));
     return Level(obs);
 }
@@ -41,7 +41,7 @@ size_t Loader::leer_cantidad_de_obstaculos() {
     return buffer;
 }
 
-obstaculo_t Loader::leer_obstaculo() {
+Obstacle Loader::leer_obstaculo() {
     color_t col;
     movimiento_t mov;
     geometria_t geo;
@@ -65,11 +65,11 @@ obstaculo_t Loader::leer_obstaculo() {
     // std::cout << parametros[0] << " " << parametros[1] << " " <<
     // parametros[2]
     //           << std::endl;
-    return obstaculo_t(leer_geometria(geo), col, mov, geo, parametros);
+    return Obstacle(leer_geometria(geo), col, mov, geo, parametros);
 }
 
-std::list<obstaculo_t> Loader::leer_obstaculos(size_t n) {
-    std::list<obstaculo_t> obstaculos;
+std::list<Obstacle> Loader::leer_obstaculos(size_t n) {
+    std::list<Obstacle> obstaculos;
     for (size_t i = 0; i < n; i++) obstaculos.emplace_back(leer_obstaculo());
     return obstaculos;
 }
@@ -111,20 +111,20 @@ bool Loader::leer_movimiento(movimiento_t movimiento, int16_t parametros[]) {
 // Funciones para leer geometría
 // -------------------------------------------------------------------
 
-poligono_t Loader::leer_geometria_circulo() {
+Polygon Loader::leer_geometria_circulo() {
     int16_t x, y, r;
     if (not((bool)file.read(reinterpret_cast<char *>(&x), SIZE16B) and
             (bool) file.read(reinterpret_cast<char *>(&y), SIZE16B) and
             (bool) file.read(reinterpret_cast<char *>(&r), SIZE16B)))
         throw -1;  // TODO Crear Excepcion
 
-    poligono_t poligono(r, RESOL_BOLA_OBS);
+    Polygon poligono(r, RESOL_BOLA_OBS);
     poligono.trasladar(aVec2(x, y));
     // printf("CIRCULO: x = %d, y = %d, radio = %d\n",x, y, r);
     return poligono;
 }
 
-poligono_t Loader::leer_geometria_rectangulo() {
+Polygon Loader::leer_geometria_rectangulo() {
     int16_t x, y, ancho, alto, angulo;
     if (not((bool)file.read(reinterpret_cast<char *>(&x), SIZE16B) and
             (bool) file.read(reinterpret_cast<char *>(&y), SIZE16B) and
@@ -138,7 +138,7 @@ poligono_t Loader::leer_geometria_rectangulo() {
                            {(float)ancho / 2, (float)-alto / 2},
                            {(float)ancho / 2, (float)alto / 2},
                            {(float)-ancho / 2, (float)alto / 2}};
-    poligono_t poligono(vertices, 4);
+    Polygon poligono(vertices, 4);
 
     // printf("angul = %g x: %d y: %d\n",(double)angulo, x, y);
     poligono.rotar2(angulo);
@@ -148,7 +148,7 @@ poligono_t Loader::leer_geometria_rectangulo() {
     return poligono;
 }
 
-poligono_t Loader::leer_geometria_poligono() {
+Polygon Loader::leer_geometria_poligono() {
     uint16_t puntos;
     if (not(bool) file.read(reinterpret_cast<char *>(&puntos), SIZE16B))
         throw -1;
@@ -169,17 +169,17 @@ poligono_t Loader::leer_geometria_poligono() {
         printf("\tx%zd = %g,", i, parametros[i][0]);
         printf(" y%zd = %g\n", i, parametros[i][1]);
     }*/
-    return poligono_t(parametros, puntos);
+    return Polygon(parametros, puntos);
 }
 
 // Tabla de busqueda de funciones para leer geometria
-// poligono_t *(*funciones_leer_geometria[])(FILE *f) = {
+// Polygon *(*funciones_leer_geometria[])(FILE *f) = {
 //     [CIRCULO] = leer_geometria_circulo,
 //     [RECTANGULO] = leer_geometria_rectangulo,
 //     [POLIGONO] = leer_geometria_poligono};
 
 // Funcion para utilizar la tabla de busqueda
-poligono_t Loader::leer_geometria(geometria_t geometria) {
+Polygon Loader::leer_geometria(geometria_t geometria) {
     // return funciones_leer_geometria[geometria](f);
     if (geometria == CIRCULO)
         return leer_geometria_circulo();

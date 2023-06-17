@@ -9,7 +9,7 @@
 class Cannon {
    public:
     // TODO que también reciba un largo de cannon
-    Cannon(aVec2 p0, bola_t &bala);
+    Cannon(aVec2 p0, Ball &bala);
     Cannon(Cannon &&) = default;
     Cannon(const Cannon &) = delete;
     Cannon &operator=(Cannon &&) = delete;
@@ -27,7 +27,7 @@ class Cannon {
 
    private:
     const aVec2 bottom;
-    bola_t &bullet;
+    Ball &ball;
     float rotation;
 };
 
