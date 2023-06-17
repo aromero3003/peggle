@@ -406,11 +406,6 @@ int main(int argc, char *argv[]) {
 
                         continue;
                     }
-                    level.draw(renderer);
-                    // for (auto &obs : obstaculos) {
-                    //     return obs.dibujar((SDL_Renderer *)renderer);
-                    // }
-
 #ifdef TTF
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0x60, 0x00, 0x00);
                     {
@@ -460,12 +455,9 @@ int main(int argc, char *argv[]) {
                     nivel_escribir(renderer, font, nivel, MIN_X, MIN_Y / 2);
 
 #endif
-
-                    // Dibujamos el cañón:
-                    r.drawCannon(canon);
-
-                    // Dibujamos las paredes:
-                    r.drawScenario();
+                    level.draw(renderer);
+                    r.drawCannon(canon);  // Dibujamos el cañón
+                    r.drawScenario();     // Dibujamos las paredes
                 }
 
                 break;
