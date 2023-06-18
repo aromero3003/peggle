@@ -38,13 +38,23 @@ void HybridRenderer::drawLevel(Level *level) {
     ss << level->get_hit_oranges() << "/" << level->get_total_oranges();
     writeText(ss.str().c_str(), aVec2(MAX_X + 15, MAX_Y - 30), false, 1);
 
+    drawScore(level);
+
+    SDL_SetRenderDrawColor(r, 0xFF, 0x60, 0x00, 0x00);
+    drawCircle(aVec2(MAX_X + 40, MAX_Y - 50), 10, BOLA_RESOL);
+}
+
+void HybridRenderer::drawScore(Level *level) {
     std::string score = "Score: " + std::to_string(level->get_score());
     std::string multiplier = "x" + std::to_string(level->get_multiplier());
     writeText(score, aVec2(600, MIN_Y / 2.), false, 0.8);
     writeText(multiplier, aVec2(730, 50), false, 0.8);
-
-    SDL_SetRenderDrawColor(r, 0xFF, 0x60, 0x00, 0x00);
-    drawCircle(aVec2(MAX_X + 40, MAX_Y - 50), 10, BOLA_RESOL);
+}
+void HybridRenderer::drawLevelUp(Level *level) {
+    std::string score = "SCORE: " + std::to_string(level->get_score());
+    writeText("SUCCESS", aVec2(VENTANA_ANCHO / 2., 200), true, 1);
+    writeText(score, aVec2(VENTANA_ANCHO / 2., 260), true, 1);
+    writeText("Click to continue", aVec2(VENTANA_ANCHO / 2., 230), true, 1);
 }
 
 void HybridRenderer::drawLifes(Lifes &lifes) {

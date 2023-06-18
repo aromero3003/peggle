@@ -52,6 +52,7 @@ void Renderer::drawRetriever(const Retriever &ret) { ret.dibujar(r); }
 void Renderer::drawLevel(Level *level) { level->draw(r); }
 
 void Renderer::drawLifes(const Lifes &vidas) const {
+    SDL_SetRenderDrawColor(r, 0xFF, 0xFF, 0xFF, 0xFF);
     aVec2 p = vidas.position();
     for (size_t i = 0; i < vidas.restantes(); i++, p.y += BOLA_RADIO * 3)
         drawCircle(p, BOLA_RADIO, BOLA_RESOL);

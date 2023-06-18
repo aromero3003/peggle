@@ -147,6 +147,8 @@ int main(int argc, char *argv[]) {
                             case SDL_KEYUP:
                                 if (event.key.keysym.sym == SDLK_q)
                                     game.state = GAME_LEVEL_UP;
+                                else if (event.key.keysym.sym == SDLK_e)
+                                    game.state = GAME_LEVEL_FAILED;
                                 break;
 
                             case SDL_MOUSEBUTTONDOWN:
@@ -241,6 +243,7 @@ int main(int argc, char *argv[]) {
                             if (game.current_level + 1 == game.getTotalLevels())
                                 game.state = GAME_OVER;
                             else {
+                                vidas.resetear();
                                 game.state = GAME_RUNNING;
                                 canon.reload();
                                 game.current_level++;
@@ -255,19 +258,7 @@ int main(int argc, char *argv[]) {
                         continue;
                     }
 
-#ifdef TTF
-                    char p_actual[14];
-                    sprintf(p_actual, "SCORE: %zd", puntaje_en_nivel);
-
-                    color_--;
-                    escribir_texto(renderer, font, "MUY BIEN!!", 340, 200,
-                                   color_, color_, color_);
-                    escribir_texto(renderer, font, p_actual, 330, 260, color_,
-                                   color_, color_);
-                    escribir_texto(renderer, font, "Haga click para continuar",
-                                   260, 230, color_, color_, color_);
-#endif
-
+                    r.drawLevelUp(level);
                     r.drawCannon(canon);  // Dibujamos el cañón:
                     r.drawScenario();     // Dibujamos las paredes:
                     r.drawTitle();

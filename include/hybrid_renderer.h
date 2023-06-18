@@ -23,7 +23,7 @@ class HybridRenderer : public Renderer {
 
     void drawTitle();
     void drawLevel(Level *level);
-    // void drawScore();
+    void drawLevelUp(Level *level);
     void drawLifes(Lifes &lifes);
 
    private:
@@ -31,6 +31,8 @@ class HybridRenderer : public Renderer {
 
     void writeText(const std::string &s, aVec2 position, bool centered,
                    float scale);
+
+    void drawScore(Level *level);
 };
 
 #endif /* __HYBRID_RENDERER_H__ */
