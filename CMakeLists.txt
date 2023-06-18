@@ -17,6 +17,7 @@ set(SOURCES
   source/vec2.cpp
   source/ball.cpp
   source/game.cpp
+  source/main.cpp
   source/lifes.cpp
   source/level.cpp
   source/loader.cpp
