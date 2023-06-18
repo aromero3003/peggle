@@ -13,7 +13,7 @@ Dar los permisos necesarios a build.sh
 $chmod +x ./build.sh
 ```
 
-##Jugar
+## Jugar
 Ejecutar como `./Peggle`. Las ubicaciones están hardcodeadas y son relativas.
 Por lo que al cambiar el ejecutable de ubicación no iniciará el juego.
 
