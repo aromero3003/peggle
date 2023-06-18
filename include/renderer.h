@@ -12,6 +12,7 @@
 #include "lifes.h"
 #include "retriever.h"
 #include "trajectory.h"
+#include "vec2.h"
 
 class Renderer {
    public:
@@ -39,7 +40,11 @@ class Renderer {
     SDL_Window *w;
     SDL_Renderer *r;
 
+    void drawLine(aVec2 a, aVec2 b) const;
+    void drawPoint(aVec2 p) const;
     void drawCircle(aVec2 center, float radius, uint32_t num_segments) const;
+    void drawFilledCircle(aVec2 center, float radius,
+                          uint32_t num_segments) const;
 };
 
 #endif /* __RENDERER_H__ */

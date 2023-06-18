@@ -41,11 +41,13 @@ void Renderer::drawScenario() const {
 void Renderer::drawCannon(const Cannon &cannon) const {
     aVec2 cannon_tip = cannon.tip();
     setColor(0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderDrawLine(r, CANON_X, CANON_Y, cannon_tip.x, cannon_tip.y);
+    drawLine(aVec2(CANON_X, CANON_Y), cannon.tip());
+    // SDL_RenderDrawLine(r, CANON_X, CANON_Y, cannon_tip.x, cannon_tip.y);
 }
 
 void Renderer::drawBall(const Ball &ball) const {
-    drawCircle(ball.position(), BOLA_RADIO, 100);
+    // drawCircle(ball.position(), BOLA_RADIO, 100);
+    drawFilledCircle(ball.position(), BOLA_RADIO + 1, 100);
 }
 
 void Renderer::drawTrajectory(Trajectory &traj) { traj.dibujar(r); }
@@ -56,27 +58,59 @@ void Renderer::drawLifes(const Lifes &vidas) const {
     SDL_SetRenderDrawColor(r, 0xFF, 0xFF, 0xFF, 0xFF);
     aVec2 p = vidas.position();
     for (size_t i = 1; i < vidas.restantes(); i++, p.y += BOLA_RADIO * 3)
-        drawCircle(p, BOLA_RADIO, BOLA_RESOL);
+        drawFilledCircle(p, BOLA_RADIO, BOLA_RESOL);
 }
 
+void Renderer::drawFilledCircle(aVec2 center, float radius,
+                                uint32_t resolution) const {
+    int x = 0;
+    int y = radius;
+    int d = 3 - 2 * radius;
+
+    while (y >= x) {
+        // Draw horizontal lines from (x, y) to (x, -y) to fill the circle
+        for (int i = -x; i <= x; ++i) {
+            SDL_RenderDrawLine(r, center.x + i, center.y + y, center.x + i,
+                               center.y - y);
+        }
+        // Draw horizontal lines from (y, x) to (-y, x) to fill the circle
+        for (int i = -y; i <= y; ++i) {
+            SDL_RenderDrawLine(r, center.x + i, center.y + x, center.x + i,
+                               center.y - x);
+        }
+        if (d < 0) {
+            d += 4 * x + 6;
+        } else {
+            d += 4 * (x - y) + 10;
+            --y;
+        }
+        ++x;
+    }
+}
 void Renderer::drawCircle(aVec2 center, float radius,
                           uint32_t num_segments) const {
-    // Calculate the angle step between line segments
     float angle_step = (2.0f * M_PI) / static_cast<float>(num_segments);
     float angle = 0.0f;
 
-    // Set the draw color to red
-    // SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
-
-    // Draw the outline of the circle using multiple lines
     for (uint32_t i = 0; i < num_segments; ++i) {
-        float x1 = center.x + radius * cos(angle);
-        float y1 = center.y + radius * sin(angle);
-        float x2 = center.x + radius * cos(angle + angle_step);
-        float y2 = center.y + radius * sin(angle + angle_step);
-
-        SDL_RenderDrawLineF(r, x1, y1, x2, y2);
-
+        aVec2 p1 = center + radius * aVec2(cos(angle), sin(angle));
         angle += angle_step;
+        aVec2 p2 = center + radius * aVec2(cos(angle), sin(angle));
+        drawLine(p1, p2);
     }
+
+    // float angleIncrement = 2 * M_PI / resolution;
+    //
+    // for (int i = 0; i < resolution; ++i) {
+    //     float angle = i * angleIncrement;
+    //     int x = center.x + static_cast<int>(radius * std::cos(angle));
+    //     int y = center.y + static_cast<int>(radius * std::sin(angle));
+    //     SDL_RenderDrawPoint(r, x, y);
+    // }
 }
+
+void Renderer::drawLine(aVec2 a, aVec2 b) const {
+    SDL_RenderDrawLine(r, a.x, a.y, b.x, b.y);
+}
+
+void Renderer::drawPoint(aVec2 p) const { SDL_RenderDrawPoint(r, p.x, p.y); }
