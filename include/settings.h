@@ -35,7 +35,7 @@
 #define MULT3 19
 #define MULT4 21
 
-#define VIDAS_INICIALES 15
+#define VIDAS_INICIALES 10
 
 #define CONTADOR_GAME_OVER 8  // Cuenta regresiva para terminar el juego
 

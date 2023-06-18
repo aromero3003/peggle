@@ -1,3 +1,0 @@
-#!/bin/bash
-
-./build/Peggle ./resources/peggle_n.bin

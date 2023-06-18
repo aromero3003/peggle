@@ -20,6 +20,11 @@ if [ $# -gt 1 ] || ([ $# -eq 1 ] && [ $1 != "-r" ]) ; then
     echo "Usage: ./build.sh [-r]"
     exit 1
 fi
+
+if [ -f "Peggle" ]; then
+    rm "Peggle"
+fi
+
 if [ $# -eq 1 ] && [ $1 = "-r" ]; then
     if [ -d "build" ]; then
         rm -r build

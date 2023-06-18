@@ -258,6 +258,7 @@ void Peggle::gameLevelUp(Game &game, Level **level) {
                 game.state = GAME_RUNNING;
                 canon.reload();
                 game.current_level++;
+                puntaje_total += (*level)->get_score();
                 *level = game.getCurrentLevel();
             }
         } else if (event.type == SDL_MOUSEMOTION) {
