@@ -32,16 +32,16 @@ void HybridRenderer::drawTitle() {
 void HybridRenderer::drawLevel(Level *level) {
     Renderer::drawLevel(level);
     std::string level_id = "Level " + std::to_string(level->get_id());
-    writeText(level_id.c_str(), aVec2(MIN_X, MIN_Y / 2.), false, 0.8);
-
-    std::stringstream ss;
-    ss << level->get_hit_oranges() << "/" << level->get_total_oranges();
-    writeText(ss.str().c_str(), aVec2(MAX_X + 15, MAX_Y - 30), false, 1);
+    writeText(level_id, aVec2(MIN_X, MIN_Y / 2.), false, 0.8);
 
     drawScore(level);
 
+    std::stringstream ss;
+    ss << level->get_hit_oranges() << "/" << level->get_total_oranges();
+    writeText(ss.str(), aVec2(MAX_X + 40, MAX_Y - 30), true, 1);
+
     SDL_SetRenderDrawColor(r, 0xFF, 0x60, 0x00, 0x00);
-    drawCircle(aVec2(MAX_X + 40, MAX_Y - 50), 10, BOLA_RESOL);
+    drawFilledCircle(aVec2(MAX_X + 40, MAX_Y - 55), 10, BOLA_RESOL);
 }
 
 void HybridRenderer::drawScore(Level *level) {
@@ -72,8 +72,8 @@ void HybridRenderer::drawGameOver(size_t total_score) {
 
 void HybridRenderer::drawLifes(Lifes &lifes) {
     Renderer::drawLifes(lifes);
-    writeText(std::to_string(lifes.restantes()).c_str(),
-              aVec2(MIN_X / 4., MIN_Y), false, 1);
+    writeText(std::to_string(lifes.restantes()), aVec2(MIN_X / 4., MIN_Y),
+              false, 1);
 }
 
 void HybridRenderer::writeText(const std::string &s, aVec2 position,
