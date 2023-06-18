@@ -24,6 +24,7 @@ class HybridRenderer : public Renderer {
     void drawTitle();
     void drawLevel(Level *level);
     void drawLevelUp(Level *level);
+    void drawLevelFailed(Level *level);
     void drawLifes(Lifes &lifes);
 
    private:

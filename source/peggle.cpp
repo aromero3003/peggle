@@ -294,14 +294,6 @@ int main(int argc, char *argv[]) {
                     }
 #ifdef TTF
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
-                    escribir_texto(renderer, font, "OOPs Nivel Fallido!", 290,
-                                   MIN_Y + 18, 0xFF, 0xFF, 0xFF);
-                    escribir_texto(renderer, font, "Haz click para reintentar",
-                                   265, 290, color_, color_, color_);
-                    escribir_numero(renderer, font, contador_game_over, 390,
-                                    320, color_, color_, color_);
-                    puntaje_escribir(renderer, font, puntaje_en_nivel, 345,
-                                     MIN_Y + 48);
                     color_ += color_cambiar;
                     if (color_ == 0 || color_ == 255) {
                         color_cambiar = -color_cambiar;
@@ -312,11 +304,12 @@ int main(int argc, char *argv[]) {
                         break;
                     }
 #endif
-                    // level->draw(renderer);
+                    r.drawLifes(vidas);
                     r.drawLevel(level);
                     r.drawCannon(canon);  // Dibujamos el cañón
                     r.drawScenario();     // Dibujamos las paredes
                     r.drawTitle();
+                    r.drawLevelFailed(level);
                 }
 
                 break;

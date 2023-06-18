@@ -57,6 +57,13 @@ void HybridRenderer::drawLevelUp(Level *level) {
     writeText("Click to continue", aVec2(VENTANA_ANCHO / 2., 230), true, 1);
 }
 
+void HybridRenderer::drawLevelFailed(Level *level) {
+    writeText("OOPs Level Failed!", aVec2(VENTANA_ANCHO / 2., MIN_Y + 30), true,
+              1);
+    writeText("Click to retry", aVec2(VENTANA_ANCHO / 2., VENTANA_ALTO / 2.),
+              true, 1);
+}
+
 void HybridRenderer::drawLifes(Lifes &lifes) {
     Renderer::drawLifes(lifes);
     writeText(std::to_string(lifes.restantes()).c_str(),
