@@ -4,7 +4,7 @@
 #include "vec2.h"
 
 Lifes::Lifes(unsigned int n, float cx, float cy)
-    : start_position(cx, cy), total(n), dibujadas(n - 1) {
+    : start_position(cx, cy), total(n), dibujadas(n) {
     if (n == 0) throw -1;  // TODO lanzar excepcion más descriptiva
 }
 

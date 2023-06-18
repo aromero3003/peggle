@@ -23,10 +23,15 @@ bool Trajectory::dibujar(SDL_Renderer* renderer) {
 
 Trajectory calcular(aVec2 pi, aVec2 vi, aVec2 a, float dt) {
     Trajectory actual;
-    while (pi.x > MIN_X and pi.x < MAX_X and pi.y < MAX_Y) {
-        actual.agregar_coordenada(pi);
+    for (char i; i < 10; i++) {
         vi = ROZAMIENTO * computar_velocidad(vi, a, dt);
         pi = computar_posicion(pi, vi, dt);
+        actual.agregar_coordenada(pi);
     }
+    // while (pi.x > MIN_X and pi.x < MAX_X and pi.y < MAX_Y) {
+    //     actual.agregar_coordenada(pi);
+    //     vi = ROZAMIENTO * computar_velocidad(vi, a, dt);
+    //     pi = computar_posicion(pi, vi, dt);
+    // }
     return actual;
 }

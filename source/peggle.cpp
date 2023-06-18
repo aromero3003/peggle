@@ -3,10 +3,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
 #include <assert.h>
-#include <math.h>
 #include <stdbool.h>
 #include <string.h>
 
+#include <cmath>
 #include <iostream>
 #include <list>
 
@@ -45,62 +45,51 @@ Peggle::Peggle()
 
 void Peggle::run() {
     int dormir = 0;
-
-    // contador para actualizar la trayectoria en intervalos de 5
     Loader loader("resources/levels.bin");
-
-    int nivel = 0;
     Game game(loader);
 
-    while (game.state) {
-        if (game.current_level + 1 == game.getTotalLevels()) {
-            game.state = GAME_OVER;
-        }
-        vidas.resetear();  // Se setean las vidas a la cantidad inicial
-
-        Level *level = game.getCurrentLevel();
-        unsigned int ticks = SDL_GetTicks();
+    Level *level = game.getCurrentLevel();
+    unsigned int ticks = SDL_GetTicks();
 #ifdef TTF
-        uint8_t color_ = 0xFF;
-        int color_cambiar = -1;
-        int contador_game_over = CONTADOR_GAME_OVER;
+    uint8_t color_ = 0xFF;
+    int color_cambiar = -1;
+    int contador_game_over = CONTADOR_GAME_OVER;
 #endif
 
-        while (game.state) {
-            r.setColor(0x00, 0x00, 0x00, 0x00);
-            r.clear();
-            r.setColor(0xFF, 0xFF, 0xFF, 0x00);
-            switch (game.state) {
-                case GAME_RUNNING:
-                    gameRunning(game, &level);
-                    break;
+    while (game.state) {
+        r.setColor(0x00, 0x00, 0x00, 0x00);
+        r.clear();
+        r.setColor(0xFF, 0xFF, 0xFF, 0x00);
+        switch (game.state) {
+            case GAME_RUNNING:
+                gameRunning(game, &level);
+                break;
 
-                case GAME_LEVEL_UP:  // Caso se pasó de nivel
-                    gameLevelUp(game, &level);
-                    break;
+            case GAME_LEVEL_UP:  // Caso se pasó de nivel
+                gameLevelUp(game, &level);
+                break;
 
-                case GAME_LEVEL_FAILED:  // Caso no se pasó de nivel
-                    gameLevelFailed(game, &level);
-                    break;
+            case GAME_LEVEL_FAILED:  // Caso no se pasó de nivel
+                gameLevelFailed(game, &level);
+                break;
 
-                case GAME_OVER:  // Caso se termina el juego
-                    gameOver(game);
-                    break;
+            case GAME_OVER:  // Caso se termina el juego
+                gameOver(game);
+                break;
 
-                case GAME_CLOSE:
-                    return;
-                    break;
-            }
-
-            r.present();
-            ticks = SDL_GetTicks() - ticks;
-            if (dormir) {
-                SDL_Delay(dormir);
-                dormir = 0;
-            } else if (ticks < 1000 / JUEGO_FPS)
-                SDL_Delay(1000 / JUEGO_FPS - ticks);
-            ticks = SDL_GetTicks();
+            case GAME_CLOSE:
+                return;
+                break;
         }
+
+        r.present();
+        ticks = SDL_GetTicks() - ticks;
+        if (dormir) {
+            SDL_Delay(dormir);
+            dormir = 0;
+        } else if (ticks < 1000 / JUEGO_FPS)
+            SDL_Delay(1000 / JUEGO_FPS - ticks);
+        ticks = SDL_GetTicks();
     }
 }
 
@@ -119,8 +108,8 @@ void Peggle::gameRunning(Game &game, Level **level) {
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
+                if (not b.esta_cayendo()) tray = Trajectory();
                 canon.fire();
-                // tray = Trajectory();
             case SDL_MOUSEMOTION:
                 canon.update(
                     atan2(event.motion.x - CANON_X, event.motion.y - CANON_Y));
@@ -132,35 +121,32 @@ void Peggle::gameRunning(Game &game, Level **level) {
 
     if (b.esta_cayendo()) {
         b.actualizar(DT);
-        // Se agrega una coordenada cada 5 iteraciones
-        if (contador_trayectoria > 5) {
+        // Se agrega una coordenada cada 15 iteraciones
+        if (contador_trayectoria > 15) {
             tray.agregar_coordenada(b.centro);
             contador_trayectoria = 0;
         }
-        // tray.dibujar(renderer);
-        r.drawTrajectory(tray);
         contador_trayectoria++;
     } else {
-        tray = Trajectory();
-        // {
-        //     Trajectory calculada =
-        //         calcular(c, v, G_VEC, 0.01);
-        //     calculada.dibujar(renderer);
-        // }
+        tray = calcular(b.position(),
+                        aVec2(BOLA_VI * std::sin(canon.angle()),
+                              BOLA_VI * std::cos(canon.angle())),
+                        G_VEC, 0.05);
     }
 
     // Se salió de la pantalla:
     if (b.centro.y > MAX_Y - BOLA_RADIO) {
+        tray = Trajectory();
+        (*level)->update_multiplier();
+        (*level)->clean_touched_obstacles();
         if (not recuperador.recuperar(b)) {
+            vidas.quitar();
             if (vidas.estan_agotadas()) {
                 game.state = GAME_LEVEL_FAILED;
                 return;
             }
-            vidas.quitar();
         }
         canon.reload();
-        (*level)->update_multiplier();
-        (*level)->clean_touched_obstacles();
     }
 
     if (b.esta_trabada()) (*level)->clean_touched_obstacles();
@@ -176,6 +162,7 @@ void Peggle::gameRunning(Game &game, Level **level) {
     (*level)->move_obstacles(DT);
 
     /* Dibujamos los elementos del juego */
+    r.drawTrajectory(tray);
     r.drawCannon(canon);
     r.drawBall(b);
     r.drawScenario();
@@ -214,23 +201,25 @@ void Peggle::gameOver(Game &game) {
 }
 
 void Peggle::gameLevelFailed(Game &game, Level **level) {
-    vidas.resetear();
-    (*level)->reset();
     if (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
-            game.state = GAME_CLOSE;
-        }
-
-        if (event.type == SDL_MOUSEBUTTONDOWN) {
-            game.state = GAME_RUNNING;
-            (*level)->reset(); /* OJO */
-            vidas.resetear();
+        switch (event.type) {
+            case SDL_QUIT:
+                game.state = GAME_CLOSE;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                game.state = GAME_RUNNING;
+                tray = Trajectory();
+                canon.reload();
+                (*level)->reset();
+                vidas.resetear();
 #ifdef TTF
-            contador_game_over = CONTADOR_GAME_OVER;
+                contador_game_over = CONTADOR_GAME_OVER;
 #endif
-        } else if (event.type == SDL_MOUSEMOTION) {
-            canon.update(
-                atan2(event.motion.x - CANON_X, event.motion.y - CANON_Y));
+                break;
+            case SDL_MOUSEMOTION:
+                canon.update(
+                    atan2(event.motion.x - CANON_X, event.motion.y - CANON_Y));
+                break;
         }
     }
 #ifdef TTF
@@ -245,6 +234,8 @@ void Peggle::gameLevelFailed(Game &game, Level **level) {
         break;
     }
 #endif
+    r.drawRetriever(recuperador);
+    r.drawTrajectory(tray);
     r.drawLifes(vidas);
     r.drawLevel(*level);
     r.drawCannon(canon);  // Dibujamos el cañón
