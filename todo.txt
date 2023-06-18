@@ -1,5 +1,7 @@
 Ajustar el umbral para detectar si la bola está estancada
 
+Agregar animacion para las pantallas de LevelUp, Failed, y GameOver
+
 Quién debería calcular posicion en cada instante?
     1. La pelota contener una trayectoria, calcularla y agregarle puntos
     2. La trayectoria, la pelota le consulta a la trayectoria cual es su siguiente coordenada
