@@ -26,6 +26,7 @@ class HybridRenderer : public Renderer {
     void drawLevelUp(Level *level);
     void drawLevelFailed(Level *level);
     void drawLifes(Lifes &lifes);
+    void drawGameOver(size_t total_score);
 
    private:
     TTF_Font *font;

@@ -37,48 +37,7 @@ void resetear_obstaculos(Obstacle &obs) {
 #include "hybrid_renderer.h"
 #endif  // TTF2
 
-#ifdef TTF
-#include <SDL2/SDL_ttf.h>
-
-// ------------------------------------------------------------- FUNCIONES QUE
-// ESCRIBEN TEXTO EN LA PANTALLA
-// -------------------------------------------------------------
-
-void puntaje_escribir(SDL_Renderer *renderer, TTF_Font *font, puntaje_t puntaje,
-                      int x, int y) {
-    char p[20];
-    sprintf(p, "Puntaje: %zd", puntaje);
-
-    SDL_Color color = {255, 255, 255};
-    SDL_Surface *surface = TTF_RenderText_Solid(font, p, color);
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-    SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = surface->w * 0.8;
-    rect.h = surface->h * 0.8;
-
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
-    SDL_DestroyTexture(texture);
-    SDL_FreeSurface(surface);
-}
-
-void escribir_numero(SDL_Renderer *renderer, TTF_Font *font, int contador,
-                     int x, int y, uint8_t r, uint8_t g, uint8_t b) {
-    char c[4];
-    sprintf(c, "%ds", contador);
-    escribir_texto(renderer, font, c, x, y, r, g, b);
-}
-
-#endif
-
 int main(int argc, char *argv[]) {
-    // if (argc != 2) {
-    //     std::cerr << "Usage: " << argv[0] << "<levels_path.bin" << std::endl;
-    //     return 1;
-    // }
-
     // SDL_Init(SDL_INIT_VIDEO);
 
     // #ifdef TTF2
@@ -88,12 +47,6 @@ int main(int argc, char *argv[]) {
     // #endif  // TTF2
 
     HybridRenderer r(VENTANA_ANCHO, VENTANA_ALTO, 0);
-
-#ifdef TTF
-    TTF_Init();
-    TTF_Font *font = TTF_OpenFont("resources/FreeSansBold.ttf", 24);
-#endif
-
     SDL_Event event;
     int dormir = 0;
 
@@ -336,16 +289,10 @@ int main(int argc, char *argv[]) {
                     if (color_ == 0 || color_ == 255) {
                         color_cambiar = -color_cambiar;
                     }
-                    escribir_texto(renderer, font, "GAME OVER", 305, 180,
-                                   color_, color_, color_);
-                    char final_score[22];
-                    sprintf(final_score, "PUNTAJE TOTAL %zd", puntaje_total);
-                    escribir_texto(renderer, font, final_score, 270, 230,
-                                   color_, color_, color_);
 #endif
-
                     r.drawScenario();  // Dibujamos las paredes:
                     r.drawTitle();
+                    r.drawGameOver(puntaje_total);
                     break;
 
                 default:
@@ -362,9 +309,5 @@ int main(int argc, char *argv[]) {
             ticks = SDL_GetTicks();
         }
     }
-#ifdef TTF
-    TTF_CloseFont(font);
-    TTF_Quit();
-#endif
     return 0;
 }

@@ -22,7 +22,7 @@ Renderer::~Renderer() {
     SDL_Quit();
 }
 
-void Renderer::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+void Renderer::setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) const {
     SDL_SetRenderDrawColor(this->r, r, g, b, a);
 }
 
@@ -40,6 +40,7 @@ void Renderer::drawScenario() const {
 
 void Renderer::drawCannon(const Cannon &cannon) const {
     aVec2 cannon_tip = cannon.tip();
+    setColor(0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderDrawLine(r, CANON_X, CANON_Y, cannon_tip.x, cannon_tip.y);
 }
 

@@ -64,6 +64,12 @@ void HybridRenderer::drawLevelFailed(Level *level) {
               true, 1);
 }
 
+void HybridRenderer::drawGameOver(size_t total_score) {
+    std::string total = "FINAL SCORE: " + std::to_string(total_score);
+    writeText("GAME OVER", aVec2(VENTANA_ANCHO / 2., 180), true, 1);
+    writeText(total, aVec2(VENTANA_ANCHO / 2., 230), true, 1);
+}
+
 void HybridRenderer::drawLifes(Lifes &lifes) {
     Renderer::drawLifes(lifes);
     writeText(std::to_string(lifes.restantes()).c_str(),
