@@ -1,16 +1,25 @@
 # Peggle
 Versión del juego Peggle en SDL2 y C++ 
 
-## Instalar SDL2
-Para jugar se necesita instalar SDL2
+## Requerimientos
+Para compilar se necesita instalar CMake y SDL2
 ```bash
+sudo apt-get install cmake
 sudo apt-get install libsdl2-dev libsdl2-ttf-dev
 ```
 
 ## Compilar
-Dar los permisos necesarios a build.sh
+Para compilar manualmente dar los permisos necesarios a build.sh
 ```bash
 chmod +x ./build.sh
+```
+
+## Instalación
+```bash
+git clone https://github.com/aromero3003/peggle.git
+cd peggle
+chmod +x build.sh
+./build.sh
 ```
 
 ## Jugar
