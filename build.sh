@@ -33,4 +33,4 @@ if [ $# -eq 1 ] && [ $1 = "-r" ]; then
 
 fi
 cmake -S . -B build
-cmake --build build
+cmake --build build -j4
