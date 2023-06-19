@@ -19,5 +19,6 @@ Por lo que al cambiar el ejecutable de ubicación no iniciará el juego.
 
 Para debugging la tecla `q` cambia al siguiente nivel y `e` cambia a Nivel Fallido.
 
-[Screenshot of the game](./resources/screenshot4.png)
-[Screenshot2 of the game](./resources/levelscreenshot3.png)
+![Screenshot of the game](./resources/screenshot4.png)
+
+![Screenshot2 of the game](./resources/levelscreenshot3.png)
